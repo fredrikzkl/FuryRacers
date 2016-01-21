@@ -1,4 +1,4 @@
-package $bachelor.furyracers;
+package com.github.fredrikzkl.furyracers.Furyracers;
 
 /**
  * Hello world!

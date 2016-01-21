@@ -1,4 +1,4 @@
-package $bachelor.furyracers;
+package com.github.fredrikzkl.furyracers.Furyracers;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
