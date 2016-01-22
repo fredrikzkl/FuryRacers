@@ -7,11 +7,16 @@ import javax.json.JsonReader;
 import javax.websocket.DeploymentException;
 import javax.websocket.EncodeException;
 import javax.websocket.Session;
+
+import org.glassfish.tyrus.client.ClientManager;
+
 import com.github.fredrikzkl.furyracers.network.Gamecore;
 import java.io.IOException;
 import java.io.StringReader;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.HashSet;
+import java.util.Set;
 
 public class GameSession {
 
@@ -20,27 +25,20 @@ public class GameSession {
 	
 	private Session backend;
 	
-	private String player1;
-	private String player2;
-	private String player3;
-	private String player4;
-	
-	private String player1Username = "Player 1";
-	private String player2Username = "Player 2";
-	private String player3Username = "Player 3";
-	private String player4Username = "Player 4";
+	private Set<Player> players;
 	
 	public GameSession(Gamecore game) throws DeploymentException {
 		this.game = game;
+		players = new HashSet<>();
+	}
+	
+	public void connect() throws URISyntaxException, IOException, DeploymentException {
+		ClientManager client = ClientManager.createClient();
+        client.connectToServer(WebsocketClient.class, new URI("ws://localhost:3001/ws"));
 	}
 	
 	public void onOpen(Session session)throws IOException, EncodeException {
 		backend = session;
-		player1 = "";
-		player2= "";
-		player3= "";
-		player4= "";
-		
 		sendToBackend("Identify", "game");
 	}
 
@@ -59,21 +57,15 @@ public class GameSession {
         if(!(jsonObj.containsKey("action") && jsonObj.containsKey("data"))){
         	return;
         }
+        
+        //Skal fylles ut med messages fra controller (switch)
 	}
 	
-	public String getplayer1Username(){
-		return player1Username;
-	}
-	public String getplayer2Username(){
-		return player2Username;
-	}
-	public String getplayer3Username(){
-		return player3Username;
-	}
-	public String getplayer4Username(){
-		return player4Username;
-	}
-
+	//Metoder som mangler:
+	//Sende informasjon til kontroller
+	
+	
+	
 	
 	
 }
