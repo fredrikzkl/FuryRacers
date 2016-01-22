@@ -23,7 +23,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>com.github.s111.bachelor.pong.Application</mainClass>
+                            <mainClass>com.github.s111.bachelor.FuryRacers.BasicGame</mainClass>
                         </manifest>
                     </archive>
                     <descriptorRefs>
