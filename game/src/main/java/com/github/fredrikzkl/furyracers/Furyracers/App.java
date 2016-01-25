@@ -1,6 +1,6 @@
 package com.github.fredrikzkl.furyracers.Furyracers;
 
-import com.guthub.fredrikzkl.furyracers.game.GameSession;
+import com.github.fredrikzkl.furyracers.network.GameSession;
 
 /**
  * Hello world!

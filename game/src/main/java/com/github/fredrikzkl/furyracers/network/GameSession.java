@@ -1,4 +1,4 @@
-package com.guthub.fredrikzkl.furyracers.game;
+package com.github.fredrikzkl.furyracers.network;
 
 import javax.json.Json;
 import javax.json.JsonArray;
@@ -10,7 +10,9 @@ import javax.websocket.Session;
 
 import org.glassfish.tyrus.client.ClientManager;
 
-import com.github.fredrikzkl.furyracers.network.Gamecore;
+import com.guthub.fredrikzkl.furyracers.game.GameCore;
+import com.guthub.fredrikzkl.furyracers.game.Player;
+
 import java.io.IOException;
 import java.io.StringReader;
 import java.net.URI;
@@ -21,13 +23,13 @@ import java.util.Set;
 public class GameSession {
 
 	
-	private final Gamecore game;
+	private final GameCore game;
 	
 	private Session backend;
 	
 	private Set<Player> players;
 	
-	public GameSession(Gamecore game) throws DeploymentException {
+	public GameSession(GameCore game) throws DeploymentException {
 		this.game = game;
 		players = new HashSet<>();
 	}
