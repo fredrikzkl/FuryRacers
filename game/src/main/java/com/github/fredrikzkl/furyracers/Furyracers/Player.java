@@ -1,4 +1,4 @@
-package com.guthub.fredrikzkl.furyracers.game;
+package com.github.fredrikzkl.furyracers.Furyracers;
 
 public class Player {
 	private String id;

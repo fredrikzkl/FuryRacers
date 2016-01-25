@@ -1,4 +1,4 @@
-package com.guthub.fredrikzkl.furyracers.game;
+package com.github.fredrikzkl.furyracers.Furyracers;
 
 import org.newdawn.slick.AppGameContainer;
 import org.newdawn.slick.BasicGame;

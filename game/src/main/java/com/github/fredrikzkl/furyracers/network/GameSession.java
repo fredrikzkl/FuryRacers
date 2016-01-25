@@ -10,8 +10,8 @@ import javax.websocket.Session;
 
 import org.glassfish.tyrus.client.ClientManager;
 
-import com.guthub.fredrikzkl.furyracers.game.GameCore;
-import com.guthub.fredrikzkl.furyracers.game.Player;
+import com.github.fredrikzkl.furyracers.Furyracers.GameCore;
+import com.github.fredrikzkl.furyracers.Furyracers.Player;
 
 import java.io.IOException;
 import java.io.StringReader;
