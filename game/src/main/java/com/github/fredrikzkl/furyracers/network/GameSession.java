@@ -1,4 +1,4 @@
-package com.guthub.fredrikzkl.furyracers.game;
+package com.github.fredrikzkl.furyracers.network;
 
 import javax.json.Json;
 import javax.json.JsonArray;
@@ -10,7 +10,8 @@ import javax.websocket.Session;
 
 import org.glassfish.tyrus.client.ClientManager;
 
-import com.github.fredrikzkl.furyracers.network.Gamecore;
+import com.github.fredrikzkl.furyracers.game.Gamecore;
+
 import java.io.IOException;
 import java.io.StringReader;
 import java.net.URI;

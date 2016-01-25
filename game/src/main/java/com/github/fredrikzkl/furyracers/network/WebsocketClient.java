@@ -1,4 +1,4 @@
-package com.guthub.fredrikzkl.furyracers.game;
+package com.github.fredrikzkl.furyracers.network;
 
 
 import javax.websocket.*;
