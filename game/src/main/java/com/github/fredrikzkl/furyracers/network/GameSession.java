@@ -9,9 +9,9 @@ import javax.websocket.EncodeException;
 import javax.websocket.Session;
 
 import org.glassfish.tyrus.client.ClientManager;
-
-import com.github.fredrikzkl.furyracers.Furyracers.GameCore;
-import com.github.fredrikzkl.furyracers.Furyracers.Player;
+import com.github.fredrikzkl.furyracers.GameCore;
+import com.github.fredrikzkl.furyracers.game.Player;
+import com.github.fredrikzkl.furyracers.GameCore;
 
 import java.io.IOException;
 import java.io.StringReader;

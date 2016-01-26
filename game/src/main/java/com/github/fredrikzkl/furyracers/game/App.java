@@ -1,4 +1,4 @@
-package com.github.fredrikzkl.furyracers.Furyracers;
+package com.github.fredrikzkl.furyracers.game;
 
 import com.github.fredrikzkl.furyracers.network.GameSession;
 

@@ -3,7 +3,7 @@ package com.github.fredrikzkl.furyracers.network;
 
 import javax.websocket.*;
 
-import com.github.fredrikzkl.furyracers.Furyracers.App;
+import com.github.fredrikzkl.furyracers.game.App;
 
 import java.io.IOException;
 

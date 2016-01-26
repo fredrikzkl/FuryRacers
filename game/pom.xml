@@ -24,6 +24,7 @@
                     <archive>
                         <manifest>
                             <mainClass>com.github.fredrikzkl.furyracers.Furyracers.GameCore</mainClass>
+
                         </manifest>
                     </archive>
                     <descriptorRefs>
