@@ -16,8 +16,8 @@ public class GameCore extends BasicGame {
 	boolean left;
 	boolean right;
 	
-	int handling = 4;
-	int speed = 5;
+	int handling = 2;
+	int speed = 0;
 	
 	float carSize = (float) 0.5;
 	
@@ -32,6 +32,12 @@ public class GameCore extends BasicGame {
 	
 	public void update(GameContainer container, int arg1) throws SlickException {
 		Input input = container.getInput();
+		
+		if(input.isKeyDown(Input.KEY_SPACE)){
+			speed = 5;
+		}else{
+			speed = 0;
+		}
 	
 		if(input.isKeyDown(Input.KEY_RIGHT)){
 			movementDegrees -= handling;
