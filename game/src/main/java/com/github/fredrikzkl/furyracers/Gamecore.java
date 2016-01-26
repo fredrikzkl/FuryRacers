@@ -17,7 +17,7 @@ public class GameCore extends BasicGame {
 	boolean right;
 	
 	int handling = 2;
-	int speed = 0;
+	float speed = 0;
 	
 	float carSize = (float) 0.5;
 	
@@ -34,9 +34,13 @@ public class GameCore extends BasicGame {
 		Input input = container.getInput();
 		
 		if(input.isKeyDown(Input.KEY_SPACE)){
-			speed = 5;
+			if(speed<5){
+				speed += 0.1;
+			}
 		}else{
-			speed = 0;
+			if(speed>0){
+				speed -= 0.1;
+			}
 		}
 	
 		if(input.isKeyDown(Input.KEY_RIGHT)){
