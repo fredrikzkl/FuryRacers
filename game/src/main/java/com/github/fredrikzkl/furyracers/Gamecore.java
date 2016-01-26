@@ -13,11 +13,14 @@ public class GameCore extends BasicGame {
 
 	Image carSprites = null;
 	SpriteSheet sprite;
-	boolean left;
-	boolean right;
 	
 	int handling = 2;
+	
+	int topSpeed = 5;
+	
 	float speed = 0;
+	float acceleration = (float) 0.1;
+	float deAcceleration = (float) 0.05;
 	
 	float carSize = (float) 0.5;
 	
@@ -30,16 +33,24 @@ public class GameCore extends BasicGame {
 		super(title);
 	}
 	
+	public void init(GameContainer arg0) throws SlickException {
+		sprite = new SpriteSheet("Sprites/car.png", 100, 100);
+		carSprites = new Image("Sprites/car.png");
+	}
+	
 	public void update(GameContainer container, int arg1) throws SlickException {
 		Input input = container.getInput();
 		
 		if(input.isKeyDown(Input.KEY_SPACE)){
-			if(speed<5){
-				speed += 0.1;
+			if(speed<topSpeed){
+				speed += acceleration; 
 			}
 		}else{
 			if(speed>0){
-				speed -= 0.1;
+				speed -= deAcceleration;
+			}
+			else{
+				speed = 0;
 			}
 		}
 	
@@ -55,19 +66,12 @@ public class GameCore extends BasicGame {
 		float deltaX = (float) (Math.cos(radDeg))*speed;
 		float deltaY = (float) (Math.sin(radDeg))*speed;
 		
-		System.out.println("Deg: "+movementDegrees+"-->["+deltaX+","+deltaY+"]");
-		
 		xPos += deltaX;
 		yPos += deltaY;	
 	}
 
 	public void render(GameContainer container, Graphics g) throws SlickException {
 		carSprites.getSubImage(1,0,140,140).draw(xPos, yPos, carSize);
-	}
-
-	public void init(GameContainer arg0) throws SlickException {
-		sprite = new SpriteSheet("Sprites/car.png", 100, 100);
-		carSprites = new Image("Sprites/car.png");
 	}
 
 	public static void main(String[] args) throws SlickException{
