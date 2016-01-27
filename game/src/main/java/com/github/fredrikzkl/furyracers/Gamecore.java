@@ -15,10 +15,9 @@ public class GameCore extends BasicGame {
 	SpriteSheet sprite;
 	
 	int handling = 2;
-	
+
 	int topSpeed = 5;
-	
-	float speed = 0;
+	float currentSpeed = 0;
 	float acceleration = (float) 0.1;
 	float deAcceleration = (float) 0.05;
 	
@@ -41,30 +40,12 @@ public class GameCore extends BasicGame {
 	public void update(GameContainer container, int arg1) throws SlickException {
 		Input input = container.getInput();
 		
-		if(input.isKeyDown(Input.KEY_SPACE)){
-			if(speed<topSpeed){
-				speed += acceleration; 
-			}
-		}else{
-			if(speed>0){
-				speed -= deAcceleration;
-			}
-			else{
-				speed = 0;
-			}
-		}
-	
-		if(input.isKeyDown(Input.KEY_RIGHT)){
-			movementDegrees -= handling;
-		}
-		if(input.isKeyDown(Input.KEY_LEFT)){
-			movementDegrees += handling;
-		}
+		reactToKeyboardInput(input);
 		
 		float radDeg = (float) Math.toRadians(movementDegrees);
 
-		float deltaX = (float) (Math.cos(radDeg))*speed;
-		float deltaY = (float) (Math.sin(radDeg))*speed;
+		float deltaX = (float) (Math.cos(radDeg))*currentSpeed;
+		float deltaY = (float) (Math.sin(radDeg))*currentSpeed;
 		
 		xPos += deltaX;
 		yPos += deltaY;	
@@ -73,7 +54,29 @@ public class GameCore extends BasicGame {
 	public void render(GameContainer container, Graphics g) throws SlickException {
 		carSprites.getSubImage(1,0,140,140).draw(xPos, yPos, carSize);
 	}
-
+	
+	public void reactToKeyboardInput(Input input){
+		
+		if(input.isKeyDown(Input.KEY_UP)){
+			if(currentSpeed<topSpeed){
+				currentSpeed += acceleration; 
+			}
+		}else{
+			if(currentSpeed>0){
+				currentSpeed -= deAcceleration;
+			}
+			else{
+				currentSpeed = 0;
+			}
+		}
+	
+		if(input.isKeyDown(Input.KEY_LEFT)){
+			movementDegrees -= handling;
+		}
+		if(input.isKeyDown(Input.KEY_RIGHT)){
+			movementDegrees += handling;
+		}
+	}
 	public static void main(String[] args) throws SlickException{
 		AppGameContainer app = new AppGameContainer(new GameCore("Test"));
 		
