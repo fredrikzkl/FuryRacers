@@ -4,82 +4,31 @@ var game = new Phaser.Game(800, 600, Phaser.AUTO, 'game', {
     update: update
 });
 
-var paddle;
-var leftButton;
-var rightButton;
+var accelerateButton;
+
 var target;
 
-var playingSide = "";
-
-var leftPaddleAvailable = false;
-var rightPaddleAvailable = false;
-var onlyOnePaddleAvailable;
-
-var selectionState;
-var playingState;
-var pendingStateChange = false;
-
-var oldPos;
-
-var RED = "0xff0373";
-var GREEN = "0x00fc8c";
+var GREY = "0xbebbbd";
 var BLACK = "0x111213";
+var WHITE = "0xffffff";
+var RED = "0xD40100";
 
-var textStyle = {
-    font: "38px Arial",
-    fill: "#eeefef",
-    strokeThickness: 5,
-    stroke: "#111213"
-};
-
-var numberOfButtonsLeftToRender;
-
-var gameIsFullMessage;
-
-var movePaddle = function(pos) {};
-
-function selectPaddle(sel) {
-    sendToGame("play as", sel);
-}
+var accelerate = function(gasButton){};
 
 function preload() {
-    addMessageHandler(function(msg) {
-        if (msg === "identified") {
-            sendToGame("play as", "");
+    addMessageHandler(function(msg){
+        if(msg == "identified"){
 
-            movePaddle = function(pos) {
-                sendToGame("move", pos);
-            }
-        }
-
-        if (msg.action === "play as") {
-            var id = getId();
-
-            var left = msg.data.left;
-            var right = msg.data.right;
-
-            if (left === id) {
-                playingSide = "left";
-            } else if (right === id) {
-                playingSide = "right";
+            accelerate = function(gasButton) {
+              sendToGame("accelerate", gasButton);
             }
 
-            playingState = playingSide !== "";
-            selectionState = !playingState;
-
-            pendingStateChange = true;
-
-            leftPaddleAvailable = left === "";
-            rightPaddleAvailable = right === "";
-
-            onlyOnePaddleAvailable = (leftPaddleAvailable && !rightPaddleAvailable) || (!leftPaddleAvailable && rightPaddleAvailable);
-
-            numberOfButtonsLeftToRender = (onlyOnePaddleAvailable ? 1 : 2);
         }
-    });
+    })
+
 }
 
-function create() {
+function create(){
     game.scale.fullScreenScaleMode = Phaser.ScaleManager.EXACT_FIT;
     game.scale.scaleMode = Phaser.ScaleManager.EXACT_FIT;
     game.scale.refresh();
@@ -95,134 +44,88 @@ function create() {
 
         if (!game.scale.isFullScreen) {
             game.scale.startFullScreen(false);
-        } else if (data === "left" || data === "right") {
-            selectPaddle(data);
+        }
+
+        if(data == "accelerate"){
+          console.log("Skyt meg i hodet");
         }
 
         target = pointer.targetObject;
     }, this);
+
+    createControllerLayout();
+
 }
 
-function createPaddleSprite(playingSide) {
-    var color = (playingSide === "left" ? RED : GREEN);
+function createControllerLayout(){
+    //Den hvite bakgrunnen under pilene
+    var whitePaddle = game.add.graphics(0,0);
+    whitePaddle.beginFill(WHITE, 1);
+    whitePaddle.drawRect(
+      game.stage.width/20,
+      game.stage.height/2,
+      game.stage.width/2,
+      game.stage.height/4);
+    //Pilene som skal ligge over det hvite området
+    var arrowLeft = game.add.graphics(0,0);
+    arrowLeft.beginFill(BLACK,1);
+    arrowLeft.drawRect(
+      game.stage.width/18,
+      game.stage.height/1.96,
+      game.stage.width/2/2.1,
+      game.stage.height/4.35);
+    var arrowRight = game.add.graphics(0,0);
+    arrowRight.beginFill(BLACK,1);
+    arrowRight.drawRect(
+      game.stage.width/3.3,
+      game.stage.height/1.96,
+      game.stage.width/2/2.1,
+      game.stage.height/4.35);
+    //Grå området under knappen
+    var buttonUnder = game.add.graphics(0,0);
+    buttonUnder.beginFill(GREY,1);
+    buttonUnder.drawRect(
+      game.stage.width/1.5, //Posisjon x
+      game.stage.height/2.2, //Posisjon y
+      game.stage.width/4, //Størrelse X
+      game.stage.height/3); //Størrelse Y
+    circleButton = game.add.graphics(0,0);
+    circleButton.beginFill(RED,1);
+    circleButton.drawCircle(
+      game.stage.width/1.265, //Posisjon x
+      game.stage.height/1.6, //Posisjon y
+      game.stage.width/4.3); //Radius
 
-    var g = game.add.graphics(0, 0);
-    g.beginFill(color, 1);
-    g.drawRect(0, 0, game.stage.width, 128);
+    accelerateButton = game.add.sprite(0,32);
+    circleButton.addChild(accelerateButton);
 
-    s = game.add.sprite(0, 32);
-    s.addChild(g);
-
-    s.inputEnabled = true;
-    s.input.enableDrag();
-    s.input.allowHorizontalDrag = false;
-    s.input.boundsRect = new Phaser.Rectangle(0, 32, game.stage.width, game.stage.height - 32 - 128);
-
-    paddle = s;
+    addInput();
 }
 
-function createButtonSprites(leftOrRight) {
-    var buttonX = game.stage.width / 2;
-    var buttonWidth = game.stage.width / 2;
-    var buttonHeight = game.stage.height;
+function addInput(){
+    accelerateButton.inputEnabled = true;
+    accelerateButton.data = "accelerate";
+    circleButton.data = "accelerate";
 
-    if (numberOfButtonsLeftToRender === 2) {
-        buttonX = 0;
-    }
-
-    if (onlyOnePaddleAvailable) {
-        buttonX = 0;
-        buttonWidth *= 2;
-    }
-
-    var x = 32;
-    if (leftOrRight === "right") {
-        x = 0;
-    }
-
-    g = game.add.graphics(0, 0);
-
-    var color = (leftOrRight === "left" ? RED : GREEN);
-    g.beginFill(color, 1);
-
-    g.drawRoundedRect(x, 32, buttonWidth - 32 - x, buttonHeight - 64, 64);
-
-    s = game.add.sprite(buttonX, 0);
-
-    s.addChild(g);
-    s.data = leftOrRight;
-    s.inputEnabled = true;
-
-    var text = game.add.text((buttonWidth - ((buttonX > 0) ? 32 : 0)) / 2, buttonHeight / 2, "", textStyle);
-    text.setText("PLAY AS " + leftOrRight.toUpperCase());
-    text.x -= text.width / 2;
-    text.y -= text.height / 2;
-    s.addChild(text);
-
-    numberOfButtonsLeftToRender--;
-
-    return s;
-}
-
-function createGameIsFullSprite() {
-    var s = game.add.sprite(0, 0);
-    s.kill();
-    var text = game.add.text(game.stage.width / 2, game.stage.height / 2, "THE GAME IS FULL!", textStyle);
-    text.x -= text.width / 2;
-    s.addChild(text);
-
-    gameIsFullMessage = s;
 }
 
 function update() {
-    if (target && target.sprite === paddle && target.isDragged) {
-        var newPos = ((paddle.y - 32) / (game.stage.height - 32 * 2 - 128) * 2000) | 0;
 
-        if (newPos != oldPos) {
-            oldPos = newPos;
-            movePaddle(newPos / 2000);
-        }
-    }
 
-    if (pendingStateChange) {
-        pendingStateChange = false;
+  if(game.scale.isFullScreen){
 
-        destroy(leftButton);
-        destroy(rightButton);
+    game.input.onDown.add(function(pointer){
+      var data;
 
-        if (playingState) {
-            if (!paddle) {
-                createPaddleSprite(playingSide);
-            }
-        } else if (selectionState) {
-            if (!gameIsFullMessage) {
-                createGameIsFullSprite();
-            }
+      if (pointer.targetObject) {
+          data = pointer.targetObject.sprite.data;
+      }
 
-            var twoPaddlesAvailable = leftPaddleAvailable && rightPaddleAvailable;
+      if(data == "accelerate"){
+        console.log("Skyt meg i hodet");
+      }
 
-            if (twoPaddlesAvailable) {
-                leftButton = createButtonSprites("left");
-                rightButton = createButtonSprites("right");
-            } else if (onlyOnePaddleAvailable) {
-                if (leftPaddleAvailable) {
-                    leftButton = createButtonSprites("left");
+    })
 
-                    gameIsFullMessage.kill();
-                } else if (rightPaddleAvailable) {
-                    rightButton = createButtonSprites("right");
-
-                    gameIsFullMessage.kill();
-                }
-            } else {
-                gameIsFullMessage.revive();
-            }
-        }
-    }
-}
-
-function destroy(sprite) {
-    if (sprite) {
-        sprite.destroy();
-    }
+  }
 }
