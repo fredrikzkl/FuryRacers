@@ -23,7 +23,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>com.github.fredrikzkl.furyracers.Furyracers.GameCore</mainClass>
+                            <mainClass>com.github.fredrikzkl.furyracers.GameCore</mainClass>
 
                         </manifest>
                     </archive>
