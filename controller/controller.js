@@ -13,14 +13,15 @@ var BLACK = "0x111213";
 var WHITE = "0xffffff";
 var RED = "0xD40100";
 
-var accelerate = function(gasButton){};
+var accelerate = function(button){};
 
 function preload() {
     addMessageHandler(function(msg){
         if(msg == "identified"){
 
-            accelerate = function(gasButton) {
-              sendToGame("accelerate", gasButton);
+            accelerate = function(button) {
+              console.log("Hell to life");
+              sendToGame("accelerate", button);
             }
 
         }
@@ -38,22 +39,23 @@ function create(){
     game.input.onDown.add(function(pointer) {
         var data;
 
+
         if (pointer.targetObject) {
             data = pointer.targetObject.sprite.data;
         }
 
         if (!game.scale.isFullScreen) {
             game.scale.startFullScreen(false);
-        }
-
-        if(data == "accelerate"){
-          console.log("Skyt meg i hodet");
+        }else if (pointer.targetObject) {
+            accelerate(pointer.targetObject.sprite.data);
         }
 
         target = pointer.targetObject;
+
     }, this);
 
     createControllerLayout();
+
 
 }
 
@@ -89,7 +91,7 @@ function createControllerLayout(){
       game.stage.height/2.2, //Posisjon y
       game.stage.width/4, //Størrelse X
       game.stage.height/3); //Størrelse Y
-    circleButton = game.add.graphics(0,0);
+    circleButton = game.add.graphics (0,0);
     circleButton.beginFill(RED,1);
     circleButton.drawCircle(
       game.stage.width/1.265, //Posisjon x
@@ -103,7 +105,18 @@ function createControllerLayout(){
 }
 
 function addInput(){
+    g = game.add.graphics(0, 0);
+    g.beginFill(RED, 1);
+    g.drawCircle(game.stage.width/1.265, //Posisjon x
+    game.stage.height/1.6, //Posisjon y
+    game.stage.width/4.3);
+
+    s = game.add.sprite(0, 0);
+    s.addChild(g);
+    s.data = 3;
+    s.inputEnabled = true;
     accelerateButton.inputEnabled = true;
+    circleButton.inputEnabled = true;
     accelerateButton.data = "accelerate";
     circleButton.data = "accelerate";
 
@@ -116,6 +129,7 @@ function update() {
 
     game.input.onDown.add(function(pointer){
       var data;
+
 
       if (pointer.targetObject) {
           data = pointer.targetObject.sprite.data;
