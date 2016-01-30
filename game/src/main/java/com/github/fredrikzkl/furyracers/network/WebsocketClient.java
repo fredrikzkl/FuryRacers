@@ -1,22 +1,22 @@
 package com.github.fredrikzkl.furyracers.network;
 
+import com.github.fredrikzkl.furyracers.Application;
 
 import javax.websocket.*;
 
-import com.github.fredrikzkl.furyracers.game.App;
-
 import java.io.IOException;
 
+@ClientEndpoint
 public class WebsocketClient {
-	//Istedet for app, skal det være vår "application" klasse
-	private GameSession gameSession = App.getGameSession();
-	
-	public void onOpen(Session session) throws IOException, EncodeException{
-		gameSession.onOpen(session);
-	}
-	public void onMessage(Session session, String message) throws IOException, EncodeException{
-		gameSession.onMessage(session,message);
-	}
-	
-	
+    private GameSession gameSession = Application.getGameSession();
+
+    @OnOpen
+    public void onOpen(Session session) throws IOException, EncodeException {
+        gameSession.onOpen(session);
+    }
+
+    @OnMessage
+    public void onMessage(Session session, String message) throws IOException, EncodeException {
+        gameSession.onMessage(session, message);
+    }
 }

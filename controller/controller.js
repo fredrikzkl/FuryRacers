@@ -4,29 +4,39 @@ var game = new Phaser.Game(800, 600, Phaser.AUTO, 'game', {
     update: update
 });
 
-var accelerateButton;
-
-var target;
-
 var GREY = "0xbebbbd";
 var BLACK = "0x111213";
 var WHITE = "0xffffff";
 var RED = "0xD40100";
 
-var accelerate = function(button){};
+var whitePaddle;
+var arrowLeft;
+var arrowRight;
+var whiteUnderRedButton;
+var redButton;
+
+var spriteRedButton;
+var spriteArrowLeft;
+var spriteArrowRight;
+
+var buttonDown = function(buttonID){};
+var buttonUp = function(buttonID){};
 
 function preload() {
-    addMessageHandler(function(msg){
+     addMessageHandler(function(msg){
         if(msg == "identified"){
 
-            accelerate = function(button) {
-              console.log("Hell to life");
-              sendToGame("accelerate", button);
+            buttonDown = function(buttonID) {
+              console.log("Down");
+              sendToGame("buttonDown", buttonID);
             }
 
+            buttonUp = function(buttonID){
+              console.log("up");
+              sendToGame("buttonUp", buttonID);
+            }
         }
-    })
-
+    });
 }
 
 function create(){
@@ -36,32 +46,36 @@ function create(){
 
     game.stage.backgroundColor = BLACK;
 
-    game.input.onDown.add(function(pointer) {
-        var data;
+   
+     createControllerLayout();
 
+    game.input.onDown.add(function(pointer) {    //Reagerer på all trykk ned(onDown) på game området ==> game.input
+      var data;
+      
+      if (pointer.targetObject) {                // Hvis trykk skjer på en knapp ==> pointer.targetObject == true;
+        data = pointer.targetObject.sprite.data; // Henter data(knappID/buttonID) fra knappen som har blitt trykket.
+        buttonDown(data);
+      }
 
-        if (pointer.targetObject) {
-            data = pointer.targetObject.sprite.data;
-        }
-
-        if (!game.scale.isFullScreen) {
-            game.scale.startFullScreen(false);
-        }else if (pointer.targetObject) {
-            accelerate(pointer.targetObject.sprite.data);
-        }
-
-        target = pointer.targetObject;
-
+      target = pointer.targetObject;
     }, this);
 
-    createControllerLayout();
+    game.input.onUp.add(function(pointer) {
+      var data;
 
+      if (pointer.targetObject) {
+        data = pointer.targetObject.sprite.data;
+        buttonUp(data);
+      }
+    }, this);
 
 }
 
+
+
 function createControllerLayout(){
     //Den hvite bakgrunnen under pilene
-    var whitePaddle = game.add.graphics(0,0);
+    whitePaddle = game.add.graphics(0,0);
     whitePaddle.beginFill(WHITE, 1);
     whitePaddle.drawRect(
       game.stage.width/20,
@@ -69,14 +83,15 @@ function createControllerLayout(){
       game.stage.width/2,
       game.stage.height/4);
     //Pilene som skal ligge over det hvite området
-    var arrowLeft = game.add.graphics(0,0);
+    arrowLeft = game.add.graphics(0,0);
     arrowLeft.beginFill(BLACK,1);
     arrowLeft.drawRect(
       game.stage.width/18,
       game.stage.height/1.96,
       game.stage.width/2/2.1,
       game.stage.height/4.35);
-    var arrowRight = game.add.graphics(0,0);
+    
+    arrowRight = game.add.graphics(0,0);
     arrowRight.beginFill(BLACK,1);
     arrowRight.drawRect(
       game.stage.width/3.3,
@@ -84,62 +99,41 @@ function createControllerLayout(){
       game.stage.width/2/2.1,
       game.stage.height/4.35);
     //Grå området under knappen
-    var buttonUnder = game.add.graphics(0,0);
-    buttonUnder.beginFill(GREY,1);
-    buttonUnder.drawRect(
+    whiteUnderRedButton = game.add.graphics(0,0);
+    whiteUnderRedButton.beginFill(GREY,1);
+    whiteUnderRedButton.drawRect(
       game.stage.width/1.5, //Posisjon x
       game.stage.height/2.2, //Posisjon y
       game.stage.width/4, //Størrelse X
       game.stage.height/3); //Størrelse Y
-    circleButton = game.add.graphics (0,0);
-    circleButton.beginFill(RED,1);
-    circleButton.drawCircle(
-      game.stage.width/1.265, //Posisjon x
-      game.stage.height/1.6, //Posisjon y
-      game.stage.width/4.3); //Radius
 
-    accelerateButton = game.add.sprite(0,32);
-    circleButton.addChild(accelerateButton);
-
+    redButton = game.add.graphics(0, 0);
+    redButton.beginFill(RED, 1);
+    redButton.drawCircle(game.stage.width/1.265, //Posisjon x
+    game.stage.height/1.6, //Posisjon y
+    game.stage.width/4.3);
+    
     addInput();
 }
 
 function addInput(){
-    g = game.add.graphics(0, 0);
-    g.beginFill(RED, 1);
-    g.drawCircle(game.stage.width/1.265, //Posisjon x
-    game.stage.height/1.6, //Posisjon y
-    game.stage.width/4.3);
+    
+    spriteRedButton = game.add.sprite(0, 0);
+    spriteRedButton.addChild(redButton);
+    spriteRedButton.data = 1;  //knappID/buttonID
+    spriteRedButton.inputEnabled = true;
 
-    s = game.add.sprite(0, 0);
-    s.addChild(g);
-    s.data = 3;
-    s.inputEnabled = true;
-    accelerateButton.inputEnabled = true;
-    circleButton.inputEnabled = true;
-    accelerateButton.data = "accelerate";
-    circleButton.data = "accelerate";
+    spriteArrowRight = game.add.sprite(0, 0);
+    spriteArrowRight.addChild(arrowRight);
+    spriteArrowRight.data = 2; // knappID/buttonID
+    spriteArrowRight.inputEnabled = true;
 
+    spriteArrowLeft = game.add.sprite(0, 0);
+    spriteArrowLeft.addChild(arrowLeft);
+    spriteArrowLeft.data = 3; //knappID/buttonID
+    spriteArrowLeft.inputEnabled = true;
 }
 
-function update() {
+function update(){
 
-
-  if(game.scale.isFullScreen){
-
-    game.input.onDown.add(function(pointer){
-      var data;
-
-
-      if (pointer.targetObject) {
-          data = pointer.targetObject.sprite.data;
-      }
-
-      if(data == "accelerate"){
-        console.log("Skyt meg i hodet");
-      }
-
-    })
-
-  }
 }
