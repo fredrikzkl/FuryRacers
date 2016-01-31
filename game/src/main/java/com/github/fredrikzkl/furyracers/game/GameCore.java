@@ -8,11 +8,13 @@ import org.newdawn.slick.Image;
 import org.newdawn.slick.Input;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.SpriteSheet;
+import org.newdawn.slick.geom.Vector2f;
 
 public class GameCore extends BasicGame {
 
-	Image carSprites = null;
+	Image p1car = null;
 	SpriteSheet sprite;
+	
 	
 	boolean throttleKeyIsDown = false;
 	boolean leftKeyIsDown = false;
@@ -29,8 +31,10 @@ public class GameCore extends BasicGame {
 	
 	float movementDegrees = 0;
 	
-	float xPos = 140;
-	float yPos = 140;
+	Vector2f position = new Vector2f();
+	Vector2f angle = new Vector2f();
+	
+	float radDeg;
 	
 	public GameCore(String title) {
 		super(title);
@@ -38,25 +42,33 @@ public class GameCore extends BasicGame {
 	
 	public void init(GameContainer arg0) throws SlickException {
 		sprite = new SpriteSheet("Sprites/car.png", 100, 100);
-		carSprites = new Image("Sprites/car.png");
+		p1car = new Image("Sprites/fr_mustang_red.png");
+		
+		
+		
 	}
 	
 	public void update(GameContainer container, int arg1) throws SlickException {
+		
+		
 		Input input = container.getInput();
 		
 		reactToKeyboardInput(input);
 		
-		float radDeg = (float) Math.toRadians(movementDegrees);
-
-		float deltaX = (float) (Math.cos(radDeg))*currentSpeed;
-		float deltaY = (float) (Math.sin(radDeg))*currentSpeed;
+		radDeg = (float) Math.toRadians(movementDegrees);
 		
-		xPos += deltaX;
-		yPos += deltaY;	
+		angle.x = (float) (Math.cos(radDeg))*currentSpeed;
+		angle.y = (float) (Math.sin(radDeg))*currentSpeed;
+		
+		position.x += angle.x;
+		position.y += angle.y;	
 	}
 
 	public void render(GameContainer container, Graphics g) throws SlickException {
-		carSprites.getSubImage(1,0,140,140).draw(xPos, yPos, carSize);
+		p1car.draw(position.x, position.y, carSize);
+		p1car.setRotation(movementDegrees);
+		
+		
 	}
 	
 	public void onThrottle(){
@@ -85,12 +97,6 @@ public class GameCore extends BasicGame {
 	
 	public void reactToKeyboardInput(Input input){
 		
-		/*if(input.isKeyDown(Input.KEY_UP)){
-			onThrottle();
-		}else{
-			offThrottle();
-		}*/
-		
 		if(throttleKeyIsDown){
 			if(currentSpeed<topSpeed){
 				currentSpeed += acceleration; 
@@ -106,9 +112,11 @@ public class GameCore extends BasicGame {
 	
 		if(leftKeyIsDown){
 			movementDegrees -= handling;
+			
 		}
 		if(rightKeyIsDown){
 			movementDegrees += handling;
+			
 		}
 	}
 }
