@@ -15,6 +15,8 @@ public class GameCore extends BasicGame {
 	Image p1car = null;
 	SpriteSheet sprite;
 	
+	public Level level;
+	
 	
 	boolean throttleKeyIsDown = false;
 	boolean leftKeyIsDown = false;
@@ -41,11 +43,9 @@ public class GameCore extends BasicGame {
 	}
 	
 	public void init(GameContainer arg0) throws SlickException {
+		level = new Level(1);
 		sprite = new SpriteSheet("Sprites/car.png", 100, 100);
 		p1car = new Image("Sprites/fr_mustang_red.png");
-		
-		
-		
 	}
 	
 	public void update(GameContainer container, int arg1) throws SlickException {
