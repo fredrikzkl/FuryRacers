@@ -1,33 +1,24 @@
 package com.github.fredrikzkl.furyracers.game;
 
-import java.awt.Color;
 import java.awt.Rectangle;
 
 import org.newdawn.slick.Graphics;
+import org.newdawn.slick.Image;
 
-import com.github.fredrikzkl.furyracers.Application;
-
+@SuppressWarnings("serial")
 public class Background extends Rectangle {
 
-	public int[] id = {-1,-1};
-	
-	public Background(Rectangle rect, int id[]){
-		setBounds(rect);
+	public int id;
+	public Image image;
+
+	public Background(int x, int y, int id) {
+		setBounds(new Rectangle(x, y, Tile.size, Tile.size));
 		this.id = id;
+		image = Tile.resolveTile(id);
 	}
-	
-	public void render(Graphics g){
-		g.drawImage(Tile.background, 
-				x- (float)Application.oX,
-				y - (float)Application.oY,
-				x + width - (float)Application.oX,
-				y + height - (float)Application.oY,
-				(float)id[0] * Tile.size,
-				(float)id[1] * Tile.size,
-				(float)id[0] * Tile.size + Tile.size,
-				(float)id[1] * Tile.size + Tile.size,
-				Color.GREEN
-				);
+
+	public void render(Graphics g) {
+		g.drawImage(image, x*Tile.size, y*Tile.size);
 	}
 
 }
