@@ -25,7 +25,7 @@ public class GameCore extends BasicGame {
 
 	int handling = 1;
 
-	int topSpeed = 2;
+	int topSpeed = 4;
 	float currentSpeed = 0;
 	float acceleration = (float) 0.05;
 	float deAcceleration = (float) 0.025;
@@ -47,7 +47,6 @@ public class GameCore extends BasicGame {
 
 		level = new Level(1);
 		//sprite = new SpriteSheet("Sprites/fr_mustang_red.png", 100, 100);
-
 		p1car = new Image("Sprites/fr_mustang_red.png");
 	}
 
@@ -70,13 +69,16 @@ public class GameCore extends BasicGame {
 			throws SlickException {
 		level.render(g);
 		p1car.draw(position.x, position.y,carSize);
-		p1car.setCenterOfRotation(32, 32);
+		p1car.setCenterOfRotation(16, 32);
 		p1car.setRotation(movementDegrees);
 
 	}
 
 	public void reactToControlls(Input input) {
 		
+		if(input == null){
+			usingRemoteControllers = false;
+		}
 		if(!usingRemoteControllers){
 			reactToKeyboard(input);
 		}
@@ -104,7 +106,7 @@ public class GameCore extends BasicGame {
 	
 	public void reactToKeyboard(Input input){
 		
-		if (input.isKeyDown(Input.KEY_UP)) {
+		if(input.isKeyDown(Input.KEY_UP)) {
             throttleKeyDown();
 	    }else {
 	    	throttleKeyUp();
