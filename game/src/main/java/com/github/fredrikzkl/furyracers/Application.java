@@ -47,19 +47,19 @@ public class Application {
     }
 
     private void startGame() {
-        /*GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
+        GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
         int width = gd.getDisplayMode().getWidth();
         int height = gd.getDisplayMode().getHeight();
 
-        System.setProperty("org.lwjgl.opengl.Window.undecorated", "true");*/
+        System.setProperty("org.lwjgl.opengl.Window.undecorated", "true");
 
         try {
             Display.setResizable(true);
 
-            AppGameContainer app = new AppGameContainer(new ScalableGame(game, 1280, 720));
-            app.setDisplayMode(1280, 720, false);
-            app.setTargetFrameRate(60);
-            //app.setMouseGrabbed(true);
+            AppGameContainer app = new AppGameContainer(new ScalableGame(game, width, height));
+            app.setDisplayMode(width, height, false);
+            app.setTargetFrameRate(120);
+            app.setMouseGrabbed(true);
             app.setAlwaysRender(true);
             app.start();
         } catch (SlickException e) {

@@ -15,14 +15,13 @@ public class GameCore extends BasicGame {
 	Image p1car = null;
 	SpriteSheet sprite;
 	
-	
 	boolean throttleKeyIsDown = false;
 	boolean leftKeyIsDown = false;
 	boolean rightKeyIsDown = false;
 	
-	int handling = 2;
+	int handling = 1;
 
-	int topSpeed = 5;
+	int topSpeed = 4;
 	float currentSpeed = 0;
 	float acceleration = (float) 0.1;
 	float deAcceleration = (float) 0.05;
@@ -32,7 +31,7 @@ public class GameCore extends BasicGame {
 	float movementDegrees = 0;
 	
 	Vector2f position = new Vector2f();
-	Vector2f angle = new Vector2f();
+	Vector2f unitCirclePos = new Vector2f();
 	
 	float radDeg;
 	
@@ -41,15 +40,11 @@ public class GameCore extends BasicGame {
 	}
 	
 	public void init(GameContainer arg0) throws SlickException {
-		sprite = new SpriteSheet("Sprites/car.png", 100, 100);
+		//sprite = new SpriteSheet("Sprites/car.png", 100, 100);
 		p1car = new Image("Sprites/fr_mustang_red.png");
-		
-		
-		
 	}
 	
 	public void update(GameContainer container, int arg1) throws SlickException {
-		
 		
 		Input input = container.getInput();
 		
@@ -57,25 +52,24 @@ public class GameCore extends BasicGame {
 		
 		radDeg = (float) Math.toRadians(movementDegrees);
 		
-		angle.x = (float) (Math.cos(radDeg))*currentSpeed;
-		angle.y = (float) (Math.sin(radDeg))*currentSpeed;
+		unitCirclePos.x = (float) (Math.cos(radDeg))*currentSpeed;
+		unitCirclePos.y = (float) (Math.sin(radDeg))*currentSpeed;
 		
-		position.x += angle.x;
-		position.y += angle.y;	
+		position.x += unitCirclePos.x;
+		position.y += unitCirclePos.y;	
 	}
 
 	public void render(GameContainer container, Graphics g) throws SlickException {
-		p1car.draw(position.x, position.y, carSize);
+		//p1car.draw(position.x,position.y, carSize);
+		p1car.drawCentered(position.x, position.y);
 		p1car.setRotation(movementDegrees);
-		
-		
 	}
 	
-	public void onThrottle(){
+	public void throttleKeyDown(){
 		throttleKeyIsDown = true;
 	}
 	
-	public void offThrottle(){
+	public void throttleKeyUp(){
 		throttleKeyIsDown = false;
 	}
 	
@@ -109,14 +103,14 @@ public class GameCore extends BasicGame {
 				currentSpeed = 0;
 			}
 		}
-	
-		if(leftKeyIsDown){
-			movementDegrees -= handling;
-			
+		
+		if(currentSpeed > 0){
+			if(leftKeyIsDown){
+				movementDegrees -= handling;
+			}else if(rightKeyIsDown){
+				movementDegrees += handling;
+			}
 		}
-		if(rightKeyIsDown){
-			movementDegrees += handling;
-			
-		}
+		
 	}
 }

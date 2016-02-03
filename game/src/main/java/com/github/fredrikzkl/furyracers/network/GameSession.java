@@ -124,7 +124,7 @@ public class GameSession {
                 String data = jsonObj.getJsonNumber("data").toString();
                 
                 switch(data){
-                	case "1": game.onThrottle();break;
+                	case "1": game.throttleKeyDown();System.out.println("throttleDown");break;
                 	case "2": game.rightKeyDown();System.out.println("rightDown");break;
                 	case "3": game.leftKeyDown();System.out.println("leftDown");break;
                 }
@@ -140,7 +140,7 @@ public class GameSession {
             case "buttonUp":{
             	String data = jsonObj.getJsonNumber("data").toString();
             	switch(data){
-            		case "1": game.offThrottle();break;
+            		case "1": game.throttleKeyUp();System.out.println("throttleUp");break;
             		case "2": game.rightKeyUp(); System.out.println("rightUp");break;
             		case "3": game.leftKeyUp();System.out.println("leftUp");break;
             	}
