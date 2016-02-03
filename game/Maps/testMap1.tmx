@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="32" height="32" tilewidth="32" tileheight="32" nextobjectid="1">
+ <tileset firstgid="1" name="desert_tileset32x32" tilewidth="32" tileheight="32" tilecount="42" columns="14">
+  <image source="D:/Downloads/desert_tileset32x32.png" width="448" height="96"/>
+ </tileset>
+ <layer name="background" width="32" height="32">
+  <data encoding="base64" compression="gzip">
+   H4sIAAAAAAAAC+2W2wqCQBCGtwNZVFZImdjhokz0/R+wERSWcWf2mBV48SHIDp8787NuIoRIRv6GCFgSrAbwH4ETQTqg/ww8W7Iv+FPNO4oY2La4zLlk/C+iRs6HiT+SPCaz5jKBa3T+zl2jGWMKqebBrMss/XK+bHIxAaaIGepNKrl1ftss74A94vCD/jygH/tM959b+lXf2znmwA1YMP7asv8XA79r/yuH/pv4r20fZO5E/138lcZPEWL+zfqYcXD/5FLht92/zt/UbET/vFWdv5/yr0X/v6w6s338MpTf9w5A+Sv05DIW2m+b8RB+3V2Cy3gIvyu+fu4uYULh6R8ZGZI3SRS9vAAQAAA=
+  </data>
+ </layer>
+</map>

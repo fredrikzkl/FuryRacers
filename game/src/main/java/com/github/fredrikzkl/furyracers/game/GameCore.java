@@ -13,43 +13,47 @@ import org.newdawn.slick.geom.Vector2f;
 public class GameCore extends BasicGame {
 
 	Image p1car = null;
-	SpriteSheet sprite;
-	
+
+	public Level level = null;
+
 	boolean throttleKeyIsDown = false;
 	boolean leftKeyIsDown = false;
 	boolean rightKeyIsDown = false;
-	
+
 	int handling = 1;
 
-	int topSpeed = 4;
+	int topSpeed = 2;
 	float currentSpeed = 0;
-	float acceleration = (float) 0.1;
-	float deAcceleration = (float) 0.05;
-	
+	float acceleration = (float) 0.05;
+	float deAcceleration = (float) 0.025;
+
 	float carSize = (float) 0.5;
-	
-	float movementDegrees = 0;
-	
+
+	int movementDegrees = 0;
+
 	Vector2f position = new Vector2f();
 	Vector2f unitCirclePos = new Vector2f();
 	
-	float radDeg;
-	
+	float radDeg = 0;
+
 	public GameCore(String title) {
 		super(title);
 	}
-	
+
 	public void init(GameContainer arg0) throws SlickException {
-		//sprite = new SpriteSheet("Sprites/car.png", 100, 100);
+
+		level = new Level(1);
+		//sprite = new SpriteSheet("Sprites/fr_mustang_red.png", 100, 100);
+
 		p1car = new Image("Sprites/fr_mustang_red.png");
 	}
-	
+
 	public void update(GameContainer container, int arg1) throws SlickException {
-		
+
 		Input input = container.getInput();
-		
+
 		reactToKeyboardInput(input);
-		
+
 		radDeg = (float) Math.toRadians(movementDegrees);
 		
 		unitCirclePos.x = (float) (Math.cos(radDeg))*currentSpeed;
@@ -59,47 +63,51 @@ public class GameCore extends BasicGame {
 		position.y += unitCirclePos.y;	
 	}
 
-	public void render(GameContainer container, Graphics g) throws SlickException {
-		//p1car.draw(position.x,position.y, carSize);
-		p1car.drawCentered(position.x, position.y);
-		p1car.setRotation(movementDegrees);
-	}
 	
-	public void throttleKeyDown(){
+
+	public void render(GameContainer container, Graphics g)
+			throws SlickException {
+		level.render(g);
+		p1car.draw(position.x, position.y,carSize);
+		p1car.setCenterOfRotation(32, 32);
+		p1car.setRotation(movementDegrees);
+
+	}
+
+	public void throttleKeyDown() {
 		throttleKeyIsDown = true;
 	}
-	
-	public void throttleKeyUp(){
+
+	public void throttleKeyUp() {
 		throttleKeyIsDown = false;
 	}
-	
-	public void leftKeyDown(){
+
+	public void leftKeyDown() {
 		leftKeyIsDown = true;
 	}
-	
-	public void rightKeyDown(){
+
+	public void rightKeyDown() {
 		rightKeyIsDown = true;
 	}
-	
-	public void leftKeyUp(){
+
+	public void leftKeyUp() {
 		leftKeyIsDown = false;
 	}
-	
-	public void rightKeyUp(){
+
+	public void rightKeyUp() {
 		rightKeyIsDown = false;
 	}
-	
-	public void reactToKeyboardInput(Input input){
-		
-		if(throttleKeyIsDown){
-			if(currentSpeed<topSpeed){
-				currentSpeed += acceleration; 
+
+	public void reactToKeyboardInput(Input input) {
+
+		if(throttleKeyIsDown) {
+			if(currentSpeed < topSpeed) {
+				currentSpeed += acceleration;
 			}
-		}else{
-			if(currentSpeed>0){
+		} else {
+			if(currentSpeed > 0) {
 				currentSpeed -= deAcceleration;
-			}
-			else{
+			}else {
 				currentSpeed = 0;
 			}
 		}
@@ -111,6 +119,5 @@ public class GameCore extends BasicGame {
 				movementDegrees += handling;
 			}
 		}
-		
 	}
 }

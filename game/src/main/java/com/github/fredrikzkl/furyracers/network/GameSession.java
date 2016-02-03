@@ -55,6 +55,7 @@ public class GameSession {
 	
 	public void onMessage(Session session, String message)throws IOException, EncodeException {
 
+		System.out.println("Conncection");
 		JsonReader jsonReader = Json.createReader(new StringReader(message));
 
         JsonObject jsonObj = jsonReader.readObject();
