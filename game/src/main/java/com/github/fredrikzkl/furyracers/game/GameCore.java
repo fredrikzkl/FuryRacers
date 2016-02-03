@@ -1,5 +1,7 @@
 package com.github.fredrikzkl.furyracers.game;
 
+import java.awt.event.KeyEvent;
+
 import org.newdawn.slick.AppGameContainer;
 import org.newdawn.slick.BasicGame;
 import org.newdawn.slick.GameContainer;
@@ -19,6 +21,7 @@ public class GameCore extends BasicGame {
 	boolean throttleKeyIsDown = false;
 	boolean leftKeyIsDown = false;
 	boolean rightKeyIsDown = false;
+	boolean usingRemoteControllers = false;
 
 	int handling = 1;
 
@@ -52,7 +55,7 @@ public class GameCore extends BasicGame {
 
 		Input input = container.getInput();
 
-		reactToKeyboardInput(input);
+		reactToControlls(input);
 
 		radDeg = (float) Math.toRadians(movementDegrees);
 		
@@ -63,8 +66,6 @@ public class GameCore extends BasicGame {
 		position.y += unitCirclePos.y;	
 	}
 
-	
-
 	public void render(GameContainer container, Graphics g)
 			throws SlickException {
 		level.render(g);
@@ -74,6 +75,54 @@ public class GameCore extends BasicGame {
 
 	}
 
+	public void reactToControlls(Input input) {
+		
+		if(!usingRemoteControllers){
+			reactToKeyboard(input);
+		}
+		
+		if(throttleKeyIsDown) {
+			if(currentSpeed < topSpeed) {
+				currentSpeed += acceleration;
+			}
+		} else {
+			if(currentSpeed > 0) {
+				currentSpeed -= deAcceleration;
+			}else {
+				currentSpeed = 0;
+			}
+		}
+		
+		if(currentSpeed > 0){
+			if(leftKeyIsDown){
+				movementDegrees -= handling;
+			}else if(rightKeyIsDown){
+				movementDegrees += handling;
+			}
+		}
+	}
+	
+	public void reactToKeyboard(Input input){
+		
+		if (input.isKeyDown(Input.KEY_UP)) {
+            throttleKeyDown();
+	    }else {
+	    	throttleKeyUp();
+	    }
+		
+		if(input.isKeyDown(Input.KEY_LEFT)){
+			leftKeyDown();
+		}else{
+			leftKeyUp();
+		}
+		
+		if(input.isKeyDown(Input.KEY_RIGHT)){
+			rightKeyDown();
+		}else{
+			rightKeyUp();
+		}
+	}
+	
 	public void throttleKeyDown() {
 		throttleKeyIsDown = true;
 	}
@@ -97,27 +146,8 @@ public class GameCore extends BasicGame {
 	public void rightKeyUp() {
 		rightKeyIsDown = false;
 	}
-
-	public void reactToKeyboardInput(Input input) {
-
-		if(throttleKeyIsDown) {
-			if(currentSpeed < topSpeed) {
-				currentSpeed += acceleration;
-			}
-		} else {
-			if(currentSpeed > 0) {
-				currentSpeed -= deAcceleration;
-			}else {
-				currentSpeed = 0;
-			}
-		}
-		
-		if(currentSpeed > 0){
-			if(leftKeyIsDown){
-				movementDegrees -= handling;
-			}else if(rightKeyIsDown){
-				movementDegrees += handling;
-			}
-		}
+	
+	public void setUsingRemoteControllers(){
+		usingRemoteControllers = true;
 	}
 }

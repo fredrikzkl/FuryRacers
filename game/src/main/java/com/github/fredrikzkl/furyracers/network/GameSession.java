@@ -54,8 +54,6 @@ public class GameSession {
 	}
 	
 	public void onMessage(Session session, String message)throws IOException, EncodeException {
-
-		System.out.println("Conncection");
 		JsonReader jsonReader = Json.createReader(new StringReader(message));
 
         JsonObject jsonObj = jsonReader.readObject();
@@ -123,6 +121,7 @@ public class GameSession {
 
             case "buttonDown": {	
                 String data = jsonObj.getJsonNumber("data").toString();
+                game.setUsingRemoteControllers();
                 
                 switch(data){
                 	case "1": game.throttleKeyDown();System.out.println("throttleDown");break;
@@ -140,6 +139,7 @@ public class GameSession {
             }
             case "buttonUp":{
             	String data = jsonObj.getJsonNumber("data").toString();
+            	
             	switch(data){
             		case "1": game.throttleKeyUp();System.out.println("throttleUp");break;
             		case "2": game.rightKeyUp(); System.out.println("rightUp");break;
