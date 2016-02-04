@@ -121,7 +121,7 @@ public class GameSession {
 
             case "buttonDown": {	
                 String data = jsonObj.getJsonNumber("data").toString();
-                game.setUsingRemoteControllers();
+                game.disableKeyboardInput();
                 
                 switch(data){
                 	case "1": game.throttleKeyDown();System.out.println("throttleDown");break;

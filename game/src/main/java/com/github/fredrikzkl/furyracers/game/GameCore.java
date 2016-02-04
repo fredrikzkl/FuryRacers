@@ -20,11 +20,11 @@ public class GameCore extends BasicGame {
 
 	public Level level = null;
 
-	boolean reverseKeyIsDown, throttleKeyIsDown, leftKeyIsDown, rightKeyIsDown, usingRemoteControllers = false;
+	boolean reverseKeyIsDown, throttleKeyIsDown, leftKeyIsDown, rightKeyIsDown, usingKeyboard = false;
 	
-	int topSpeed = 480;
-	int acceleration = 6;
-	int deAcceleration = 3;
+	int topSpeed = 480; // pixels per second
+	int acceleration = 3; // pixels per second
+	float deAcceleration = (float) 1.8;
 	int currentSpeed = 0;
 	int angleChangePerUpdate = 1;
 
@@ -83,10 +83,10 @@ public class GameCore extends BasicGame {
 
 	public void reactToControlls(Input input) {
 		
-		if(input == null){
-			usingRemoteControllers = false;
+		if(input != null){
+			usingKeyboard = true;
 		}
-		if(!usingRemoteControllers){
+		if(usingKeyboard){
 			reactToKeyboard(input);
 		}
 		
@@ -182,7 +182,11 @@ public class GameCore extends BasicGame {
 		throttleKeyIsDown = false;
 	}
 	
-	public void setUsingRemoteControllers(){
-		usingRemoteControllers = true;
+	public void disableKeyboardInput(){
+		usingKeyboard = false;
+	}
+	
+	public void activateKeyboardInput(){
+		usingKeyboard = true;
 	}
 }
