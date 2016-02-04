@@ -28,8 +28,8 @@ public class GameCore extends BasicGame {
 	int currentSpeed = 0;
 	int angleChangePerUpdate = 1;
 
-	float maxPixelMovementPerUpdate = topSpeed/Application.FPS;
-	float currentPixelMovementPerUpdate = currentSpeed/Application.FPS;
+	float maxPixelMovementPerUpdate = topSpeed/(float)Application.FPS;
+	float currentPixelMovementPerUpdate = currentSpeed/(float)Application.FPS;
 	float pixelAccelerationPerUpdate = acceleration/(float)Application.FPS;
 	float pixelDeAccelerationPerUpdate = deAcceleration/(float)Application.FPS;
 
