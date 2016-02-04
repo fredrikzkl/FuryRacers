@@ -1,5 +1,7 @@
 package com.github.fredrikzkl.furyracers.game;
 
+import javax.annotation.Generated;
+
 import org.newdawn.slick.AppGameContainer;
 import org.newdawn.slick.BasicGame;
 import org.newdawn.slick.GameContainer;
@@ -14,7 +16,8 @@ public class GameCore extends BasicGame {
 
 	Image p1car = null;
 	SpriteSheet sprite;
-
+	
+	public Camera camera;
 	public Level level;
 
 	boolean throttleKeyIsDown = false;
@@ -42,17 +45,21 @@ public class GameCore extends BasicGame {
 	}
 
 	public void init(GameContainer arg0) throws SlickException {
+		
+		camera = new Camera(0,0);
+		
 		level = new Level(1);
 		sprite = new SpriteSheet("Sprites/fr_mustang_red.png", 100, 100);
 		p1car = new Image("Sprites/fr_mustang_red.png");
+		position.x = 100; position.y = 100;
 	}
 
 	public void update(GameContainer container, int arg1) throws SlickException {
-
+		
 		Input input = container.getInput();
 
 		reactToKeyboardInput(input);
-
+		
 		radDeg = (float) Math.toRadians(movementDegrees);
 
 		angle.x = (float) (Math.cos(radDeg)) * currentSpeed;
@@ -60,14 +67,20 @@ public class GameCore extends BasicGame {
 
 		position.x += angle.x;
 		position.y += angle.y;
+		position.x++;
+		camera.update(position.x, position.y);
 	}
 
 	public void render(GameContainer container, Graphics g)
 			throws SlickException {
+		
+		g.translate(camera.getX(), camera.getY()); //Start of camera
+		
 		level.render(g);
 		p1car.draw(position.x, position.y, carSize);
 		p1car.setRotation(movementDegrees);
 
+		g.translate(-camera.getX(), -camera.getY()); //End of camera
 	}
 
 	public void onThrottle() {

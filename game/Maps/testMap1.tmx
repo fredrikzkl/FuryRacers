@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <map version="1.0" orientation="orthogonal" renderorder="right-down" width="32" height="32" tilewidth="32" tileheight="32" nextobjectid="1">
  <tileset firstgid="1" name="desert_tileset32x32" tilewidth="32" tileheight="32" tilecount="42" columns="14">
-  <image source="D:/Downloads/desert_tileset32x32.png" width="448" height="96"/>
+  <image source="../Sprites/bg.png" width="448" height="96"/>
  </tileset>
  <layer name="background" width="32" height="32">
   <data encoding="base64" compression="gzip">
-   H4sIAAAAAAAAC+2W2wqCQBCGtwNZVFZImdjhokz0/R+wERSWcWf2mBV48SHIDp8787NuIoRIRv6GCFgSrAbwH4ETQTqg/ww8W7Iv+FPNO4oY2La4zLlk/C+iRs6HiT+SPCaz5jKBa3T+zl2jGWMKqebBrMss/XK+bHIxAaaIGepNKrl1ftss74A94vCD/jygH/tM959b+lXf2znmwA1YMP7asv8XA79r/yuH/pv4r20fZO5E/138lcZPEWL+zfqYcXD/5FLht92/zt/UbET/vFWdv5/yr0X/v6w6s338MpTf9w5A+Sv05DIW2m+b8RB+3V2Cy3gIvyu+fu4uYULh6R8ZGZI3SRS9vAAQAAA=
+   H4sIAAAAAAAAC+2W2w6CMAxA5yUqUVBDFAheHhAJ/P8HuiUzmWPtujHUBx5OSMiW07WlLGWMpRM91pyNJPqB/8Q5SzIgLp2QcVach6QG4tLJAvoFscSUl1yJrxjJj9Uls7yDSIBzUeoraBD/07I3Ivix+kK1dtlD9XdajXXUnqyQdYWnPyfUUmXGmWssWP87jol+117ecw4axz/0lwH9uo96/tLRb4r37VhybpwV4u8c838h+H3z33rkn+K/yjyo3IH8+/hbix8iRP3F+gRxYDO7Mfhdz2/ziz079jlrofk7ln/L+v9l08we4leB/EPvAJC/1Z5Yj4X2u/Z4CL/tLoH1eAi/L0P92F2CQj3QPzHxTV7V+VugABAAAA==
   </data>
  </layer>
 </map>
