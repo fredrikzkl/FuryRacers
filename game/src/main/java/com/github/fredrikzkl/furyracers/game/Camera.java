@@ -10,11 +10,8 @@ public class Camera {
 	}
 	
 	public void update(float posX, float posY) {
-		
-		
 		x = -posX;
 		y = -posY;
-		
 	}
 
 	public float getX() {

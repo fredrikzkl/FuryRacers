@@ -67,7 +67,7 @@ public class GameCore extends BasicGame {
 
 		position.x += angle.x;
 		position.y += angle.y;
-		position.x++;
+		
 		camera.update(position.x, position.y);
 	}
 

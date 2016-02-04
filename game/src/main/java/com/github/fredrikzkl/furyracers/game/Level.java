@@ -30,7 +30,6 @@ public class Level {
 		bg = new Background[map.getWidth()][map.getHeight()];
 		Tile.init();
 		loadCourse();
-
 	}
 
 	public void loadCourse() {

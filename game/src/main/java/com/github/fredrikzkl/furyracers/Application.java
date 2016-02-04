@@ -20,6 +20,7 @@ public class Application {
 	public static final int WIDTH = 32;
 	public static final int VIEW_HEIGHT = HEIGHT * Tile.size;
 	public static final int VIEW_WIDTH = WIDTH * Tile.size;
+	public static final int FPS = 120;
 
 	private Application() {
 		game = new GameCore("Fury");
@@ -53,7 +54,6 @@ public class Application {
 			fatalError("Could not start websocket server: " + e.getMessage());
 		}
 	}
-
 	private void startGame() {
 		/*
 		 * GraphicsDevice gd =
@@ -65,11 +65,10 @@ public class Application {
 		 */
 
 		try {
-			Display.setResizable(true);
-			AppGameContainer app = new AppGameContainer(new ScalableGame(game, VIEW_WIDTH , VIEW_HEIGHT));
-			app.setDisplayMode(VIEW_WIDTH, VIEW_HEIGHT, true);
-			app.setTargetFrameRate(60);
-			
+			//Display.setResizable(true);
+			AppGameContainer app = new AppGameContainer(new ScalableGame(game, 1280, 720));
+			app.setDisplayMode(1280, 720, false);
+			app.setTargetFrameRate(FPS);
 			// app.setMouseGrabbed(true);
 			app.setAlwaysRender(true);
 			app.start();
