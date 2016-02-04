@@ -152,7 +152,6 @@ public class GameCore extends BasicGame {
 	
 	public void throttleKeyDown() {
 		throttleKeyIsDown = true;
-		//System.out.println("throttleDown");
 	}
 
 	public void leftKeyDown() {
@@ -181,7 +180,6 @@ public class GameCore extends BasicGame {
 	
 	public void throttleKeyUp() {
 		throttleKeyIsDown = false;
-		//System.out.println("throttleUp");
 	}
 	
 	public void setUsingRemoteControllers(){
