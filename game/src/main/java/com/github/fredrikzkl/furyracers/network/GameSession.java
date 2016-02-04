@@ -156,11 +156,10 @@ public class GameSession {
         }
     }
 
-        //Skal fylles ut med messages fra controller (switch)
+        
 	}
 	
-	//Metoder som mangler:
-	//Sende informasjon til kontroller
+
 	
 	
 	
