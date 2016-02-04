@@ -12,26 +12,30 @@ import org.newdawn.slick.SlickException;
 import org.newdawn.slick.SpriteSheet;
 import org.newdawn.slick.geom.Vector2f;
 
+import com.github.fredrikzkl.furyracers.Application;
+
 public class GameCore extends BasicGame {
 
 	Image p1car = null;
 
 	public Level level = null;
 
-	boolean throttleKeyIsDown = false;
-	boolean leftKeyIsDown = false;
-	boolean rightKeyIsDown = false;
-	boolean usingRemoteControllers = false;
+	boolean reverseKeyIsDown, throttleKeyIsDown, leftKeyIsDown, rightKeyIsDown, usingRemoteControllers = false;
+	
+	int topSpeed = 480;
+	int acceleration = 6;
+	int deAcceleration = 3;
+	int currentSpeed = 0;
+	int angleChangePerUpdate = 1;
 
-	int handling = 1;
+	float maxPixelMovementPerUpdate = topSpeed/Application.FPS;
+	float currentPixelMovementPerUpdate = currentSpeed/Application.FPS;
+	float pixelAccelerationPerUpdate = acceleration/(float)Application.FPS;
+	float pixelDeAccelerationPerUpdate = deAcceleration/(float)Application.FPS;
 
-	int topSpeed = 4;
-	float currentSpeed = 0;
-	float acceleration = (float) 0.05;
-	float deAcceleration = (float) 0.025;
-
+	float turningCircumferance = (360/angleChangePerUpdate) * maxPixelMovementPerUpdate;
+	float turningRadius = (float) (turningCircumferance / 2 * Math.PI);
 	float carSize = (float) 0.5;
-
 	int movementDegrees = 0;
 
 	Vector2f position = new Vector2f();
@@ -48,6 +52,10 @@ public class GameCore extends BasicGame {
 		level = new Level(1);
 		//sprite = new SpriteSheet("Sprites/fr_mustang_red.png", 100, 100);
 		p1car = new Image("Sprites/fr_mustang_red.png");
+		System.out.println("top pixel/second: " + topSpeed);
+		System.out.println("current pixel/second: " + currentSpeed);
+		System.out.println("pixel/second^2:" + acceleration);
+		System.out.println("-pixel/second^2: " + deAcceleration);
 	}
 
 	public void update(GameContainer container, int arg1) throws SlickException {
@@ -58,8 +66,8 @@ public class GameCore extends BasicGame {
 
 		radDeg = (float) Math.toRadians(movementDegrees);
 		
-		unitCirclePos.x = (float) (Math.cos(radDeg))*currentSpeed;
-		unitCirclePos.y = (float) (Math.sin(radDeg))*currentSpeed;
+		unitCirclePos.x = (float) (Math.cos(radDeg))*currentPixelMovementPerUpdate;
+		unitCirclePos.y = (float) (Math.sin(radDeg))*currentPixelMovementPerUpdate;
 		
 		position.x += unitCirclePos.x;
 		position.y += unitCirclePos.y;	
@@ -71,7 +79,6 @@ public class GameCore extends BasicGame {
 		p1car.draw(position.x, position.y,carSize);
 		p1car.setCenterOfRotation(16, 32);
 		p1car.setRotation(movementDegrees);
-
 	}
 
 	public void reactToControlls(Input input) {
@@ -83,23 +90,35 @@ public class GameCore extends BasicGame {
 			reactToKeyboard(input);
 		}
 		
-		if(throttleKeyIsDown) {
-			if(currentSpeed < topSpeed) {
-				currentSpeed += acceleration;
+		if(throttleKeyIsDown ) {
+			if(currentPixelMovementPerUpdate < maxPixelMovementPerUpdate) {
+				currentPixelMovementPerUpdate += pixelAccelerationPerUpdate;
 			}
-		} else {
-			if(currentSpeed > 0) {
-				currentSpeed -= deAcceleration;
-			}else {
-				currentSpeed = 0;
+		} else{
+			if(currentPixelMovementPerUpdate > pixelDeAccelerationPerUpdate) {
+				currentPixelMovementPerUpdate -= pixelDeAccelerationPerUpdate;
+			}else if(currentPixelMovementPerUpdate > 0){
+				currentPixelMovementPerUpdate = 0;
 			}
 		}
 		
-		if(currentSpeed > 0){
+		if(reverseKeyIsDown) {
+			if(currentPixelMovementPerUpdate > -maxPixelMovementPerUpdate) {
+				currentPixelMovementPerUpdate -= pixelDeAccelerationPerUpdate;
+			}
+		} else{
+			if(currentPixelMovementPerUpdate < -pixelDeAccelerationPerUpdate) {
+				currentPixelMovementPerUpdate += pixelDeAccelerationPerUpdate;
+			}else if(currentPixelMovementPerUpdate < 0){
+				currentPixelMovementPerUpdate = 0;
+			}
+		}
+		
+		if(currentPixelMovementPerUpdate != 0){
 			if(leftKeyIsDown){
-				movementDegrees -= handling;
+				movementDegrees -= angleChangePerUpdate;
 			}else if(rightKeyIsDown){
-				movementDegrees += handling;
+				movementDegrees += angleChangePerUpdate;
 			}
 		}
 	}
@@ -111,6 +130,12 @@ public class GameCore extends BasicGame {
 	    }else {
 	    	throttleKeyUp();
 	    }
+		
+		if(input.isKeyDown(Input.KEY_DOWN)){
+			reverseKeyDown();
+		}else{
+			reverseKeyUp();
+		}
 		
 		if(input.isKeyDown(Input.KEY_LEFT)){
 			leftKeyDown();
@@ -127,10 +152,7 @@ public class GameCore extends BasicGame {
 	
 	public void throttleKeyDown() {
 		throttleKeyIsDown = true;
-	}
-
-	public void throttleKeyUp() {
-		throttleKeyIsDown = false;
+		//System.out.println("throttleDown");
 	}
 
 	public void leftKeyDown() {
@@ -140,6 +162,10 @@ public class GameCore extends BasicGame {
 	public void rightKeyDown() {
 		rightKeyIsDown = true;
 	}
+	
+	public void reverseKeyDown() {
+		reverseKeyIsDown = true;
+	}
 
 	public void leftKeyUp() {
 		leftKeyIsDown = false;
@@ -147,6 +173,15 @@ public class GameCore extends BasicGame {
 
 	public void rightKeyUp() {
 		rightKeyIsDown = false;
+	}
+	
+	public void reverseKeyUp() {
+		reverseKeyIsDown = false;
+	}
+	
+	public void throttleKeyUp() {
+		throttleKeyIsDown = false;
+		//System.out.println("throttleUp");
 	}
 	
 	public void setUsingRemoteControllers(){

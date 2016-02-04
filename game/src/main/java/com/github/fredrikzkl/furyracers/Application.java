@@ -20,6 +20,7 @@ public class Application {
 	public static final int WIDTH = 32;
 	public static final int VIEW_HEIGHT = HEIGHT * Tile.size;
 	public static final int VIEW_WIDTH = WIDTH * Tile.size;
+	public static final int FPS = 120;
 
 	private Application() {
 		game = new GameCore("Fury");
@@ -67,7 +68,7 @@ public class Application {
 			//Display.setResizable(true);
 			AppGameContainer app = new AppGameContainer(new ScalableGame(game, 1280, 720));
 			app.setDisplayMode(1280, 720, false);
-			app.setTargetFrameRate(120);
+			app.setTargetFrameRate(FPS);
 			// app.setMouseGrabbed(true);
 			app.setAlwaysRender(true);
 			app.start();
