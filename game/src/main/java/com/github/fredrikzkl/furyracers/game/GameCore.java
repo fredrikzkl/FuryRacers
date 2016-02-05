@@ -11,27 +11,30 @@ import org.newdawn.slick.Input;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.SpriteSheet;
 import org.newdawn.slick.geom.Vector2f;
+import org.newdawn.slick.tiled.TiledMap;
 
 import com.github.fredrikzkl.furyracers.Application;
 
 public class GameCore extends BasicGame {
 
 	Image p1car = null;
+	
+	TiledMap map;
 
 	public Level level = null;
 
 	boolean reverseKeyIsDown, throttleKeyIsDown, leftKeyIsDown, rightKeyIsDown, usingKeyboard = false;
 	
-	int topSpeed = 480; // pixels per second
-	int acceleration = 3; // pixels per second
-	float deAcceleration = (float) 1.8;
+	int topSpeed = 520; // pixels per second
+	float acceleration = 320; // pixels per second^2
+	float deAcceleration = (float) 300;
 	int currentSpeed = 0;
 	int angleChangePerUpdate = 1;
 
 	float maxPixelMovementPerUpdate = topSpeed/(float)Application.FPS;
 	float currentPixelMovementPerUpdate = currentSpeed/(float)Application.FPS;
-	float pixelAccelerationPerUpdate = acceleration/(float)Application.FPS;
-	float pixelDeAccelerationPerUpdate = deAcceleration/(float)Application.FPS;
+	float pixelAccelerationPerUpdate = acceleration/(float)Math.pow(Application.FPS,2);
+	float pixelDeAccelerationPerUpdate = deAcceleration/(float)Math.pow(Application.FPS,2);
 
 	float turningCircumferance = (360/angleChangePerUpdate) * maxPixelMovementPerUpdate;
 	float turningRadius = (float) (turningCircumferance / 2 * Math.PI);
@@ -49,17 +52,17 @@ public class GameCore extends BasicGame {
 
 	public void init(GameContainer arg0) throws SlickException {
 
-		level = new Level(1);
+		//level = new Level(1);
 		//sprite = new SpriteSheet("Sprites/fr_mustang_red.png", 100, 100);
-		p1car = new Image("Sprites/fr_mustang_red.png");
-		System.out.println("top pixel/second: " + topSpeed);
-		System.out.println("current pixel/second: " + currentSpeed);
-		System.out.println("pixel/second^2:" + acceleration);
-		System.out.println("-pixel/second^2: " + deAcceleration);
+		map = new TiledMap("Maps/go.tmx");
+		p1car = new Image("Sprites//fr_mustang_red.png");
 	}
 
 	public void update(GameContainer container, int arg1) throws SlickException {
 
+		int edgeLayer = map.getLayerIndex("Edges");
+		map.getTileId(1, 2, edgeLayer);
+		
 		Input input = container.getInput();
 
 		reactToControlls(input);
@@ -75,8 +78,9 @@ public class GameCore extends BasicGame {
 
 	public void render(GameContainer container, Graphics g)
 			throws SlickException {
-		level.render(g);
-		p1car.draw(position.x, position.y,carSize);
+		map.render((int)position.x, (int)position.y, 0,0, 20, 20);
+		//level.render(g);
+		p1car.draw(640,360 ,carSize);
 		p1car.setCenterOfRotation(16, 32);
 		p1car.setRotation(movementDegrees);
 	}
@@ -125,13 +129,13 @@ public class GameCore extends BasicGame {
 	
 	public void reactToKeyboard(Input input){
 		
-		if(input.isKeyDown(Input.KEY_UP)) {
+		if(input.isKeyDown(Input.KEY_DOWN)) {
             throttleKeyDown();
 	    }else {
 	    	throttleKeyUp();
 	    }
 		
-		if(input.isKeyDown(Input.KEY_DOWN)){
+		if(input.isKeyDown(Input.KEY_UP)){
 			reverseKeyDown();
 		}else{
 			reverseKeyUp();
