@@ -29,10 +29,10 @@ public class Tile {
 
 	static SpriteSheet sheet;
 	public static Map<Integer, Tiles> tiles;
-	public static int[] blank = { -1, -1 };
 	public static int size = 32;
 
 	public static void init() {
+
 		Image bg;
 		try {
 			bg = new Image("Sprites/bg.png");
@@ -41,18 +41,20 @@ public class Tile {
 			e.printStackTrace();
 		}
 		tiles = new HashMap<>();
+		
 		/*
 		 * TODO Map tiles to spritesheet tiles
 		 */
 		for (int id = 1; id <= Tiles.values().length; id++) {
 			tiles.put(id, Tiles.values()[id - 1]);
 		}
+		
 	}
 
 	public static Image resolveTile(int id) {
 		Tiles tile = tiles.get(id);
 		if (tile == null) {
-			tile = Tiles.BG19;
+			tile = Tiles.BG1;
 		}
 		return sheet.getSubImage(tile.x * size, tile.y * size, size, size);
 	}

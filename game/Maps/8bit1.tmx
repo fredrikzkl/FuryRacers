@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="100" height="100" tilewidth="16" tileheight="16" nextobjectid="1">
+ <tileset firstgid="1" name="bg" tilewidth="32" tileheight="32" tilecount="42" columns="14">
+  <image source="../Sprites/bg.png" width="448" height="96"/>
+ </tileset>
+ <layer name="Background" width="100" height="100">
+  <data encoding="base64" compression="gzip">
+   H4sIAAAAAAAAC+3VMQqFMBBAwS08wRf9J/D+V7SJICGKhZiFjDCshBSBR3SOiBkAAAAAAAAAAABIaSlzLfOf4Ewj0yMXPXJp9dAkT4+jyfEeCc44svp+6PGt8/3wrYJ7W5nxYO8vwXlHEdW8WqNfHz36N6hbtPrwbY/Wuhb9nZ8n+/3v4dqU4AwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAwPt2uj4tU0CcAAA=
+  </data>
+ </layer>
+</map>

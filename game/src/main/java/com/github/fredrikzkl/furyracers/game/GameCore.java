@@ -1,6 +1,10 @@
 package com.github.fredrikzkl.furyracers.game;
 
+
 import javax.annotation.Generated;
+
+import java.awt.event.KeyEvent;
+
 
 import org.newdawn.slick.AppGameContainer;
 import org.newdawn.slick.BasicGame;
@@ -17,13 +21,15 @@ import com.github.fredrikzkl.furyracers.Application;
 public class GameCore extends BasicGame {
 
 	Image p1car = null;
+
 	SpriteSheet sprite;
-	
+
 	public Camera camera;
-	public Level level;
+
+	public Level level = null;
 
 	boolean reverseKeyIsDown, throttleKeyIsDown, leftKeyIsDown, rightKeyIsDown, usingKeyboard = false;
-	
+
 	int topSpeed = 480; // pixels per second
 	int acceleration = 3; // pixels per second
 	float deAcceleration = (float) 1.8;
@@ -43,165 +49,168 @@ public class GameCore extends BasicGame {
 	Vector2f position = new Vector2f();
 	Vector2f unitCirclePos = new Vector2f();
 
-	float radDeg;
+	float radDeg = 0;
 
 	public GameCore(String title) {
 		super(title);
 	}
 
 	public void init(GameContainer arg0) throws SlickException {
-		
-		camera = new Camera(0,0);
-		
+
 		level = new Level(1);
-		//sprite = new SpriteSheet("Sprites/fr_mustang_red.png", 100, 100);
 		p1car = new Image("Sprites/fr_mustang_red.png");
-		
+
+		position.x = Application.VIEW_HEIGHT/2;
+		position.y = Application.VIEW_WIDTH/2;
+
 		System.out.println("top pixel/second: " + topSpeed);
 		System.out.println("current pixel/second: " + currentSpeed);
 		System.out.println("pixel/second^2:" + acceleration);
 		System.out.println("-pixel/second^2: " + deAcceleration);
 		
-	
+		camera = new Camera(Application.VIEW_HEIGHT/2,Application.VIEW_WIDTH/2);
+		
 	}
 
 	public void update(GameContainer container, int arg1) throws SlickException {
-		
+
 		Input input = container.getInput();
 
 		reactToControlls(input);
-		
+
 		radDeg = (float) Math.toRadians(movementDegrees);
-
-		unitCirclePos.x = (float) (Math.cos(radDeg))*currentPixelMovementPerUpdate;
-		unitCirclePos.y = (float) (Math.sin(radDeg))*currentPixelMovementPerUpdate;
-
+		
 		unitCirclePos.x = (float) (Math.cos(radDeg))*currentPixelMovementPerUpdate;
 		unitCirclePos.y = (float) (Math.sin(radDeg))*currentPixelMovementPerUpdate;
 		
-		camera.update(position.x, position.y);
+		position.x += unitCirclePos.x;
+		position.y += unitCirclePos.y;	
+		
+		camera.update(position.x - Application.VIEW_WIDTH/2, position.y - Application.VIEW_HEIGHT/2);
 	}
 
 	public void render(GameContainer container, Graphics g)
 			throws SlickException {
-		
+
 		g.translate(camera.getX(), camera.getY()); //Start of camera
+		camera.zoom(g,(float) 1);//Crasher om verdien =<0 
 		
 		level.render(g);
-		p1car.draw(position.x, position.y, carSize);
+		p1car.draw(position.x, position.y,carSize);
 		p1car.setCenterOfRotation(16, 32);
 		p1car.setRotation(movementDegrees);
 
+
 		g.translate(-camera.getX(), -camera.getY()); //End of camera
+
 	}
-	
-	
+
 	public void reactToControlls(Input input) {
-			
-			if(input != null){
-				usingKeyboard = true;
-			}
-			if(usingKeyboard){
-				reactToKeyboard(input);
-			}
-			
-			if(throttleKeyIsDown ) {
-				if(currentPixelMovementPerUpdate < maxPixelMovementPerUpdate) {
-					currentPixelMovementPerUpdate += pixelAccelerationPerUpdate;
-				}
-			} else{
-				if(currentPixelMovementPerUpdate > pixelDeAccelerationPerUpdate) {
-					currentPixelMovementPerUpdate -= pixelDeAccelerationPerUpdate;
-				}else if(currentPixelMovementPerUpdate > 0){
-					currentPixelMovementPerUpdate = 0;
-				}
-			}
-			
-			if(reverseKeyIsDown) {
-				if(currentPixelMovementPerUpdate > -maxPixelMovementPerUpdate) {
-					currentPixelMovementPerUpdate -= pixelDeAccelerationPerUpdate;
-				}
-			} else{
-				if(currentPixelMovementPerUpdate < -pixelDeAccelerationPerUpdate) {
-					currentPixelMovementPerUpdate += pixelDeAccelerationPerUpdate;
-				}else if(currentPixelMovementPerUpdate < 0){
-					currentPixelMovementPerUpdate = 0;
-				}
-			}
-			
-			if(currentPixelMovementPerUpdate != 0){
-				if(leftKeyIsDown){
-					movementDegrees -= angleChangePerUpdate;
-				}else if(rightKeyIsDown){
-					movementDegrees += angleChangePerUpdate;
-				}
-			}
-		}
-		
-	public void reactToKeyboard(Input input){
-			
-			if(input.isKeyDown(Input.KEY_UP)) {
-	            throttleKeyDown();
-		    }else {
-		    	throttleKeyUp();
-		    }
-			
-			if(input.isKeyDown(Input.KEY_DOWN)){
-				reverseKeyDown();
-			}else{
-				reverseKeyUp();
-			}
-			
-			if(input.isKeyDown(Input.KEY_LEFT)){
-				leftKeyDown();
-			}else{
-				leftKeyUp();
-			}
-			
-			if(input.isKeyDown(Input.KEY_RIGHT)){
-				rightKeyDown();
-			}else{
-				rightKeyUp();
-			}
-		}
-		
-		public void throttleKeyDown() {
-			throttleKeyIsDown = true;
-		}
-	
-		public void leftKeyDown() {
-			leftKeyIsDown = true;
-		}
-	
-		public void rightKeyDown() {
-			rightKeyIsDown = true;
-		}
-		
-		public void reverseKeyDown() {
-			reverseKeyIsDown = true;
-		}
-	
-		public void leftKeyUp() {
-			leftKeyIsDown = false;
-		}
-	
-		public void rightKeyUp() {
-			rightKeyIsDown = false;
-		}
-		
-		public void reverseKeyUp() {
-			reverseKeyIsDown = false;
-		}
-		
-		public void throttleKeyUp() {
-			throttleKeyIsDown = false;
-		}
-		
-		public void disableKeyboardInput(){
-			usingKeyboard = false;
-		}
-		
-		public void activateKeyboardInput(){
+
+		if(input != null){
 			usingKeyboard = true;
 		}
+		if(usingKeyboard){
+			reactToKeyboard(input);
+		}
+
+		if(throttleKeyIsDown ) {
+			if(currentPixelMovementPerUpdate < maxPixelMovementPerUpdate) {
+				currentPixelMovementPerUpdate += pixelAccelerationPerUpdate;
+			}
+		} else{
+			if(currentPixelMovementPerUpdate > pixelDeAccelerationPerUpdate) {
+				currentPixelMovementPerUpdate -= pixelDeAccelerationPerUpdate;
+			}else if(currentPixelMovementPerUpdate > 0){
+				currentPixelMovementPerUpdate = 0;
+			}
+		}
+
+		if(reverseKeyIsDown) {
+			if(currentPixelMovementPerUpdate > -maxPixelMovementPerUpdate) {
+				currentPixelMovementPerUpdate -= pixelDeAccelerationPerUpdate;
+			}
+		} else{
+			if(currentPixelMovementPerUpdate < -pixelDeAccelerationPerUpdate) {
+				currentPixelMovementPerUpdate += pixelDeAccelerationPerUpdate;
+			}else if(currentPixelMovementPerUpdate < 0){
+				currentPixelMovementPerUpdate = 0;
+			}
+		}
+
+		if(currentPixelMovementPerUpdate != 0){
+			if(leftKeyIsDown){
+				movementDegrees -= angleChangePerUpdate;
+			}else if(rightKeyIsDown){
+				movementDegrees += angleChangePerUpdate;
+			}
+		}
 	}
+
+	public void reactToKeyboard(Input input){
+
+		if(input.isKeyDown(Input.KEY_UP)) {
+            throttleKeyDown();
+	    }else {
+	    	throttleKeyUp();
+	    }
+
+		if(input.isKeyDown(Input.KEY_DOWN)){
+			reverseKeyDown();
+		}else{
+			reverseKeyUp();
+		}
+
+		if(input.isKeyDown(Input.KEY_LEFT)){
+			leftKeyDown();
+		}else{
+			leftKeyUp();
+		}
+
+		if(input.isKeyDown(Input.KEY_RIGHT)){
+			rightKeyDown();
+		}else{
+			rightKeyUp();
+		}
+	}
+
+	public void throttleKeyDown() {
+		throttleKeyIsDown = true;
+	}
+
+	public void leftKeyDown() {
+		leftKeyIsDown = true;
+	}
+
+	public void rightKeyDown() {
+		rightKeyIsDown = true;
+	}
+
+	public void reverseKeyDown() {
+		reverseKeyIsDown = true;
+	}
+
+	public void leftKeyUp() {
+		leftKeyIsDown = false;
+	}
+
+	public void rightKeyUp() {
+		rightKeyIsDown = false;
+	}
+
+	public void reverseKeyUp() {
+		reverseKeyIsDown = false;
+	}
+
+	public void throttleKeyUp() {
+		throttleKeyIsDown = false;
+	}
+
+	public void disableKeyboardInput(){
+		usingKeyboard = false;
+	}
+
+	public void activateKeyboardInput(){
+		usingKeyboard = true;
+	}
+}

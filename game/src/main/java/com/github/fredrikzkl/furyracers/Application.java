@@ -67,13 +67,13 @@ public class Application {
 		try {
 			//Display.setResizable(true);
 			AppGameContainer app = new AppGameContainer(new ScalableGame(game, 1280, 720));
-			app.setDisplayMode(1280, 720, false);
+			app.setDisplayMode(1280, 720, true);
 			app.setTargetFrameRate(FPS);
 			// app.setMouseGrabbed(true);
 			app.setAlwaysRender(true);
 			app.start();
 		} catch (SlickException e) {
-			fatalError("Could not start fury: " + e.getMessage());
+			fatalError("Could not start FuryRacers: " + e.getMessage());
 		}
 	}
 }
