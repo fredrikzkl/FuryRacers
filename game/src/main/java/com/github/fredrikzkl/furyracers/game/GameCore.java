@@ -93,7 +93,7 @@ public class GameCore extends BasicGame {
 			throws SlickException {
 
 		g.translate(camera.getX(), camera.getY()); //Start of camera
-		camera.zoom(g,(float) 1);//Crasher om verdien =<0 
+		//camera.zoom(g,(float) 1);//Crasher om verdien =<0 
 		
 		level.render(g);
 		p1car.draw(position.x, position.y,carSize);

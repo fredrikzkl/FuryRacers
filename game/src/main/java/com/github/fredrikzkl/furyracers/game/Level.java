@@ -12,7 +12,7 @@ public class Level {
 	public Road[][] road;
 	public Background[][] solid;
 
-	public final String Dpath = "Maps/bigWorld";
+	public final String Dpath = "Maps/sixteen";
 	public String path = Dpath;
 
 	public TiledMap map = null;
@@ -20,17 +20,21 @@ public class Level {
 	public Level(int id) {
 		path = Dpath + id + ".tmx";
 		System.out.println(path);
-
+		
+		
 		try {
-			map = new TiledMap(path, false);
+			map = new TiledMap(path);
 		} catch (SlickException e) {
 			System.out.println("Error loading map");
 		}
 		
+		
+		/*
 		bg = new Background[map.getWidth()][map.getHeight()];
 		road = new Road[map.getWidth()][map.getHeight()];
 		Tile.init();
 		loadCourse();
+		*/
 	}
 
 	public void loadCourse() {
@@ -65,11 +69,14 @@ public class Level {
 	}
 
 	public void render(Graphics g) {
+		map.render(0,0,0,0,16,16);
+		/*
 		for (int x = 0; x < bg.length; x++) {
 			for (int y = 0; y < bg[0].length; y++) {
 				bg[x][y].render(g);
 			}
 		}
+		*/
 	}
 
 }
