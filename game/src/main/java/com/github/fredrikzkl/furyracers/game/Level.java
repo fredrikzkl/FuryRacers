@@ -68,8 +68,11 @@ public class Level {
 		*/
 	}
 
-	public void render(Graphics g) {
-		map.render(0,0, 0, 0, Application.VIEW_WIDTH,Application.VIEW_HEIGHT);
+	public void render(Graphics g, int tileX, int tileY) {
+		
+		map.render(0,0, 0, 0, (int)Application.screenSize.getWidth()/map.getTileWidth()+tileX,
+				(int)Application.screenSize.getHeight()/map.getTileHeight()+tileY);
+		
 		/*
 		for (int x = 0; x < bg.length; x++) {
 			for (int y = 0; y < bg[0].length; y++) {

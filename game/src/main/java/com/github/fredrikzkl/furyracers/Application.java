@@ -16,7 +16,7 @@ public class Application {
 	private static GameCore game;
 	private static GameSession gameSession;
 	
-	Dimension screenSize;
+	public static Dimension screenSize;
 
 	public static final int HEIGHT = 24;
 	public static final int WIDTH = 32;
