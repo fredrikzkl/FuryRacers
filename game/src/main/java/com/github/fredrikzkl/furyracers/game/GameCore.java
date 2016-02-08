@@ -24,7 +24,7 @@ public class GameCore extends BasicGame {
 
 	SpriteSheet sprite;
 
-	public Camera camera;
+	public static Camera camera;
 
 	public Level level = null;
 
@@ -48,6 +48,8 @@ public class GameCore extends BasicGame {
 
 	Vector2f position = new Vector2f();
 	Vector2f unitCirclePos = new Vector2f();
+	
+	public int zoom = 1;
 
 	float radDeg = 0;
 
@@ -56,6 +58,8 @@ public class GameCore extends BasicGame {
 	}
 
 	public void init(GameContainer arg0) throws SlickException {
+		
+		
 
 		level = new Level(1);
 		p1car = new Image("Sprites/fr_mustang_red.png");
@@ -86,14 +90,14 @@ public class GameCore extends BasicGame {
 		position.x += unitCirclePos.x;
 		position.y += unitCirclePos.y;	
 		
-		camera.update(position.x - Application.VIEW_WIDTH/2, position.y - Application.VIEW_HEIGHT/2);
+		camera.update((position.x*zoom - Application.VIEW_WIDTH/2)/zoom, (position.y*2 - Application.VIEW_HEIGHT/2)/zoom);
 	}
 
 	public void render(GameContainer container, Graphics g)
 			throws SlickException {
 
-		g.translate(camera.getX(), camera.getY()); //Start of camera
-		//camera.zoom(g,(float) 1);//Crasher om verdien =<0 
+		g.translate(camera.getX()*zoom, camera.getY()*zoom); //Start of camera
+		camera.zoom(g,(float) zoom);//Crasher om verdien =<0 
 		
 		level.render(g);
 		p1car.draw(position.x, position.y,carSize);
@@ -101,7 +105,7 @@ public class GameCore extends BasicGame {
 		p1car.setRotation(movementDegrees);
 
 
-		g.translate(-camera.getX(), -camera.getY()); //End of camera
+		g.translate(-camera.getX()*zoom, -camera.getY()*zoom); //End of camera
 
 	}
 
@@ -213,4 +217,15 @@ public class GameCore extends BasicGame {
 	public void activateKeyboardInput(){
 		usingKeyboard = true;
 	}
+
+	public int getZoom() {
+		return zoom;
+	}
+
+	public void setZoom(int zoom) {
+		this.zoom = zoom;
+	}
+	
+	
+	
 }

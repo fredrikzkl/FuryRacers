@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="200" height="200" tilewidth="16" tileheight="16" nextobjectid="3">
+ <tileset firstgid="1" name="terrain" tilewidth="16" tileheight="16" tilecount="288" columns="24">
+  <image source="../Sprites/terrain.png" width="384" height="192"/>
+ </tileset>
+ <tileset firstgid="289" name="road1" tilewidth="16" tileheight="16" tilecount="2500" columns="50">
+  <image source="../Sprites/road1.png" width="800" height="800"/>
+ </tileset>
+ <layer name="Tile Layer 1" width="200" height="200">
+  <data encoding="base64" compression="gzip">
+   H4sIAAAAAAAAC+3ZQUpCURQG4PuGldly3joV1DVUVHtI1DU4UNcQaE09l1c4iCAie4f4Bt/wwn8HP+dy7qyUMgMAAAAAAAAAAAAAAAAAAAAAAP6lUZiEaYIskM1tuAvDpv8skE3tx2OCHJDRT/rRJsgNf8H8gK/pB3xW91bjMA/PxQ4LPtQu1F7UvdV9WISH0s2RpwT5oE+DputFnRu1J4t3y7BKkA/6ti6nXlSbsA27b55vE9wBzuWlnLqxD4fwGt4SZIO+XcQb6zJcNd1767rp/tBv/KPDWbQJMgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADAbzoCBB78tQBxAgA=
+  </data>
+ </layer>
+</map>

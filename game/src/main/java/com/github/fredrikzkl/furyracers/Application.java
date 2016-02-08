@@ -15,6 +15,8 @@ import java.awt.*;
 public class Application {
 	private static GameCore game;
 	private static GameSession gameSession;
+	
+	Dimension screenSize;
 
 	public static final int HEIGHT = 24;
 	public static final int WIDTH = 32;
@@ -66,8 +68,9 @@ public class Application {
 
 		try {
 			//Display.setResizable(true);
-			AppGameContainer app = new AppGameContainer(new ScalableGame(game, 1280, 720));
-			app.setDisplayMode(1280, 720, true);
+			screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+			AppGameContainer app = new AppGameContainer(new ScalableGame(game, (int)screenSize.getWidth(),(int) screenSize.getHeight()));
+			app.setDisplayMode((int)screenSize.getWidth(),(int) screenSize.getHeight(), true);
 			app.setTargetFrameRate(FPS);
 			// app.setMouseGrabbed(true);
 			app.setAlwaysRender(true);

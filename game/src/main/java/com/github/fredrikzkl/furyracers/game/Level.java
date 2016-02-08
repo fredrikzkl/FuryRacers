@@ -12,7 +12,7 @@ public class Level {
 	public Road[][] road;
 	public Background[][] solid;
 
-	public final String Dpath = "Maps/sixteen";
+	public final String Dpath = "Maps/a";
 	public String path = Dpath;
 
 	public TiledMap map = null;
@@ -69,7 +69,7 @@ public class Level {
 	}
 
 	public void render(Graphics g) {
-		map.render(0,0,0,0,16,16);
+		map.render(0,0, 0, 0, Application.VIEW_WIDTH,Application.VIEW_HEIGHT);
 		/*
 		for (int x = 0; x < bg.length; x++) {
 			for (int y = 0; y < bg[0].length; y++) {
