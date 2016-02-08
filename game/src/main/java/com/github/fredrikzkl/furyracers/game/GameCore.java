@@ -1,12 +1,7 @@
 package com.github.fredrikzkl.furyracers.game;
 
 
-import javax.annotation.Generated;
 
-import java.awt.event.KeyEvent;
-
-
-import org.newdawn.slick.AppGameContainer;
 import org.newdawn.slick.BasicGame;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
@@ -24,7 +19,7 @@ public class GameCore extends BasicGame {
 
 	SpriteSheet sprite;
 
-	public Camera camera;
+	public static Camera camera;
 
 	public Level level = null;
 
@@ -48,8 +43,13 @@ public class GameCore extends BasicGame {
 
 	Vector2f position = new Vector2f();
 	Vector2f unitCirclePos = new Vector2f();
+	
+	public float zoom = (float) 1; //TODO
 
 	float radDeg = 0;
+
+	private int tilePosX;
+	private int tilePosY;
 
 	public GameCore(String title) {
 		super(title);
@@ -60,15 +60,12 @@ public class GameCore extends BasicGame {
 		level = new Level(1);
 		p1car = new Image("Sprites/fr_mustang_red.png");
 
-		position.x = Application.VIEW_HEIGHT/2;
-		position.y = Application.VIEW_WIDTH/2;
+		position.x = Application.VIEW_HEIGHT/2; //TODO
+		position.y = Application.VIEW_WIDTH/2;//TODO
 
-		System.out.println("top pixel/second: " + topSpeed);
-		System.out.println("current pixel/second: " + currentSpeed);
-		System.out.println("pixel/second^2:" + acceleration);
-		System.out.println("-pixel/second^2: " + deAcceleration);
+	
 		
-		camera = new Camera(Application.VIEW_HEIGHT/2,Application.VIEW_WIDTH/2);
+		camera = new Camera(Application.VIEW_HEIGHT/2,Application.VIEW_WIDTH/2,level);
 		
 	}
 
@@ -86,22 +83,25 @@ public class GameCore extends BasicGame {
 		position.x += unitCirclePos.x;
 		position.y += unitCirclePos.y;	
 		
-		camera.update(position.x - Application.VIEW_WIDTH/2, position.y - Application.VIEW_HEIGHT/2);
+		tilePosX = (int) (position.x/16);
+		tilePosY = (int) (position.y/16);
+		
+		camera.update((position.x*zoom - Application.VIEW_WIDTH/2)/zoom, (position.y*zoom - Application.VIEW_HEIGHT/2)/zoom);
 	}
 
 	public void render(GameContainer container, Graphics g)
 			throws SlickException {
 
-		g.translate(camera.getX(), camera.getY()); //Start of camera
-		camera.zoom(g,(float) 1);//Crasher om verdien =<0 
+		g.translate(camera.getX()*zoom, camera.getY()*zoom); //Start of camera
+		camera.zoom(g,(float) zoom);//Crasher om verdien =<0 
 		
-		level.render(g);
+		level.render(g, tilePosX, tilePosY );
 		p1car.draw(position.x, position.y,carSize);
-		p1car.setCenterOfRotation(16, 32);
+		p1car.setCenterOfRotation(16, 32); 	//TODO Hard coding:
 		p1car.setRotation(movementDegrees);
 
 
-		g.translate(-camera.getX(), -camera.getY()); //End of camera
+		g.translate(-camera.getX()*zoom, -camera.getY()*zoom); //End of camera
 
 	}
 
@@ -213,4 +213,15 @@ public class GameCore extends BasicGame {
 	public void activateKeyboardInput(){
 		usingKeyboard = true;
 	}
+
+	public float getZoom() {
+		return zoom;
+	}
+
+	public void setZoom(float zoom) {
+		this.zoom = zoom;
+	}
+	
+	
+	
 }

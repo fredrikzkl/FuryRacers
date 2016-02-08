@@ -2,22 +2,34 @@ package com.github.fredrikzkl.furyracers.game;
 
 import org.newdawn.slick.Graphics;
 
-import com.github.fredrikzkl.furyracers.Application;
+
+
 
 public class Camera {
 	
 	private float x,y;
+	private Level level;
 	
-	public Camera(float startX, float startY){
+	public Camera(float startX, float startY, Level level){
+		this.level = level;
 		x = startX;
 		y= startY;
 	}
 	
 	public void update(float posX, float posY) {
+		x = -posX;
+		y = -posY;
 		
+		if(posX<0)
+			x = 0;
 		
-		x = -(posX);
-		y = -(posY);
+		if(posY <0)
+			y = 0;
+		
+	
+		//level.map.getWidth()*level.map.getTileWidth()
+		
+	
 		
 	}
 
