@@ -29,8 +29,6 @@ public class GameCore extends BasicGame {
 
 	Circle point1, point2, point3, point4;
 	
-	ArrayList<Rectangle> collisionTiles = new ArrayList<Rectangle>();
-	
 	TiledMap map;
 
 	public Level level = null;
@@ -65,81 +63,16 @@ public class GameCore extends BasicGame {
 	
 	float carCollisionPointBackLeftX, carCollisionPointBackLeftY, carCollisionPointBackRightX, carCollisionPointBackRightY, carCollisionPointFrontLeftX, carCollisionPointFrontLeftY, carCollisionPointFrontRightX, carCollisionPointFrontRightY; 
 	
-	boolean xDirectionAllowed = true;
-	boolean yDirectionAllowed = true;
-	
 	Font font;
 	TrueTypeFont ttf;
 	
 	float radDeg = 0;
 
-	private int tilePosXCollisionPointBackLeft;
+	private int tilePosXCollisionPointBackLeft, tilePosYCollisionPointBackLeft, tilePosXCollisionPointBackRight, tilePosYCollisionPointBackRight, tilePosXCollisionPointFrontLeft, tilePosYCollisionPointFrontLeft, tilePosXCollisionPointFrontRight, tilePosYCollisionPointFrontRight;
 
-	private int tilePosYCollisionPointBackLeft;
-
-	private int tilePosXCollisionPointBackRight;
-
-	private int tilePosYCollisionPointBackRight;
-
-	private int tilePosXCollisionPointFrontLeft;
-
-	private int tilePosYCollisionPointFrontLeft;
-
-	private int tilePosXCollisionPointFrontRight;
-
-	private int tilePosYCollisionPointFrontRight;
-
-	private float mapPosCarCollisionPointBackLeftX;
-
-	private float mapPosCarCollisionPointBackRightX;
-
-	private float mapPosCarCollisionPointFrontLeftX;
-
-	private float mapPosCarCollisionPointFrontRightX;
-
-	private float mapPosCarCollisionPointBackLeftY;
-
-	private float mapPosCarCollisionPointBackRightY;
-
-	private float mapPosCarCollisionPointFrontLeftY;
-
-	private float mapPosCarCollisionPointFrontRightY;
-
-	private float newMapPosCarCollisionPointBackLeftX;
-
-	private float newMapPosCarCollisionPointBackRightX;
-
-	private float newMapPosCarCollisionPointFrontLeftX;
-
-	private float newMapPosCarCollisionPointFrontRightX;
-
-	private float newMapPosCarCollisionPointBackLeftY;
-
-	private float newMapPosCarCollisionPointBackRightY;
-
-	private float newMapPosCarCollisionPointFrontLeftY;
-
-	private float newMapPosCarCollisionPointFrontRightY;
-
-	private int newTilePosXCollisionPointBackLeft;
-
-	private int newTilePosYCollisionPointBackLeft;
-
-	private int newTilePosXCollisionPointBackRight;
-
-	private int newTilePosYCollisionPointBackRight;
-
-	private int newTilePosXCollisionPointFrontLeft;
-
-	private int newTilePosYCollisionPointFrontLeft;
-
-	private int newTilePosXCollisionPointFrontRight;
-
-	private int newTilePosYCollisionPointFrontRight;
+	private float mapPosCarCollisionPointBackLeftX, mapPosCarCollisionPointBackRightX, mapPosCarCollisionPointFrontLeftX, mapPosCarCollisionPointFrontRightX, mapPosCarCollisionPointBackLeftY, mapPosCarCollisionPointBackRightY, mapPosCarCollisionPointFrontLeftY,mapPosCarCollisionPointFrontRightY;
 	
-	private float positionerX;
-	
-	private float positionerY;
+	private float positionerX, positionerY;
 
 	public GameCore(String title) {
 		super(title);
@@ -157,15 +90,6 @@ public class GameCore extends BasicGame {
 		point4 = new Circle(0,0,2);
 		font = new Font("Verdana", Font.BOLD, 20);
 	    ttf = new TrueTypeFont(font, true);
-	    
-	    /*newMapPosCarCollisionPointBackLeftX = (windowWidth/2) - (float) (Math.cos(radDeg+0.8))*24;
-	    newMapPosCarCollisionPointBackLeftY = (windowHeight/2) - (float) (Math.sin(radDeg+0.8))*24;
-	    newMapPosCarCollisionPointBackRightX = (windowWidth/2) - (float) (Math.cos(radDeg-0.8))*24;
-	    newMapPosCarCollisionPointBackRightY = (windowHeight/2) - (float) (Math.sin(radDeg-0.8))*24;
-	    newMapPosCarCollisionPointFrontLeftX = (windowWidth/2) + (float) (Math.cos(radDeg+0.35))*50;
-	    newMapPosCarCollisionPointFrontLeftY = (windowHeight/2) + (float) (Math.sin(radDeg+0.35))*50;
-	    newMapPosCarCollisionPointFrontRightX = (windowWidth/2) + (float) (Math.cos(radDeg-0.35))*50;
-	    newMapPosCarCollisionPointFrontRightY = (windowHeight/2) + (float) (Math.sin(radDeg-0.35))*50;*/
 	}
 
 	public void update(GameContainer container, int arg1) throws SlickException {
@@ -193,111 +117,44 @@ public class GameCore extends BasicGame {
 		positionerX -= vectorMovement.x;
 		positionerY -= vectorMovement.y; // -= fordi at det i realiteten er kartet som beveger seg ikke bilen. Bilen beveger seg motsatt av kartet, derfor -.
 		
-		newMapPosCarCollisionPointBackLeftX = positionerX + carCollisionPointBackLeftX; 
-		newMapPosCarCollisionPointBackRightX = positionerX + carCollisionPointBackRightX;
-		newMapPosCarCollisionPointFrontLeftX = positionerX + carCollisionPointFrontLeftX;
-		newMapPosCarCollisionPointFrontRightX = positionerX + carCollisionPointFrontRightX;
+		mapPosCarCollisionPointBackLeftX = positionerX + carCollisionPointBackLeftX; 
+		mapPosCarCollisionPointBackRightX = positionerX + carCollisionPointBackRightX;
+		mapPosCarCollisionPointFrontLeftX = positionerX + carCollisionPointFrontLeftX;
+		mapPosCarCollisionPointFrontRightX = positionerX + carCollisionPointFrontRightX;
 		
-		newMapPosCarCollisionPointBackLeftY = positionerY + carCollisionPointBackLeftY;
-		newMapPosCarCollisionPointBackRightY = positionerY + carCollisionPointBackRightY;
-		newMapPosCarCollisionPointFrontLeftY = positionerY + carCollisionPointFrontLeftY;
-		newMapPosCarCollisionPointFrontRightY = positionerY + carCollisionPointFrontRightY;
+		mapPosCarCollisionPointBackLeftY = positionerY + carCollisionPointBackLeftY;
+		mapPosCarCollisionPointBackRightY = positionerY + carCollisionPointBackRightY;
+		mapPosCarCollisionPointFrontLeftY = positionerY + carCollisionPointFrontLeftY;
+		mapPosCarCollisionPointFrontRightY = positionerY + carCollisionPointFrontRightY;
 		
-		newTilePosXCollisionPointBackLeft = (int) (newMapPosCarCollisionPointBackLeftX/tileWidth);
-		newTilePosYCollisionPointBackLeft = (int) (newMapPosCarCollisionPointBackLeftY/tileHeight);
-		newTilePosXCollisionPointBackRight = (int) (newMapPosCarCollisionPointBackRightX/tileWidth);
-		newTilePosYCollisionPointBackRight = (int) (newMapPosCarCollisionPointBackRightY/tileHeight);
+		tilePosXCollisionPointBackLeft = (int) (mapPosCarCollisionPointBackLeftX/tileWidth);
+		tilePosYCollisionPointBackLeft = (int) (mapPosCarCollisionPointBackLeftY/tileHeight);
+		tilePosXCollisionPointBackRight = (int) (mapPosCarCollisionPointBackRightX/tileWidth);
+		tilePosYCollisionPointBackRight = (int) (mapPosCarCollisionPointBackRightY/tileHeight);
 		
-		newTilePosXCollisionPointFrontLeft = (int) (newMapPosCarCollisionPointFrontLeftX/tileWidth);
-		newTilePosYCollisionPointFrontLeft = (int) (newMapPosCarCollisionPointFrontLeftY/tileHeight);
-		newTilePosXCollisionPointFrontRight = (int) (newMapPosCarCollisionPointFrontRightX/tileWidth);
-		newTilePosYCollisionPointFrontRight = (int) (newMapPosCarCollisionPointFrontRightY/tileHeight);
+		tilePosXCollisionPointFrontLeft = (int) (mapPosCarCollisionPointFrontLeftX/tileWidth);
+		tilePosYCollisionPointFrontLeft = (int) (mapPosCarCollisionPointFrontLeftY/tileHeight);
+		tilePosXCollisionPointFrontRight = (int) (mapPosCarCollisionPointFrontRightX/tileWidth);
+		tilePosYCollisionPointFrontRight = (int) (mapPosCarCollisionPointFrontRightY/tileHeight);
 		
 		
-	if(map.getTileId(newTilePosXCollisionPointFrontLeft,newTilePosYCollisionPointFrontLeft, edgeLayer) == 55){
-			
+		if(map.getTileId(tilePosXCollisionPointFrontLeft,tilePosYCollisionPointFrontLeft, edgeLayer) == 55){
 			currentPixelMovementPerUpdate *= 0.1;
-			
-			
-			
-		
-			
-			if( newTilePosXCollisionPointFrontLeft - tilePosXCollisionPointFrontLeft < 0){
-			
-			}else if(newTilePosXCollisionPointFrontLeft - tilePosXCollisionPointFrontLeft > 0){
-				
-				
-				
-			}else{
-				tilePosXCollisionPointFrontLeft = newTilePosXCollisionPointFrontLeft;
-				mapPosCarCollisionPointFrontLeftX = newMapPosCarCollisionPointFrontLeftX;
-			}
-			if(newTilePosYCollisionPointBackLeft - tilePosYCollisionPointBackLeft < 0){
-				
-				/*if(Math.cos(radDeg) > 0 && Math.sin(radDeg) < 0){
-					movementDegrees = 5;
-				}else if(Math.sin(radDeg) < 0 && Math.cos(radDeg) < 0){
-					movementDegrees = 175;
-				}*/
-			}else if(newTilePosYCollisionPointFrontLeft - tilePosYCollisionPointFrontLeft > 0){
-				
-				/*if(Math.cos(radDeg) < 0 && Math.sin(radDeg) > 0){
-					movementDegrees = -175;
-				}else if(Math.sin(radDeg) > 0 && Math.cos(radDeg) > 0){
-					movementDegrees = -5;
-				}*/
-			}else{
-				tilePosYCollisionPointFrontLeft = newTilePosYCollisionPointFrontLeft;
-				mapPosCarCollisionPointFrontLeftY = newMapPosCarCollisionPointFrontLeftY;
-			}
-		}else  if(map.getTileId(newTilePosXCollisionPointFrontRight,newTilePosYCollisionPointFrontRight, edgeLayer) == 55){}
-		else{
-			tilePosXCollisionPointBackLeft = newTilePosXCollisionPointBackLeft;
-			tilePosYCollisionPointBackLeft = newTilePosYCollisionPointBackLeft;
-			mapPosCarCollisionPointBackLeftY = newMapPosCarCollisionPointBackLeftY;
-			mapPosCarCollisionPointBackLeftX = newMapPosCarCollisionPointBackLeftX;
-			
-			tilePosXCollisionPointFrontLeft = newTilePosXCollisionPointFrontLeft;
-			tilePosYCollisionPointFrontLeft = newTilePosYCollisionPointFrontLeft;
-			mapPosCarCollisionPointFrontLeftY = newMapPosCarCollisionPointFrontLeftY;
-			mapPosCarCollisionPointFrontLeftX = newMapPosCarCollisionPointFrontLeftX;
+		}else if(map.getTileId(tilePosXCollisionPointFrontRight,tilePosYCollisionPointFrontRight, edgeLayer) == 55){
+			currentPixelMovementPerUpdate *= 0.1;
+		}else if(map.getTileId(tilePosXCollisionPointBackRight,tilePosYCollisionPointBackRight, edgeLayer) == 55){
+			currentPixelMovementPerUpdate *= 0.1;
+		}else if(map.getTileId(tilePosXCollisionPointBackLeft,tilePosYCollisionPointBackLeft, edgeLayer) == 55){
+			currentPixelMovementPerUpdate *= 0.1;
 		}
 		
 		topLeftCornerMap.x += vectorMovement.x;
 		topLeftCornerMap.y += vectorMovement.y;
-		
-		
-		/*if(yDirectionAllowed){
-			topLeftCornerMap.y = newTopLeftCornerMap.y;
-			currentCarTilePosX = newCarTilePosX;
-		}
-		if(xDirectionAllowed){
-			topLeftCornerMap.x = newTopLeftCornerMap.x;
-			currentCarTilePosY = newCarTilePosY;
-		}*/
-		
-		
-		/*System.out.println("carTileX: " + newCarTilePosX);
-		System.out.println("carTileY: " + newCarTilePosY);*/
 	}
-	/*public void createCollisionTiles(){
 		
-		int edgeLayer = map.getLayerIndex("Edges");
-		for(int i = 0; i < map.getWidth(); i+=tileWidth){
-			for(int j = 0; j < map.getHeight(); j += tileHeight){
-				if(map.getTileId(i, j, edgeLayer)==55){
-					Rectangle tile = new Rectangle(i, j, tileWidth, tileHeight);
-					collisionTiles.add(tile);
-				}
-			}
-		}
-	}*/
-
 	public void render(GameContainer container, Graphics g)
 			throws SlickException {
 		map.render((int)topLeftCornerMap.x, (int)topLeftCornerMap.y, 0,0, tileWidth,tileWidth);
-		yDirectionAllowed = true;
-		xDirectionAllowed = true;
 		//level.render(g);
 		p1car.draw(1280/2-16,720/2-32,carSize);
 		p1car.setCenterOfRotation(16, 32);
