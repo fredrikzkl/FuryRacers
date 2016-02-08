@@ -20,6 +20,8 @@ public class Application {
 	public static final int WIDTH = 32;
 	public static final int VIEW_HEIGHT = HEIGHT * Tile.size;
 	public static final int VIEW_WIDTH = WIDTH * Tile.size;
+	public static final int WINDOW_HEIGHT = 720;
+	public static final int WINDOW_WIDTH = 1280;
 	public static final int FPS = 120;
 
 	private Application() {
