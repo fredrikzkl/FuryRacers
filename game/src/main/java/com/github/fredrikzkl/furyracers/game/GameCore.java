@@ -25,16 +25,13 @@ public class GameCore extends BasicGame {
 
 	boolean reverseKeyIsDown, throttleKeyIsDown, leftKeyIsDown, rightKeyIsDown, usingKeyboard = false;
 
-	int topSpeed = 480; // pixels per second
-	int acceleration = 3; // pixels per second
-	float deAcceleration = (float) 1.8;
-	int currentSpeed = 0;
+	float topSpeed = 480; // pixels per second
+	float acceleration = 100; // pixels per second
+	float deAcceleration =  75;
+	float currentSpeed = 0;
 	int angleChangePerUpdate = 1;
 
 	float maxPixelMovementPerUpdate = topSpeed/(float)Application.FPS;
-	float currentPixelMovementPerUpdate = currentSpeed/(float)Application.FPS;
-	float pixelAccelerationPerUpdate = acceleration/(float)Application.FPS;
-	float pixelDeAccelerationPerUpdate = deAcceleration/(float)Application.FPS;
 
 	float turningCircumferance = (360/angleChangePerUpdate) * maxPixelMovementPerUpdate;
 	float turningRadius = (float) (turningCircumferance / 2 * Math.PI);
@@ -55,7 +52,7 @@ public class GameCore extends BasicGame {
 		super(title);
 	}
 
-	public void init(GameContainer arg0) throws SlickException {
+	public void init(GameContainer container) throws SlickException {
 
 		level = new Level(1);
 		p1car = new Image("Sprites/fr_mustang_red.png");
@@ -63,22 +60,19 @@ public class GameCore extends BasicGame {
 		position.x = Application.VIEW_HEIGHT/2; //TODO
 		position.y = Application.VIEW_WIDTH/2;//TODO
 
-	
-		
 		camera = new Camera(Application.VIEW_HEIGHT/2,Application.VIEW_WIDTH/2,level);
-		
 	}
 
-	public void update(GameContainer container, int arg1) throws SlickException {
+	public void update(GameContainer container, int deltaTime) throws SlickException {
 
 		Input input = container.getInput();
 
-		reactToControlls(input);
+		reactToControlls(input, deltaTime);
 
 		radDeg = (float) Math.toRadians(movementDegrees);
 		
-		unitCirclePos.x = (float) (Math.cos(radDeg))*currentPixelMovementPerUpdate;
-		unitCirclePos.y = (float) (Math.sin(radDeg))*currentPixelMovementPerUpdate;
+		unitCirclePos.x = (float) (Math.cos(radDeg))*currentSpeed*deltaTime/1000;
+		unitCirclePos.y = (float) (Math.sin(radDeg))*currentSpeed*deltaTime/1000;
 		
 		position.x += unitCirclePos.x;
 		position.y += unitCirclePos.y;	
@@ -93,7 +87,7 @@ public class GameCore extends BasicGame {
 			throws SlickException {
 
 		g.translate(camera.getX()*zoom, camera.getY()*zoom); //Start of camera
-		camera.zoom(g,(float) zoom);//Crasher om verdien =<0 
+		camera.zoom(g,(float) zoom);//Crasher om verdien <=0 
 		
 		level.render(g, tilePosX, tilePosY );
 		p1car.draw(position.x, position.y,carSize);
@@ -105,7 +99,7 @@ public class GameCore extends BasicGame {
 
 	}
 
-	public void reactToControlls(Input input) {
+	public void reactToControlls(Input input, int deltaTime) {
 
 		if(input != null){
 			usingKeyboard = true;
@@ -115,30 +109,30 @@ public class GameCore extends BasicGame {
 		}
 
 		if(throttleKeyIsDown ) {
-			if(currentPixelMovementPerUpdate < maxPixelMovementPerUpdate) {
-				currentPixelMovementPerUpdate += pixelAccelerationPerUpdate;
+			if(currentSpeed < topSpeed) {
+				currentSpeed += acceleration*deltaTime/1000;
 			}
 		} else{
-			if(currentPixelMovementPerUpdate > pixelDeAccelerationPerUpdate) {
-				currentPixelMovementPerUpdate -= pixelDeAccelerationPerUpdate;
-			}else if(currentPixelMovementPerUpdate > 0){
-				currentPixelMovementPerUpdate = 0;
+			if(currentSpeed > deAcceleration) {
+				currentSpeed -= deAcceleration*deltaTime/1000;
+			}else if(currentSpeed > 0){
+				currentSpeed = 0;
 			}
 		}
 
 		if(reverseKeyIsDown) {
-			if(currentPixelMovementPerUpdate > -maxPixelMovementPerUpdate) {
-				currentPixelMovementPerUpdate -= pixelDeAccelerationPerUpdate;
+			if(currentSpeed > -topSpeed) {
+				currentSpeed -= deAcceleration*deltaTime/1000;
 			}
 		} else{
-			if(currentPixelMovementPerUpdate < -pixelDeAccelerationPerUpdate) {
-				currentPixelMovementPerUpdate += pixelDeAccelerationPerUpdate;
-			}else if(currentPixelMovementPerUpdate < 0){
-				currentPixelMovementPerUpdate = 0;
+			if(currentSpeed < -acceleration) {
+				currentSpeed += deAcceleration*deltaTime/1000;
+			}else if(currentSpeed < 0){
+				currentSpeed = 0;
 			}
 		}
 
-		if(currentPixelMovementPerUpdate != 0){
+		if(currentSpeed != 0){
 			if(leftKeyIsDown){
 				movementDegrees -= angleChangePerUpdate;
 			}else if(rightKeyIsDown){
