@@ -17,7 +17,7 @@ public class Level {
 
 	public Level(int id) {
 		path = Dpath + id + ".tmx";
-		System.out.println(path);
+		System.out.println("Course loaded: " + path);
 		
 		
 		try {
