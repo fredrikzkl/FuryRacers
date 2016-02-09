@@ -25,14 +25,14 @@ public class GameCore extends BasicGame {
 	float acceleration = 100; // pixels per second
 	float deAcceleration = 75;
 	float currentSpeed = 0;
-	float handling = 100; // degrees per second
+	float handling = 110; // degrees per second
 	int angleChangePerUpdate = 1;
 
 	float maxPixelMovementPerUpdate = topSpeed/(float)Application.FPS;
 
 	float turningCircumferance = (360/angleChangePerUpdate) * maxPixelMovementPerUpdate;
 	float turningRadius = (float) (turningCircumferance / 2 * Math.PI);
-	float carSize = (float) 0.5;
+	float carSize = (float) 0.4;
 	float movementDegrees = 0;
 
 	Vector2f position = new Vector2f();
