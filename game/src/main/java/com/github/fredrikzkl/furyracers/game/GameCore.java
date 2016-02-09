@@ -74,8 +74,8 @@ public class GameCore extends BasicGame {
 		position.x += unitCirclePos.x;
 		position.y += unitCirclePos.y;	
 		
-		tilePosX = (int) (position.x/16);
-		tilePosY = (int) (position.y/16);
+		tilePosX = (int) (position.x/level.getTileWidth());
+		tilePosY = (int) (position.y/level.getTileHeight());
 		
 		camera.update((position.x*zoom - Application.VIEW_WIDTH/2)/zoom, (position.y*zoom - Application.VIEW_HEIGHT/2)/zoom);
 	}
@@ -103,7 +103,7 @@ public class GameCore extends BasicGame {
 			reactToKeyboard(input);
 		}
 
-		if(throttleKeyIsDown ) {
+		if(throttleKeyIsDown) {
 			if(currentSpeed < topSpeed) {
 				currentSpeed += acceleration*deltaTime/1000;
 			}
