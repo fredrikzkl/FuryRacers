@@ -22,210 +22,53 @@ public class GameCore extends BasicGame {
 	public static Camera camera;
 	public Level level = null;
 
-	boolean reverseKeyIsDown, throttleKeyIsDown, leftKeyIsDown, rightKeyIsDown, usingKeyboard = false;
-
-	float topSpeed = 480; // pixels per second
-	float acceleration = 100; // pixels per second
-	float deAcceleration = 75;
-	float currentSpeed = 0;
-	float handling = 110; // degrees per second
-	int angleChangePerUpdate = 1;
-
-	float maxPixelMovementPerUpdate = topSpeed/(float)Application.FPS;
-
-	float turningCircumferance = (360/angleChangePerUpdate) * maxPixelMovementPerUpdate;
-	float turningRadius = (float) (turningCircumferance / 2 * Math.PI);
-	float carSize = (float) 0.4;
-	float movementDegrees = 0;
-
-	Vector2f position = new Vector2f();
-	Vector2f unitCirclePos = new Vector2f();
-	
 	public float zoom = (float) 1; //TODO
-
-	float radDeg = 0;
-
-	private int tilePosX;
-	private int tilePosY;
 	
 	Font font;
 	TrueTypeFont ttf;
+	
+	public Car p1;
+	public Car p2;
+	public Car p3;
+	public Car p4;
 
 	public GameCore(String title) {
 		super(title);
 	}
+	
+	
 
 	public void init(GameContainer container) throws SlickException {
 
-		 font = new Font("Verdana", Font.BOLD, 20);
-		 ttf = new TrueTypeFont(font, true);
+		font = new Font("Verdana", Font.BOLD, 20);
+		ttf = new TrueTypeFont(font, true);
 		 
 		level = new Level(1);
+		
 		p1car = new Image("Sprites/fr_mustang_red.png");
-
-		position.x = Application.VIEW_HEIGHT/2; //TODO
-		position.y = Application.VIEW_WIDTH/2;//TODO
+		Image blueCar = new Image("Sprites/fr_mustang_blue.png");
+		
+		p2 = new Car("mustang", "medium",blueCar,
+				480,100,75,110,1, level);
 
 		camera = new Camera(Application.VIEW_HEIGHT/2,Application.VIEW_WIDTH/2,level);
 	}
 
 	public void update(GameContainer container, int deltaTime) throws SlickException {
-
-		Input input = container.getInput();
-
-		reactToControlls(input, deltaTime);
-
-		radDeg = (float) Math.toRadians(movementDegrees);
-		boolean slowDown = level.getTileType(tilePosX, tilePosY);
-		//ttf.drawString(50, 50, "tieID" + yes);
 		
-		if(slowDown){
-			currentSpeed = topSpeed/2;
-		}
-		
-		unitCirclePos.x = (float) (Math.cos(radDeg))*currentSpeed*deltaTime/1000;
-		unitCirclePos.y = (float) (Math.sin(radDeg))*currentSpeed*deltaTime/1000;
-		
-		position.x += unitCirclePos.x;
-		position.y += unitCirclePos.y;	
-		
-		tilePosX = (int) (position.x/level.getTileWidth());
-		tilePosY = (int) (position.y/level.getTileHeight());
-		
-		camera.update((position.x*zoom - Application.VIEW_WIDTH/2)/zoom, (position.y*zoom - Application.VIEW_HEIGHT/2)/zoom);
+		p2.update(container, deltaTime);
+		//camera.update((position.x*zoom - Application.VIEW_WIDTH/2)/zoom, (position.y*zoom - Application.VIEW_HEIGHT/2)/zoom);
 	}
 
 	public void render(GameContainer container, Graphics g)
 			throws SlickException {
-
-		g.translate(camera.getX()*zoom, camera.getY()*zoom); //Start of camera
+		//g.translate(camera.getX()*zoom, camera.getY()*zoom); //Start of camera
 		camera.zoom(g,(float) zoom);//Crasher om verdien <=0 
-		
-		level.render(g, tilePosX, tilePosY );
-		p1car.draw(position.x, position.y, carSize);
-		p1car.setCenterOfRotation(16, 32); 	//TODO Hard coding:
-		p1car.setRotation(movementDegrees);
-		
-		g.translate(-camera.getX()*zoom, -camera.getY()*zoom); //End of camera
+		level.render(g);
+		p2.render();
+		//g.translate(-camera.getX()*zoom, -camera.getY()*zoom); //End of camera
 	}
 
-	public void reactToControlls(Input input, int deltaTime) {
 
-		if(input != null){
-			usingKeyboard = true;
-		}
-		if(usingKeyboard){
-			reactToKeyboard(input);
-		}
-
-		if(throttleKeyIsDown) {
-			if(currentSpeed < topSpeed) {
-				currentSpeed += acceleration*deltaTime/1000;
-			}
-		} else{
-			if(currentSpeed > deAcceleration) {
-				currentSpeed -= deAcceleration*deltaTime/1000;
-			}else if(currentSpeed > 0){
-				currentSpeed = 0;
-			}
-		}
-
-		if(reverseKeyIsDown) {
-			if(currentSpeed > -topSpeed) {
-				currentSpeed -= deAcceleration*deltaTime/1000;
-			}
-		} else{
-			if(currentSpeed < -acceleration) {
-				currentSpeed += deAcceleration*deltaTime/1000;
-			}else if(currentSpeed < 0){
-				currentSpeed = 0;
-			}
-		}
-
-		if(currentSpeed != 0){
-			if(leftKeyIsDown){
-				movementDegrees -= handling*deltaTime/1000;
-			}else if(rightKeyIsDown){
-				movementDegrees += handling*deltaTime/1000;
-			}
-		}
-	}
-
-	public void reactToKeyboard(Input input){
-
-		if(input.isKeyDown(Input.KEY_UP)) {
-            throttleKeyDown();
-	    }else {
-	    	throttleKeyUp();
-	    }
-
-		if(input.isKeyDown(Input.KEY_DOWN)){
-			reverseKeyDown();
-		}else{
-			reverseKeyUp();
-		}
-
-		if(input.isKeyDown(Input.KEY_LEFT)){
-			leftKeyDown();
-		}else{
-			leftKeyUp();
-		}
-
-		if(input.isKeyDown(Input.KEY_RIGHT)){
-			rightKeyDown();
-		}else{
-			rightKeyUp();
-		}
-	}
-
-	public void throttleKeyDown() {
-		throttleKeyIsDown = true;
-	}
-
-	public void leftKeyDown() {
-		leftKeyIsDown = true;
-	}
-
-	public void rightKeyDown() {
-		rightKeyIsDown = true;
-	}
-
-	public void reverseKeyDown() {
-		reverseKeyIsDown = true;
-	}
-
-	public void leftKeyUp() {
-		leftKeyIsDown = false;
-	}
-
-	public void rightKeyUp() {
-		rightKeyIsDown = false;
-	}
-
-	public void reverseKeyUp() {
-		reverseKeyIsDown = false;
-	}
-
-	public void throttleKeyUp() {
-		throttleKeyIsDown = false;
-	}
-
-	public void disableKeyboardInput(){
-		usingKeyboard = false;
-	}
-
-	public void activateKeyboardInput(){
-		usingKeyboard = true;
-	}
-
-	public float getZoom() {
-		return zoom;
-	}
-
-	public void setZoom(float zoom) {
-		this.zoom = zoom;
-	}
-	
-	
 	
 }

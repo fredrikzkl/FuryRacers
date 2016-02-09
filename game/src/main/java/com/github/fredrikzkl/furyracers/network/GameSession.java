@@ -43,6 +43,8 @@ public class GameSession {
 	public void onOpen(Session session)throws IOException, EncodeException {
 		System.out.println("onOpen");
 		backend = session;
+		//player1 = "";
+		//player2 = "";
 		sendToBackend("identify", "game");
 	}
 
@@ -52,6 +54,8 @@ public class GameSession {
 				.add("data", data)
 				.build());
 	}
+	
+
 	
 	public void onMessage(Session session, String message)throws IOException, EncodeException {
 		JsonReader jsonReader = Json.createReader(new StringReader(message));
@@ -121,37 +125,35 @@ public class GameSession {
 
             case "buttonDown": {	
                 String data = jsonObj.getJsonNumber("data").toString();
-                game.disableKeyboardInput();
                 
-                switch(data){
-                	case "1": game.throttleKeyDown();System.out.println("throttleDown");break;
-                	case "2": game.rightKeyDown();System.out.println("rightDown");break;
-                	case "3": game.leftKeyDown();System.out.println("leftDown");break;
-                }
-
+                String from = jsonObj.getString("from");
+                
+                if(player1 != null && player1.equals(from)) game.p1.buttonDown(data);
+                if(player2 != null && player2.equals(from)) game.p2.buttonDown(data);
+                
+                
+                
                 if (!jsonObj.containsKey("from")) {
                     return;
                 }
 
-                String from = jsonObj.getString("from");
+                from = jsonObj.getString("from");
 
                 break;
             }
             case "buttonUp":{
             	String data = jsonObj.getJsonNumber("data").toString();
-            	
-            	switch(data){
-            		case "1": game.throttleKeyUp();System.out.println("throttleUp");break;
-            		case "2": game.rightKeyUp(); System.out.println("rightUp");break;
-            		case "3": game.leftKeyUp();System.out.println("leftUp");break;
-            	}
-            	 if (!jsonObj.containsKey("from")) {
+            	String from = jsonObj.getString("from");
+            	if(player1 != null && player1.equals(from)) game.p1.buttonUp(data);
+                if(player2 != null && player2.equals(from)) game.p2.buttonUp(data);
+            	 
+                if (!jsonObj.containsKey("from")) {
                      return;
-                 }
+                }
 
-                 String from = jsonObj.getString("from");
+                from = jsonObj.getString("from");
 
-                 break;
+                break;
             }
         }
     }

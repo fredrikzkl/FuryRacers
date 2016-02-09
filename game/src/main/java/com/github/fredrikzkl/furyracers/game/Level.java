@@ -42,10 +42,10 @@ public class Level {
 		}*/
 	}
 
-	public void render(Graphics g, int tileX, int tileY) {
+	public void render(Graphics g) {
 		
-		map.render(0,0, 0, 0, (int)Application.screenSize.getWidth()/map.getTileWidth()+tileX,
-				(int)Application.screenSize.getHeight()/map.getTileHeight()+tileY);
+		map.render(0,0, 0, 0, (int)Application.screenSize.getWidth()/map.getTileWidth(),
+				(int)Application.screenSize.getHeight()/map.getTileHeight());
 	}
 	
 	public int getTileWidth() {
