@@ -3,6 +3,7 @@ package com.github.fredrikzkl.furyracers.game;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.tiled.TiledMap;
+
 import com.github.fredrikzkl.furyracers.Application;
 
 public class Level {
@@ -14,6 +15,8 @@ public class Level {
 	public int tileWidth;
 	public int tileHeight;
 	int edgeLayer;
+	int mapWidth;
+	int mapHeight;
 	
 	public Level(int id) {
 		
@@ -26,9 +29,17 @@ public class Level {
 			System.out.println("Error loading map");
 		}
 		
-		int edgeLayer = map.getLayerIndex("Edges");
+		edgeLayer = map.getLayerIndex("road");
 		tileWidth = map.getTileWidth();
 		tileHeight = map.getTileHeight();
+		mapWidth = map.getWidth();
+		mapHeight = map.getHeight();
+		
+		/*for(int i = 0; i < mapWidth; i++){
+			for(int j = 0; j < mapHeight; j++){
+				map.setTileId(i,j,edgeLayer,777);
+			}
+		}*/
 	}
 
 	public void render(Graphics g, int tileX, int tileY) {
@@ -45,6 +56,13 @@ public class Level {
 		return tileHeight;
 	}
 	
-	public int getTileType()
-
+	public boolean getTileType(int xTile, int yTile){
+			int tileID = map.getTileId(xTile, yTile, edgeLayer);
+			
+			if(tileID != 0){
+				return false;
+			}
+			return true;
+			
+	}
 }

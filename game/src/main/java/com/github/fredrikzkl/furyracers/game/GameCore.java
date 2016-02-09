@@ -1,5 +1,7 @@
 package com.github.fredrikzkl.furyracers.game;
 
+import java.awt.Font;
+
 import org.newdawn.slick.BasicGame;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
@@ -7,6 +9,7 @@ import org.newdawn.slick.Image;
 import org.newdawn.slick.Input;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.SpriteSheet;
+import org.newdawn.slick.TrueTypeFont;
 import org.newdawn.slick.geom.Vector2f;
 
 import com.github.fredrikzkl.furyracers.Application;
@@ -25,14 +28,14 @@ public class GameCore extends BasicGame {
 	float acceleration = 100; // pixels per second
 	float deAcceleration = 75;
 	float currentSpeed = 0;
-	float handling = 100; // degrees per second
+	float handling = 110; // degrees per second
 	int angleChangePerUpdate = 1;
 
 	float maxPixelMovementPerUpdate = topSpeed/(float)Application.FPS;
 
 	float turningCircumferance = (360/angleChangePerUpdate) * maxPixelMovementPerUpdate;
 	float turningRadius = (float) (turningCircumferance / 2 * Math.PI);
-	float carSize = (float) 0.5;
+	float carSize = (float) 0.4;
 	float movementDegrees = 0;
 
 	Vector2f position = new Vector2f();
@@ -44,6 +47,9 @@ public class GameCore extends BasicGame {
 
 	private int tilePosX;
 	private int tilePosY;
+	
+	Font font;
+	TrueTypeFont ttf;
 
 	public GameCore(String title) {
 		super(title);
@@ -51,6 +57,9 @@ public class GameCore extends BasicGame {
 
 	public void init(GameContainer container) throws SlickException {
 
+		 font = new Font("Verdana", Font.BOLD, 20);
+		 ttf = new TrueTypeFont(font, true);
+		 
 		level = new Level(1);
 		p1car = new Image("Sprites/fr_mustang_red.png");
 
@@ -67,6 +76,12 @@ public class GameCore extends BasicGame {
 		reactToControlls(input, deltaTime);
 
 		radDeg = (float) Math.toRadians(movementDegrees);
+		boolean slowDown = level.getTileType(tilePosX, tilePosY);
+		//ttf.drawString(50, 50, "tieID" + yes);
+		
+		if(slowDown){
+			currentSpeed = topSpeed/2;
+		}
 		
 		unitCirclePos.x = (float) (Math.cos(radDeg))*currentSpeed*deltaTime/1000;
 		unitCirclePos.y = (float) (Math.sin(radDeg))*currentSpeed*deltaTime/1000;
