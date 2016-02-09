@@ -56,6 +56,7 @@ public class Application {
 			fatalError("Could not start websocket server: " + e.getMessage());
 		}
 	}
+	
 	private void startGame() {
 		
 		
@@ -64,7 +65,7 @@ public class Application {
 			//Display.setResizable(true);
 			AppGameContainer app = new AppGameContainer(new ScalableGame(game, (int)screenSize.getWidth(), (int)screenSize.getHeight()));
 			app.setDisplayMode((int)screenSize.getWidth(), (int)screenSize.getHeight(), true);
-			app.setTargetFrameRate(FPS);
+			//app.setTargetFrameRate(FPS);
 			// app.setMouseGrabbed(true);
 			app.setAlwaysRender(true);
 			app.start();

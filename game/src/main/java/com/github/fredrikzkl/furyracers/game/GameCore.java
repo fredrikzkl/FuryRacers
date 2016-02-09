@@ -1,7 +1,5 @@
 package com.github.fredrikzkl.furyracers.game;
 
-
-
 import org.newdawn.slick.BasicGame;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
@@ -16,19 +14,18 @@ import com.github.fredrikzkl.furyracers.Application;
 public class GameCore extends BasicGame {
 
 	Image p1car = null;
-
 	SpriteSheet sprite;
 
 	public static Camera camera;
-
 	public Level level = null;
 
 	boolean reverseKeyIsDown, throttleKeyIsDown, leftKeyIsDown, rightKeyIsDown, usingKeyboard = false;
 
 	float topSpeed = 480; // pixels per second
 	float acceleration = 100; // pixels per second
-	float deAcceleration =  75;
+	float deAcceleration = 75;
 	float currentSpeed = 0;
+	float handling = 100; // degrees per second
 	int angleChangePerUpdate = 1;
 
 	float maxPixelMovementPerUpdate = topSpeed/(float)Application.FPS;
@@ -36,7 +33,7 @@ public class GameCore extends BasicGame {
 	float turningCircumferance = (360/angleChangePerUpdate) * maxPixelMovementPerUpdate;
 	float turningRadius = (float) (turningCircumferance / 2 * Math.PI);
 	float carSize = (float) 0.5;
-	int movementDegrees = 0;
+	float movementDegrees = 0;
 
 	Vector2f position = new Vector2f();
 	Vector2f unitCirclePos = new Vector2f();
@@ -90,13 +87,11 @@ public class GameCore extends BasicGame {
 		camera.zoom(g,(float) zoom);//Crasher om verdien <=0 
 		
 		level.render(g, tilePosX, tilePosY );
-		p1car.draw(position.x, position.y,carSize);
+		p1car.draw(position.x, position.y, carSize);
 		p1car.setCenterOfRotation(16, 32); 	//TODO Hard coding:
 		p1car.setRotation(movementDegrees);
-
-
+		
 		g.translate(-camera.getX()*zoom, -camera.getY()*zoom); //End of camera
-
 	}
 
 	public void reactToControlls(Input input, int deltaTime) {
@@ -134,9 +129,9 @@ public class GameCore extends BasicGame {
 
 		if(currentSpeed != 0){
 			if(leftKeyIsDown){
-				movementDegrees -= angleChangePerUpdate;
+				movementDegrees -= handling*deltaTime/1000;
 			}else if(rightKeyIsDown){
-				movementDegrees += angleChangePerUpdate;
+				movementDegrees += handling*deltaTime/1000;
 			}
 		}
 	}
