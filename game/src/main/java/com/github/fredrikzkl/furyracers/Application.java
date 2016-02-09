@@ -58,8 +58,6 @@ public class Application {
 	}
 	
 	private void startGame() {
-		
-		
 		try {
 			screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 			//Display.setResizable(true);
@@ -69,6 +67,7 @@ public class Application {
 			// app.setMouseGrabbed(true);
 			app.setAlwaysRender(true);
 			app.start();
+			System.out.println("Launching the game! Setting resolution: " + screenSize.getWidth() + "x" + screenSize.getHeight());
 		} catch (SlickException e) {
 			fatalError("Could not start FuryRacers: " + e.getMessage());
 		}

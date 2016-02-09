@@ -21,7 +21,7 @@ public class Level {
 	public Level(int id) {
 		
 		path = Dpath + id + ".tmx";
-		System.out.println(path);
+		System.out.println("Course loaded: " + path);
 		
 		try {
 			map = new TiledMap(path);
@@ -57,12 +57,11 @@ public class Level {
 	}
 	
 	public boolean getTileType(int xTile, int yTile){
-			int tileID = map.getTileId(xTile, yTile, edgeLayer);
+		int tileID = map.getTileId(xTile, yTile, edgeLayer);
 			
-			if(tileID != 0){
-				return false;
-			}
-			return true;
-			
+		if(tileID != 0){
+			return false;
+		}
+		return true;
 	}
 }
