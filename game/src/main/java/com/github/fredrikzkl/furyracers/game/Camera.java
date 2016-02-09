@@ -24,8 +24,7 @@ public class Camera {
 	}
 	
 	public void update(float posX, float posY) {
-		System.out.println();
-		x = posX - (float) Application.screenSize.getWidth() / 2;
+		x = -posX;
 		y = -posY;
 		
 		
