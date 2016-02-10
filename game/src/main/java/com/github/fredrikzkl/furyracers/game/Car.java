@@ -61,10 +61,11 @@ public class Car {
 		
 		tilePosX = (int) (position.x/level.getTileWidth());
 		tilePosY = (int) (position.y/level.getTileHeight());
-		
+		/*
 		if(slowDown){
 			currentSpeed = topSpeed/2;
 		}
+		*/
 	}
 	
 	public void render() {

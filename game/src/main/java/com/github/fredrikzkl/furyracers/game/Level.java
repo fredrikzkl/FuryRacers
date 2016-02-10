@@ -21,7 +21,7 @@ public class Level {
 	public Level(int id) {
 		
 		path = Dpath + id + ".tmx";
-		System.out.println("Course loaded: " + path);
+		System.out.println("Course loaded:" + path.substring(5));
 		
 		try {
 			map = new TiledMap(path);

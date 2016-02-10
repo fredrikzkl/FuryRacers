@@ -3,10 +3,12 @@ package com.github.fredrikzkl.furyracers.game;
 public class Player {
 	private String id;
 	private String username;
+	private String playerNr;
 	private int score = 0;
 	
-	private Player(String id){
+	public Player(String id, String playerNr){
 		this.id=id;
+		this.playerNr=playerNr;
 	}
 
 	public boolean equals(Object o){
@@ -33,6 +35,13 @@ public class Player {
 	public int getScore() {
 		return score;
 	}
+
+	public String getPlayerNr() {
+		return playerNr;
+	}
+
+	
+	
 	
 	
 }

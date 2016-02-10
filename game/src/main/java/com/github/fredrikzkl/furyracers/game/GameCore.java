@@ -45,18 +45,20 @@ public class GameCore extends BasicGame {
 		 
 		level = new Level(1);
 		
-		p1car = new Image("Sprites/fr_mustang_red.png");
-		Image blueCar = new Image("Sprites/fr_mustang_blue.png");
 		
-		p2 = new Car("mustang", "medium",blueCar,
+		Image blueCar = new Image("Sprites/fr_mustang_blue.png");
+		p1 = new Car("mustang", "medium",blueCar,
 				480,100,75,110,1, level);
 
+		
 		camera = new Camera(Application.VIEW_HEIGHT/2,Application.VIEW_WIDTH/2,level);
+		
+		
 	}
 
 	public void update(GameContainer container, int deltaTime) throws SlickException {
 		
-		p2.update(container, deltaTime);
+		p1.update(container, deltaTime);
 		//camera.update((position.x*zoom - Application.VIEW_WIDTH/2)/zoom, (position.y*zoom - Application.VIEW_HEIGHT/2)/zoom);
 	}
 
@@ -65,7 +67,7 @@ public class GameCore extends BasicGame {
 		//g.translate(camera.getX()*zoom, camera.getY()*zoom); //Start of camera
 		camera.zoom(g,(float) zoom);//Crasher om verdien <=0 
 		level.render(g);
-		p2.render();
+		p1.render();
 		//g.translate(-camera.getX()*zoom, -camera.getY()*zoom); //End of camera
 	}
 
