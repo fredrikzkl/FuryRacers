@@ -4,6 +4,8 @@ import com.github.fredrikzkl.furyracers.Application;
 
 import javax.websocket.*;
 
+import org.newdawn.slick.SlickException;
+
 import java.io.IOException;
 
 @ClientEndpoint
@@ -16,7 +18,7 @@ public class WebsocketClient {
     }
 
     @OnMessage
-    public void onMessage(Session session, String message) throws IOException, EncodeException {
+    public void onMessage(Session session, String message) throws IOException, EncodeException, SlickException {
         gameSession.onMessage(session, message);
     }
 }

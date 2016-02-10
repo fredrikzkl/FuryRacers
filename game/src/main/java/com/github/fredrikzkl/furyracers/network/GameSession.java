@@ -9,6 +9,7 @@ import javax.websocket.EncodeException;
 import javax.websocket.Session;
 
 import org.glassfish.tyrus.client.ClientManager;
+import org.newdawn.slick.SlickException;
 
 import com.github.fredrikzkl.furyracers.game.GameCore;
 import com.github.fredrikzkl.furyracers.game.Player;
@@ -17,7 +18,9 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 public class GameSession {
@@ -28,11 +31,6 @@ public class GameSession {
 	
 	private int playerNumber;
 	
-	private String p1ID;
-	private String p2ID;
-	private String p3ID;
-	private String p4ID;
-	
 	private String player1;
     private String player2;
     private String player3;
@@ -40,11 +38,11 @@ public class GameSession {
     private String player1Username = "Player 1";
     private String player2Username = "Player 2";
     
-    private Set<Player> players;
+    private List<Player> players;
 	
 	public GameSession(GameCore game) throws DeploymentException {
 		this.game = game;
-		players = new HashSet<>();
+		players = new ArrayList<Player>();
 		playerNumber = 1;
 	}
 	
@@ -70,7 +68,7 @@ public class GameSession {
 	
 
 	
-	public void onMessage(Session session, String message)throws IOException, EncodeException {
+	public void onMessage(Session session, String message)throws IOException, EncodeException, SlickException {
 		JsonReader jsonReader = Json.createReader(new StringReader(message));
 
         JsonObject jsonObj = jsonReader.readObject();
@@ -149,29 +147,14 @@ public class GameSession {
                 
                 String from = jsonObj.getString("from");
                 
-                //checkIfPlayerExist(from);
-                
-                //System.out.println("From: " + from + " Data: " + data);
-                //System.out.println("Player1 name: " + player1);
-           
-                for(Player player : players){
-                	System.out.println(player.getId());
-                	System.out.println(p1ID);
-                	System.out.println(player.getId() == p1ID);
-                	if (player.getId() == p1ID){
-                		System.out.println("P1 sending their regards");
-                		//game.p1.buttonDown(data);
-                	}
-                	
-                	if(player.getId() == p2ID){
-                		System.out.println("P2 sending their regards");
-                		//game.p2.buttonDown(data);
+                for(int i = 0; i < players.size(); i++){
+                	if(players.get(i).getId().equals(from)){
+                		if(players.get(i).getPlayerNr() == 1)game.p1.buttonDown(data);
+                		if(players.get(i).getPlayerNr() == 2)game.p2.buttonDown(data);
+                		if(players.get(i).getPlayerNr() == 3)game.p2.buttonDown(data);
+                		if(players.get(i).getPlayerNr() == 4)game.p2.buttonDown(data);
                 	}
                 }
-                //if(player1 != null && player1.equals(from)) game.p1.buttonDown(data);
-                //if(player2 != null && player2.equals(from)) game.p2.buttonDown(data);
-                
-                
                 
                 if (!jsonObj.containsKey("from")) {
                     return;
@@ -198,7 +181,15 @@ public class GameSession {
         }
     }
 
-	private void checkIfPlayerExist(String from) throws IOException, EncodeException {
+	private void printPlayers() {
+		int count = 0;
+		for(Player player : players){
+        	System.out.println(players.get(count));
+        	count++;
+        }
+	}
+
+	private void checkIfPlayerExist(String from) throws IOException, EncodeException, SlickException {
 		boolean notExist = true;
 		for(Player player:players){
 			if(from == player.getId()){
@@ -212,15 +203,13 @@ public class GameSession {
 		
 	}
 	
-	private void addPlayer(String id) throws IOException, EncodeException{
-		String playerNr = "player" + playerNumber;
-    	players.add(new Player(id, playerNr));
-    	playerNumber++;
-    	String pID = "id" + playerNumber;
+	private void addPlayer(String id) throws IOException, EncodeException, SlickException{
+    	players.add(new Player(id, playerNumber));
     	sendToBackend("get username", id);
-    	System.out.println("Player '" + id + "' successfully added to the game! Assigned as: " + playerNr);
-    	pID = id;
-    	System.out.println(pID);
+    	game.createPlayer(playerNumber, id);
+    	System.out.println("Player '" + id + "' successfully added to the game! Assigned as player: " + playerNumber);
+    	playerNumber++;
+    	
 	}
 
         

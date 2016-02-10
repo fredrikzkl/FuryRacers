@@ -3,10 +3,10 @@ package com.github.fredrikzkl.furyracers.game;
 public class Player {
 	private String id;
 	private String username;
-	private String playerNr;
+	private int playerNr;
 	private int score = 0;
 	
-	public Player(String id, String playerNr){
+	public Player(String id, int playerNr){
 		this.id=id;
 		this.playerNr=playerNr;
 	}
@@ -36,8 +36,13 @@ public class Player {
 		return score;
 	}
 
-	public String getPlayerNr() {
+	public int getPlayerNr() {
 		return playerNr;
+	}
+	
+	public String toString(){
+		return "Player " + getPlayerNr() + " ID:'" + getId() +"'";
+		
 	}
 
 	

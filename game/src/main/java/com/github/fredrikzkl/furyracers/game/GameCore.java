@@ -1,6 +1,8 @@
 package com.github.fredrikzkl.furyracers.game;
 
 import java.awt.Font;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.newdawn.slick.BasicGame;
 import org.newdawn.slick.GameContainer;
@@ -18,6 +20,11 @@ public class GameCore extends BasicGame {
 
 	Image p1car = null;
 	SpriteSheet sprite;
+	
+	Image redMustang;
+	Image blueMustang;
+	Image greenMustang;
+	Image yellowMustang;
 
 	public static Camera camera;
 	public Level level = null;
@@ -31,6 +38,7 @@ public class GameCore extends BasicGame {
 	public Car p2;
 	public Car p3;
 	public Car p4;
+	public List<Car> cars;
 
 	public GameCore(String title) {
 		super(title);
@@ -39,18 +47,16 @@ public class GameCore extends BasicGame {
 	
 
 	public void init(GameContainer container) throws SlickException {
-
+		cars = new ArrayList<Car>();
+		redMustang = new Image("Sprites/fr_mustang_red.png");
+		blueMustang = new Image("Sprites/fr_mustang_blue.png");
+		
+		
 		font = new Font("Verdana", Font.BOLD, 20);
 		ttf = new TrueTypeFont(font, true);
 		 
 		level = new Level(1);
-		
-		
-		Image blueCar = new Image("Sprites/fr_mustang_blue.png");
-		p1 = new Car("mustang", "medium",blueCar,
-				480,100,75,110,1, level);
 
-		
 		camera = new Camera(Application.VIEW_HEIGHT/2,Application.VIEW_WIDTH/2,level);
 		
 		
@@ -58,7 +64,9 @@ public class GameCore extends BasicGame {
 
 	public void update(GameContainer container, int deltaTime) throws SlickException {
 		
-		p1.update(container, deltaTime);
+		for(Car cars: cars){
+			cars.update(container, deltaTime);
+		}
 		//camera.update((position.x*zoom - Application.VIEW_WIDTH/2)/zoom, (position.y*zoom - Application.VIEW_HEIGHT/2)/zoom);
 	}
 
@@ -67,8 +75,24 @@ public class GameCore extends BasicGame {
 		//g.translate(camera.getX()*zoom, camera.getY()*zoom); //Start of camera
 		camera.zoom(g,(float) zoom);//Crasher om verdien <=0 
 		level.render(g);
-		p1.render();
+		for(Car cars: cars){
+			cars.render();
+		}
 		//g.translate(-camera.getX()*zoom, -camera.getY()*zoom); //End of camera
+	}
+	
+	public void createPlayer(int nr, String id) throws SlickException{
+		if(nr == 1){
+		p1 = new Car(id, "medium",redMustang,
+				480,100,75,110,1, level);
+		cars.add(p1);
+		}
+		if(nr == 2){
+		p1 = new Car(id, "medium",blueMustang,
+				480,100,75,110,1, level);
+		cars.add(p2);
+		}
+		
 	}
 
 
