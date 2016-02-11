@@ -155,39 +155,32 @@ public class GameSession {
                 		if(players.get(i).getPlayerNr() == 4)game.p2.buttonDown(data);
                 	}
                 }
-                
                 if (!jsonObj.containsKey("from")) {
                     return;
                 }
-
                 from = jsonObj.getString("from");
-
                 break;
             }
             case "buttonUp":{
             	String data = jsonObj.getJsonNumber("data").toString();
             	String from = jsonObj.getString("from");
-            	//if(player1 != null && player1.equals(from)) game.p1.buttonUp(data);
-                //if(player2 != null && player2.equals(from)) game.p2.buttonUp(data);
-            	 
+            	
+            	for(int i = 0; i < players.size(); i++){
+                	if(players.get(i).getId().equals(from)){
+                		if(players.get(i).getPlayerNr() == 1)game.p1.buttonUp(data);
+                		if(players.get(i).getPlayerNr() == 2)game.p2.buttonUp(data);
+                		if(players.get(i).getPlayerNr() == 3)game.p2.buttonUp(data);
+                		if(players.get(i).getPlayerNr() == 4)game.p2.buttonUp(data);
+                	}
+                }
                 if (!jsonObj.containsKey("from")) {
                      return;
                 }
-
                 from = jsonObj.getString("from");
-
                 break;
             }
         }
     }
-
-	private void printPlayers() {
-		int count = 0;
-		for(Player player : players){
-        	System.out.println(players.get(count));
-        	count++;
-        }
-	}
 
 	private void checkIfPlayerExist(String from) throws IOException, EncodeException, SlickException {
 		boolean notExist = true;
@@ -204,12 +197,24 @@ public class GameSession {
 	}
 	
 	private void addPlayer(String id) throws IOException, EncodeException, SlickException{
-    	players.add(new Player(id, playerNumber));
-    	sendToBackend("get username", id);
-    	game.createPlayer(playerNumber, id);
-    	System.out.println("Player '" + id + "' successfully added to the game! Assigned as player: " + playerNumber);
-    	playerNumber++;
+		if(players.size() > 4){
+			System.out.println("The game is full!");
+		}else{
+	    	players.add(new Player(id, playerNumber));
+	    	sendToBackend("get username", id);
+	    	game.createPlayer(playerNumber, id);
+	    	System.out.println("Player '" + id + "' successfully added to the game! Assigned as player: " + playerNumber);
+	    	playerNumber++;
+		}
     	
+	}
+	
+	private void printPlayers() {
+		int count = 0;
+		for(Player player : players){
+        	System.out.println(players.get(count));
+        	count++;
+        }
 	}
 
         

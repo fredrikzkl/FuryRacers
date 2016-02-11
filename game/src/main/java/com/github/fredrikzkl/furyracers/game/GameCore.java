@@ -67,6 +67,7 @@ public class GameCore extends BasicGame {
 		for(Car cars: cars){
 			cars.update(container, deltaTime);
 		}
+		
 		//camera.update((position.x*zoom - Application.VIEW_WIDTH/2)/zoom, (position.y*zoom - Application.VIEW_HEIGHT/2)/zoom);
 	}
 
