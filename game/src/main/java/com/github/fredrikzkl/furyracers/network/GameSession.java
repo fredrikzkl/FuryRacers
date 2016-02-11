@@ -107,13 +107,15 @@ public class GameSession {
 
             case "dropped client": {
                 String id = jsonObj.getString("data");
-                
-                if (player1.equals(id)) {
-                    player1 = "";
-                } else if (player2.equals(id)) {
-                    player2 = "";
+                int spot = 0;
+    
+                for(Player player: players){
+                	if(player.getId().equals(id)){
+                		spot = player.getPlayerNr();
+                	}
                 }
                 
+                players.remove(spot);
 
                 System.out.println("Player " + id + " dropped!");
 
@@ -140,6 +142,7 @@ public class GameSession {
                 String data = jsonObj.getJsonNumber("data").toString();
                 
                 String from = jsonObj.getString("from");
+                checkIfPlayerExist(from);
                 
                 for(int i = 0; i < players.size(); i++){
                 	if(players.get(i).getId().equals(from)){
@@ -147,15 +150,18 @@ public class GameSession {
                 			game.p1.buttonDown(data);
                 			break;
                 		}
-                		
-                		try{
-                		if(players.get(i).getPlayerNr() == 2)game.p2.buttonDown(data);
-                		}catch(NullPointerException e){
-                			printPlayers();
+                		if(players.get(i).getPlayerNr() == 2){
+                			game.p2.buttonDown(data);
+                			break;
                 		}
-                		
-                		if(players.get(i).getPlayerNr() == 3)game.p3.buttonDown(data);
-                		if(players.get(i).getPlayerNr() == 4)game.p4.buttonDown(data);
+                		if(players.get(i).getPlayerNr() == 3){
+                			game.p3.buttonDown(data);
+                			break;
+                		}
+                		if(players.get(i).getPlayerNr() == 4){
+                			game.p4.buttonDown(data);
+                			break;
+                		}
                 	}
                 }
                 if (!jsonObj.containsKey("from")) {
@@ -180,8 +186,16 @@ public class GameSession {
                 			game.p2.disableKeyboardInput();
                 			break;
                 		}
-                		if(players.get(i).getPlayerNr() == 3)game.p3.buttonUp(data);
-                		if(players.get(i).getPlayerNr() == 4)game.p4.buttonUp(data);
+                		if(players.get(i).getPlayerNr() == 3){
+                			game.p3.buttonUp(data);
+                			game.p3.disableKeyboardInput();
+                			break;
+                		}
+                		if(players.get(i).getPlayerNr() == 4){
+                			game.p4.buttonUp(data);
+                			game.p4.disableKeyboardInput();
+                			break;
+                		}
                 	}
                 }
                 if (!jsonObj.containsKey("from")) {
@@ -196,7 +210,7 @@ public class GameSession {
 	private void checkIfPlayerExist(String from) throws IOException, EncodeException, SlickException {
 		boolean notExist = true;
 		for(Player player:players){
-			if(from == player.getId()){
+			if(player.getId().equals(from)){
 				notExist = false;
 			}
 		}
@@ -210,6 +224,7 @@ public class GameSession {
 	private void addPlayer(String id) throws IOException, EncodeException, SlickException{
 		if(players.size() > 4){
 			System.out.println("The game is full!");
+			printPlayers();
 		}else{
 	    	players.add(new Player(id, playerNumber));
 	    	sendToBackend("get username", id);

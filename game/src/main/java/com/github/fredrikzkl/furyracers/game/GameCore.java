@@ -91,6 +91,7 @@ public class GameCore extends BasicGame {
 			cars.add(p2);
 		}
 		
+		
 	}
 
 
