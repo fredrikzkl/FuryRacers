@@ -2,6 +2,7 @@ package com.github.fredrikzkl.furyracers.game;
 
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.SlickException;
+import org.newdawn.slick.geom.Vector2f;
 import org.newdawn.slick.tiled.TiledMap;
 
 import com.github.fredrikzkl.furyracers.Application;
@@ -17,6 +18,9 @@ public class Level {
 	int edgeLayer;
 	int mapWidth;
 	int mapHeight;
+	
+	float distanceWidth;
+	float distanceHeight;
 	
 	public Level(int id) {
 		
@@ -40,12 +44,16 @@ public class Level {
 				map.setTileId(i,j,edgeLayer,777);
 			}
 		}*/
+		
+		distanceHeight = map.getTileHeight() * map.getHeight();
+		distanceWidth = map.getTileWidth() * map.getWidth();
 	}
 
-	public void render(Graphics g) {
-		
-		map.render(0,0, 0, 0, (int)Application.screenSize.getWidth()/map.getTileWidth(),
-				(int)Application.screenSize.getHeight()/map.getTileHeight());
+	public void render(Graphics g, Vector2f tilePos) {
+		int tilePosX = (int) tilePos.x;
+		int tilePosY = (int) tilePos.y;
+		map.render(0,0, 0, 0, (int)Application.screenSize.getWidth()/map.getTileWidth() + tilePosX,
+				(int)Application.screenSize.getHeight()/map.getTileHeight() + tilePosY);
 	}
 	
 	public int getTileWidth() {
@@ -64,4 +72,15 @@ public class Level {
 		}
 		return true;
 	}
+
+	public float getDistanceWidth() {
+		return distanceWidth;
+	}
+
+	public float getDistanceHeight() {
+		return distanceHeight;
+	}
+
+	
+	
 }

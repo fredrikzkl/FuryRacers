@@ -29,7 +29,7 @@ public class GameCore extends BasicGame {
 	public static Camera camera;
 	public Level level = null;
 
-	public float initalZoom = (float) 1.6; //TODO
+	public float initalZoom = (float) 1.2; //TODO
 	public float zoom = (float) 1;
 	
 	Font font;
@@ -42,21 +42,32 @@ public class GameCore extends BasicGame {
 	public List<Car> cars;
 	
 	public Vector2f longestDistance;
+	public Vector2f smallestDistance;
+	public Vector2f deltaDistance;
+	public Vector2f tilePos; 
+	public int cameraMargin = 250;
+	
+	float biggest = 0;
+	
+	
 	private boolean keyboardPlayer;
 
 	public GameCore(String title) {
 		super(title);
 	}
-	
-	
 
 	public void init(GameContainer container) throws SlickException {
 		cars = new ArrayList<Car>();
+		
 		redMustang = new Image("Sprites/fr_mustang_red.png");
 		blueMustang = new Image("Sprites/fr_mustang_blue.png");
 		greenMustang = new Image("Sprites/fr_mustang_green.png");
 		yellowMustang = new Image("Sprites/fr_mustang_yellow.png");
+		
 		longestDistance = new Vector2f();
+		smallestDistance = new Vector2f();
+		deltaDistance = new Vector2f();
+		tilePos = new Vector2f();
 		
 		font = new Font("Verdana", Font.BOLD, 20);
 		ttf = new TrueTypeFont(font, true);
@@ -74,35 +85,30 @@ public class GameCore extends BasicGame {
 			cars.update(container, deltaTime);
 		}
 				
-		longestDistance.x = 1;
-		longestDistance.y = 1;
-		for(int x = 0; x<cars.size();x++){
-			if(cars.get(x).position.x >longestDistance.x){
-				longestDistance.x = cars.get(x).position.x;
-			}
-			if(cars.get(x).position.y>longestDistance.y){
-				longestDistance.y = cars.get(x).position.y;
- 			}
-		}
-		
+		checkDistances();
 		zoomLogic();
-		camera.update(0,0);
+		
+		camera.update(smallestDistance.x-cameraMargin ,smallestDistance.y-cameraMargin);
 	}
 
 	
-
-
 
 	public void render(GameContainer container, Graphics g)
 			throws SlickException {
 		g.translate(camera.getX(), camera.getY()); //Start of camera
 		camera.zoom(g,(float) zoom);//Crasher om verdien <=0 
 		
-		level.render(g);
+		
+		level.render(g,tilePos);
 		for(Car cars: cars){
 			cars.render();
 		}
+		ttf.drawString(50,50, "X: " + deltaDistance.x + " Y: " + deltaDistance.y);
+		ttf.drawString(50,100,"Biggest: " + biggest);
+		
+		
 		g.translate(-camera.getX(), -camera.getY()); //End of camera
+		
 	}
 	
 	public void createPlayer(int nr, String id) throws SlickException{
@@ -126,16 +132,56 @@ public class GameCore extends BasicGame {
 	}
 	
 	private void zoomLogic() {
-		float deltaX = (200/longestDistance.x)*7;
-		//float deltaY = 200/longestDistance.y;
-		//System.out.println(deltaX + " " + deltaY);
-		if(deltaX < 1.6 && deltaX > 0.5){
-			zoom = (deltaX / initalZoom);
-			//zoom = deltaY * initalZoom;
+		float deltaX = deltaDistance.x/700;
+		float deltaY = deltaDistance.y/330;
+		float temp = zoom;
+		
+		if(deltaY>deltaX)
+			biggest=deltaY;
+		else
+			biggest=deltaX;
+		temp = initalZoom/ (biggest);
+		
+		if(temp > 1.2){
+			zoom = (float) 1.2;
+			System.out.println(zoom);
+		}else if(temp < 0.3){
+			zoom = (float) 0.3;
+		}else{
+			zoom = temp;
 		}
+		
+	}
+	
+	private void checkDistances() {
+		longestDistance.x = 1;
+		longestDistance.y = 1;
+		smallestDistance.x = level.getDistanceWidth();
+		smallestDistance.y = level.getDistanceHeight();
+		
+		for(int i = 0; i<cars.size();i++){
+			if(cars.get(i).position.x >longestDistance.x){
+				longestDistance.x = cars.get(i).position.x;
+			}
+			if(cars.get(i).position.x<smallestDistance.x){
+				smallestDistance.x = cars.get(i).position.x;
+			}
+			if(cars.get(i).position.y>longestDistance.y){
+				longestDistance.y = cars.get(i).position.y;
+ 			}
+			if(cars.get(i).position.y<smallestDistance.y){
+				smallestDistance.y = cars.get(i).position.y;
+			}
+		}
+		deltaDistance.x = longestDistance.x - smallestDistance.x;
+		deltaDistance.y = longestDistance.y - smallestDistance.y;
+		
+		tilePos.x = (int)(longestDistance.x/level.getTileWidth());
+		tilePos.y = (int)(longestDistance.y/level.getTileHeight());
 		
 		
 	}
+	
 	
 	public void checkForKeyboardInput(GameContainer container) throws SlickException{
 		Input input = container.getInput();

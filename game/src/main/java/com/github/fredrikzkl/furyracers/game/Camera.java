@@ -29,19 +29,19 @@ public class Camera {
 		x = -posX;
 		y = -posY;
 		
+		/*
 		
 		if(posX<0)
 			x = 0;
 		
 		if(posY <0)
 			y = 0;
-		
 		if(-x > edgeX)
 			x = -(edgeX);
 		
 		if(-y > edgeY)
 			y = -(edgeY);
-		
+		*/
 	}
 
 	public float getX() {
@@ -57,8 +57,6 @@ public class Camera {
 		g.scale(i, i);
 	}
 
-	
-	
 	
 }
 
