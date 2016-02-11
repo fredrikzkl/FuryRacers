@@ -29,7 +29,8 @@ public class GameCore extends BasicGame {
 	public static Camera camera;
 	public Level level = null;
 
-	public float zoom = (float) 1.6; //TODO
+	public float initalZoom = (float) 1.6; //TODO
+	public float zoom = (float) 1;
 	
 	Font font;
 	TrueTypeFont ttf;
@@ -62,7 +63,7 @@ public class GameCore extends BasicGame {
 		 
 		level = new Level(1);
 
-		camera = new Camera(Application.VIEW_HEIGHT/2,Application.VIEW_WIDTH/2,level);
+		camera = new Camera(0,0,level);
 		
 		
 	}
@@ -73,8 +74,8 @@ public class GameCore extends BasicGame {
 			cars.update(container, deltaTime);
 		}
 				
-		longestDistance.x = 0;
-		longestDistance.y = 0;
+		longestDistance.x = 1;
+		longestDistance.y = 1;
 		for(int x = 0; x<cars.size();x++){
 			if(cars.get(x).position.x >longestDistance.x){
 				longestDistance.x = cars.get(x).position.x;
@@ -85,7 +86,7 @@ public class GameCore extends BasicGame {
 		}
 		
 		zoomLogic();
-		camera.update(longestDistance.x,longestDistance.y);
+		camera.update(0,0);
 	}
 
 	
@@ -125,13 +126,15 @@ public class GameCore extends BasicGame {
 	}
 	
 	private void zoomLogic() {
-		if(longestDistance.x  > 100 || longestDistance.y > 100){
-			if(zoom>1)
-				zoom = (float) (zoom -0.0003);
-		}else{
-			if(zoom<1.6)
-				zoom = (float) (zoom -0.0003);
+		float deltaX = (200/longestDistance.x)*7;
+		//float deltaY = 200/longestDistance.y;
+		//System.out.println(deltaX + " " + deltaY);
+		if(deltaX < 1.6 && deltaX > 0.5){
+			zoom = (deltaX / initalZoom);
+			//zoom = deltaY * initalZoom;
 		}
+		
+		
 	}
 	
 	public void checkForKeyboardInput(GameContainer container) throws SlickException{
