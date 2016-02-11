@@ -33,7 +33,7 @@ public class Car {
 	Vector2f position = new Vector2f();
 	Vector2f unitCirclePos = new Vector2f();
 	
-	public Car(String name, String type, Image sprite,float topSpeed,
+	public Car(String name, String type,int playernr, Image sprite,float topSpeed,
 			float acceleration, float deAcceleration, float handling, float weight, Level level){
 		this.name = name;
 		this.type = type;
@@ -44,6 +44,8 @@ public class Car {
 		this.handling = handling;
 		this.weight = weight;
 		this.level = level;
+		
+		position.x = playernr * 5;
 	}
 	
 	public void update(GameContainer container, int deltaTime)throws SlickException{
@@ -82,17 +84,17 @@ public class Car {
 	public void buttonDown(String data){
 		disableKeyboardInput();
         switch(data){
-        	case "1": throttleKeyDown();System.out.println("throttleDown");break;
-        	case "2": rightKeyDown();System.out.println("rightDown");break;
-        	case "3": leftKeyDown();System.out.println("leftDown");break;
+        	case "1": throttleKeyDown();break;
+        	case "2": rightKeyDown();break;
+        	case "3": leftKeyDown();break;
         }
 	}
 	
 	public void buttonUp(String data){
 		switch(data){
-			case "1": throttleKeyUp();System.out.println("throttleUp");break;
-			case "2": rightKeyUp(); System.out.println("rightUp");break;
-			case "3": leftKeyUp();System.out.println("leftUp");break;
+			case "1": throttleKeyUp();break;
+			case "2": rightKeyUp();break;
+			case "3": leftKeyUp();break;
 		}
 	}
 	
@@ -100,7 +102,7 @@ public class Car {
 	
 	
 	public void reactToControlls(Input input, int deltaTime) {
-
+		/*
 		if(input != null){
 			usingKeyboard = true;
 		}
@@ -108,6 +110,7 @@ public class Car {
 			reactToKeyboard(input);
 		}
 
+		 */
 		if(throttleKeyIsDown) {
 			if(currentSpeed < topSpeed) {
 				currentSpeed += acceleration*deltaTime/1000;
@@ -143,25 +146,25 @@ public class Car {
 	
 	public void reactToKeyboard(Input input){
 
-		if(input.isKeyDown(Input.KEY_W)) {
+		if(input.isKeyDown(Input.KEY_UP)) {
             throttleKeyDown();
 	    }else {
 	    	throttleKeyUp();
 	    }
 
-		if(input.isKeyDown(Input.KEY_S)){
+		if(input.isKeyDown(Input.KEY_DOWN)){
 			reverseKeyDown();
 		}else{
 			reverseKeyUp();
 		}
 
-		if(input.isKeyDown(Input.KEY_A)){
+		if(input.isKeyDown(Input.KEY_LEFT)){
 			leftKeyDown();
 		}else{
 			leftKeyUp();
 		}
 
-		if(input.isKeyDown(Input.KEY_D)){
+		if(input.isKeyDown(Input.KEY_RIGHT)){
 			rightKeyDown();
 		}else{
 			rightKeyUp();

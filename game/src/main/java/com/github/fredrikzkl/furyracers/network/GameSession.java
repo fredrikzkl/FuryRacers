@@ -38,7 +38,7 @@ public class GameSession {
     private String player1Username = "Player 1";
     private String player2Username = "Player 2";
     
-    private List<Player> players;
+    private static List<Player> players;
 	
 	public GameSession(GameCore game) throws DeploymentException {
 		this.game = game;
@@ -129,13 +129,7 @@ public class GameSession {
 
                     break;
                 }
-                
-                if (player1.equals("") && data.equals("left")) {
-                    player1 = id;
-                } else if (player2.equals("") && data.equals("right")) {
-                    player2 = id;
-                }
-                
+             
 
                 sendToBackend("get username", id);
 
@@ -149,10 +143,19 @@ public class GameSession {
                 
                 for(int i = 0; i < players.size(); i++){
                 	if(players.get(i).getId().equals(from)){
-                		if(players.get(i).getPlayerNr() == 1)game.p1.buttonDown(data);
+                		if(players.get(i).getPlayerNr() == 1){
+                			game.p1.buttonDown(data);
+                			break;
+                		}
+                		
+                		try{
                 		if(players.get(i).getPlayerNr() == 2)game.p2.buttonDown(data);
-                		if(players.get(i).getPlayerNr() == 3)game.p2.buttonDown(data);
-                		if(players.get(i).getPlayerNr() == 4)game.p2.buttonDown(data);
+                		}catch(NullPointerException e){
+                			printPlayers();
+                		}
+                		
+                		if(players.get(i).getPlayerNr() == 3)game.p3.buttonDown(data);
+                		if(players.get(i).getPlayerNr() == 4)game.p4.buttonDown(data);
                 	}
                 }
                 if (!jsonObj.containsKey("from")) {
@@ -167,10 +170,18 @@ public class GameSession {
             	
             	for(int i = 0; i < players.size(); i++){
                 	if(players.get(i).getId().equals(from)){
-                		if(players.get(i).getPlayerNr() == 1)game.p1.buttonUp(data);
-                		if(players.get(i).getPlayerNr() == 2)game.p2.buttonUp(data);
-                		if(players.get(i).getPlayerNr() == 3)game.p2.buttonUp(data);
-                		if(players.get(i).getPlayerNr() == 4)game.p2.buttonUp(data);
+                		if(players.get(i).getPlayerNr() == 1){
+                			game.p1.buttonUp(data);
+                			game.p1.disableKeyboardInput();
+                			break;
+                		}
+                		if(players.get(i).getPlayerNr() == 2){
+                			game.p2.buttonUp(data);
+                			game.p2.disableKeyboardInput();
+                			break;
+                		}
+                		if(players.get(i).getPlayerNr() == 3)game.p3.buttonUp(data);
+                		if(players.get(i).getPlayerNr() == 4)game.p4.buttonUp(data);
                 	}
                 }
                 if (!jsonObj.containsKey("from")) {
@@ -211,6 +222,7 @@ public class GameSession {
 	
 	private void printPlayers() {
 		int count = 0;
+		System.out.println("--Player list--");
 		for(Player player : players){
         	System.out.println(players.get(count));
         	count++;

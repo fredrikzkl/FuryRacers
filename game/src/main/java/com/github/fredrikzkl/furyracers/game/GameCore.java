@@ -63,7 +63,6 @@ public class GameCore extends BasicGame {
 	}
 
 	public void update(GameContainer container, int deltaTime) throws SlickException {
-		
 		for(Car cars: cars){
 			cars.update(container, deltaTime);
 		}
@@ -84,14 +83,12 @@ public class GameCore extends BasicGame {
 	
 	public void createPlayer(int nr, String id) throws SlickException{
 		if(nr == 1){
-		p1 = new Car(id, "medium",redMustang,
-				480,100,75,110,1, level);
-		cars.add(p1);
+			p1 = new Car(id, "medium", 1,redMustang,480,100,75,110,1, level);
+			cars.add(p1);
 		}
 		if(nr == 2){
-		p1 = new Car(id, "medium",blueMustang,
-				480,100,75,110,1, level);
-		cars.add(p2);
+			p2 = new Car(id, "medium", 2,blueMustang,480,100,75,110,1, level);
+			cars.add(p2);
 		}
 		
 	}
