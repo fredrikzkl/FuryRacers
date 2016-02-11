@@ -62,7 +62,7 @@ public class Application {
 			screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 			//Display.setResizable(true);
 			AppGameContainer app = new AppGameContainer(new ScalableGame(game, (int)screenSize.getWidth(), (int)screenSize.getHeight()));
-			app.setDisplayMode((int)screenSize.getWidth()/2, (int)screenSize.getHeight()/2, false);
+			app.setDisplayMode((int)screenSize.getWidth(), (int)screenSize.getHeight(), true);
 			//app.setTargetFrameRate(FPS);
 			// app.setMouseGrabbed(true);
 			app.setAlwaysRender(true);

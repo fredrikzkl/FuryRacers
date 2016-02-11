@@ -19,6 +19,8 @@ public class Camera {
 		x = startX;
 		y= startY;
 		
+		
+		
 		edgeX = (float) (level.map.getWidth()*level.map.getTileWidth() - Application.screenSize.getWidth());
 		edgeY = (float) (level.map.getHeight()*level.map.getTileHeight() - Application.screenSize.getHeight());
 	}

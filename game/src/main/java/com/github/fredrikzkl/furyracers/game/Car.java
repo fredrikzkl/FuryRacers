@@ -25,7 +25,7 @@ public class Car {
 	float movementDegrees = 0;
 	float radDeg = 0;
 	
-	float carSize = (float) 0.4;
+	float carSize = (float) 0.3;
 	
 	private Level level;
 	private int tilePosX, tilePosY;
@@ -45,7 +45,6 @@ public class Car {
 		this.weight = weight;
 		this.level = level;
 		
-		position.x = playernr * 5;
 	}
 	
 	public void update(GameContainer container, int deltaTime)throws SlickException{
@@ -102,15 +101,12 @@ public class Car {
 	
 	
 	public void reactToControlls(Input input, int deltaTime) {
-		/*
-		if(input != null){
-			usingKeyboard = true;
-		}
+		
 		if(usingKeyboard){
 			reactToKeyboard(input);
 		}
 
-		 */
+		
 		if(throttleKeyIsDown) {
 			if(currentSpeed < topSpeed) {
 				currentSpeed += acceleration*deltaTime/1000;

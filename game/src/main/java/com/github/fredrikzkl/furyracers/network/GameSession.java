@@ -108,17 +108,13 @@ public class GameSession {
             case "dropped client": {
                 String id = jsonObj.getString("data");
                 int spot = 0;
-    
                 for(Player player: players){
                 	if(player.getId().equals(id)){
                 		spot = player.getPlayerNr();
                 	}
                 }
-                
                 players.remove(spot);
-
-                System.out.println("Player " + id + " dropped!");
-
+                System.out.println("Player " + id + " dropped! Player slot " + spot + " removed");
                 break;
             }
 

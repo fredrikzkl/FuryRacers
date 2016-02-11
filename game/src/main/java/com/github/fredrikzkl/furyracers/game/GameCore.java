@@ -29,7 +29,7 @@ public class GameCore extends BasicGame {
 	public static Camera camera;
 	public Level level = null;
 
-	public float zoom = (float) 1; //TODO
+	public float zoom = (float) 1.6; //TODO
 	
 	Font font;
 	TrueTypeFont ttf;
@@ -39,6 +39,9 @@ public class GameCore extends BasicGame {
 	public Car p3;
 	public Car p4;
 	public List<Car> cars;
+	
+	public Vector2f longestDistance;
+	private boolean keyboardPlayer;
 
 	public GameCore(String title) {
 		super(title);
@@ -50,7 +53,9 @@ public class GameCore extends BasicGame {
 		cars = new ArrayList<Car>();
 		redMustang = new Image("Sprites/fr_mustang_red.png");
 		blueMustang = new Image("Sprites/fr_mustang_blue.png");
-		
+		greenMustang = new Image("Sprites/fr_mustang_green.png");
+		yellowMustang = new Image("Sprites/fr_mustang_yellow.png");
+		longestDistance = new Vector2f();
 		
 		font = new Font("Verdana", Font.BOLD, 20);
 		ttf = new TrueTypeFont(font, true);
@@ -63,22 +68,40 @@ public class GameCore extends BasicGame {
 	}
 
 	public void update(GameContainer container, int deltaTime) throws SlickException {
+		checkForKeyboardInput(container);
 		for(Car cars: cars){
 			cars.update(container, deltaTime);
 		}
+				
+		longestDistance.x = 0;
+		longestDistance.y = 0;
+		for(int x = 0; x<cars.size();x++){
+			if(cars.get(x).position.x >longestDistance.x){
+				longestDistance.x = cars.get(x).position.x;
+			}
+			if(cars.get(x).position.y>longestDistance.y){
+				longestDistance.y = cars.get(x).position.y;
+ 			}
+		}
 		
-		//camera.update((position.x*zoom - Application.VIEW_WIDTH/2)/zoom, (position.y*zoom - Application.VIEW_HEIGHT/2)/zoom);
+		zoomLogic();
+		camera.update(longestDistance.x,longestDistance.y);
 	}
+
+	
+
+
 
 	public void render(GameContainer container, Graphics g)
 			throws SlickException {
-		//g.translate(camera.getX()*zoom, camera.getY()*zoom); //Start of camera
+		g.translate(camera.getX(), camera.getY()); //Start of camera
 		camera.zoom(g,(float) zoom);//Crasher om verdien <=0 
+		
 		level.render(g);
 		for(Car cars: cars){
 			cars.render();
 		}
-		//g.translate(-camera.getX()*zoom, -camera.getY()*zoom); //End of camera
+		g.translate(-camera.getX(), -camera.getY()); //End of camera
 	}
 	
 	public void createPlayer(int nr, String id) throws SlickException{
@@ -90,8 +113,35 @@ public class GameCore extends BasicGame {
 			p2 = new Car(id, "medium", 2,blueMustang,480,100,75,110,1, level);
 			cars.add(p2);
 		}
+		if(nr == 3){
+			p3 = new Car(id, "medium", 3,greenMustang,480,100,75,110,1, level);
+			cars.add(p3);
+		}
+		if(nr ==4){
+			p4 = new Car(id, "medium", 4,yellowMustang,480,100,75,110,1, level);
+			cars.add(p4);
+		}
 		
-		
+	}
+	
+	private void zoomLogic() {
+		if(longestDistance.x  > 100 || longestDistance.y > 100){
+			if(zoom>1)
+				zoom = (float) (zoom -0.0003);
+		}else{
+			if(zoom<1.6)
+				zoom = (float) (zoom -0.0003);
+		}
+	}
+	
+	public void checkForKeyboardInput(GameContainer container) throws SlickException{
+		Input input = container.getInput();
+		if(input.isKeyDown(Input.KEY_A) && !keyboardPlayer){
+			int amountOfPlayers = cars.size();
+			createPlayer(amountOfPlayers+1,"futureReference");
+			cars.get(amountOfPlayers).activateKeyboardInput();
+			keyboardPlayer = true;
+		}
 	}
 
 
