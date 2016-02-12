@@ -67,7 +67,6 @@ public class GameSession {
 	}
 	
 
-	
 	public void onMessage(Session session, String message)throws IOException, EncodeException, SlickException {
 		JsonReader jsonReader = Json.createReader(new StringReader(message));
 
@@ -127,7 +126,6 @@ public class GameSession {
 
                     break;
                 }
-             
 
                 sendToBackend("get username", id);
 
@@ -214,7 +212,6 @@ public class GameSession {
 			System.out.println("Player: '" + from + "' doesnt exist as a player! Added to plyerlist..");
 			addPlayer(from);
 		}
-		
 	}
 	
 	private void addPlayer(String id) throws IOException, EncodeException, SlickException{

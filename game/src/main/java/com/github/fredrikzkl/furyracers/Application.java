@@ -32,7 +32,6 @@ public class Application extends StateBasedGame {
 
 	public Application(String gameName) {
 		super(gameName);
-		game = new GameCore(GameCore);
 		this.addState(new Menu(menu));
 		this.addState(game);
 	}
@@ -60,6 +59,7 @@ public class Application extends StateBasedGame {
 
 	private static void createGameSession() {
 		try {
+			game = new GameCore(GameCore);
 			gameSession = new GameSession(game);
 			gameSession.connect();
 		} catch (Exception e) {
