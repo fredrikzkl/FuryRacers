@@ -108,7 +108,7 @@ public class GameCore extends BasicGameState {
 		
 		g.translate(-camera.getX(), -camera.getY()); //End of camera
 		
-		ttf.drawString(Application.screenSize.width-300, Application.screenSize.height-30, IP); //Ip addresene nederst i venstre corner
+		ttf.drawString(Application.screenSize.width-300, 0, IP); //Ip addresene nederst i venstre corner
 		
 	}
 	
