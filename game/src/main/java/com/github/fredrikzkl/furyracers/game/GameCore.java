@@ -108,7 +108,7 @@ public class GameCore extends BasicGameState {
 		
 		g.translate(-camera.getX(), -camera.getY()); //End of camera
 		
-		ttf.drawString(Application.screenSize.width-250, Application.screenSize.height-30, IP); //Ip addresene nederst i venstre corner
+		ttf.drawString(Application.screenSize.width-300, Application.screenSize.height-30, IP); //Ip addresene nederst i venstre corner
 		
 	}
 	
@@ -196,7 +196,7 @@ public class GameCore extends BasicGameState {
 	}
 
 	public void setIP(String iP) {
-		IP = iP;
+		IP = iP + "/fury";
 	}
 
 }

@@ -87,6 +87,5 @@ public class Application extends StateBasedGame {
 		createGameSession();
 		startGame();
 	}
-
 	
 }
