@@ -4,6 +4,8 @@ var game = new Phaser.Game(800, 600, Phaser.AUTO, 'game', {
     update: update
 });
 
+var IP;
+
 var GREY = "0xbebbbd";
 var BLACK = "0x111213";
 var WHITE = "0xffffff";
@@ -23,6 +25,8 @@ var buttonDown = function(buttonID){};
 var buttonUp = function(buttonID){};
 
 function preload() {
+
+
      addMessageHandler(function(msg){
         if(msg == "identified"){
 
@@ -35,6 +39,8 @@ function preload() {
               console.log("up");
               sendToGame("buttonUp", buttonID);
             }
+
+            sendToBackend("get ip");
         }
     });
 }
@@ -46,12 +52,12 @@ function create(){
 
     game.stage.backgroundColor = BLACK;
 
-   
+
      createControllerLayout();
 
     game.input.onDown.add(function(pointer) {    //Reagerer på all trykk ned(onDown) på game området ==> game.input
       var data;
-      
+
       if (pointer.targetObject) {                // Hvis trykk skjer på en knapp ==> pointer.targetObject == true;
         data = pointer.targetObject.sprite.data; // Henter data(knappID/buttonID) fra knappen som har blitt trykket.
         buttonDown(data);
@@ -90,7 +96,7 @@ function createControllerLayout(){
       game.stage.height/1.96,
       game.stage.width/2/2.1,
       game.stage.height/4.35);
-    
+
     arrowRight = game.add.graphics(0,0);
     arrowRight.beginFill(BLACK,1);
     arrowRight.drawRect(
@@ -112,12 +118,12 @@ function createControllerLayout(){
     redButton.drawCircle(game.stage.width/1.265, //Posisjon x
     game.stage.height/1.6, //Posisjon y
     game.stage.width/4.3);
-    
+
     addInput();
 }
 
 function addInput(){
-    
+
     spriteRedButton = game.add.sprite(0, 0);
     spriteRedButton.addChild(redButton);
     spriteRedButton.data = 1;  //knappID/buttonID

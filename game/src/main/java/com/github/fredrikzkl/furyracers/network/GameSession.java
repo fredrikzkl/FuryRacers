@@ -28,7 +28,7 @@ public class GameSession {
 	private final GameCore game;
 	
 	private Session backend;
-	
+
 	private int playerNumber;
 	
 	private String player1;
@@ -39,6 +39,7 @@ public class GameSession {
     private String player2Username = "Player 2";
     
     private static List<Player> players;
+    
 	
 	public GameSession(GameCore game) throws DeploymentException {
 		this.game = game;
@@ -57,6 +58,7 @@ public class GameSession {
 		player1 = "";
 		player2 = "";
 		sendToBackend("identify", "game");
+		sendToBackend("get ip","");
 	}
 
 	private void sendToBackend(String action, String data) throws IOException, EncodeException {
@@ -198,6 +200,11 @@ public class GameSession {
                 from = jsonObj.getString("from");
                 break;
             }
+            
+            case "get ip":{
+            	String ip = jsonObj.getJsonString("data").toString();
+            	game.setIP(ip);
+            }
         }
     }
 
@@ -235,4 +242,7 @@ public class GameSession {
         	count++;
         }
 	}
+
+	
+	
 }

@@ -19,7 +19,9 @@ import org.newdawn.slick.state.StateBasedGame;
 import com.github.fredrikzkl.furyracers.Application;
 
 public class GameCore extends BasicGameState {
-
+	
+	private String IP = "";
+	
 	Image p1car = null;
 	SpriteSheet sprite;
 	
@@ -59,6 +61,7 @@ public class GameCore extends BasicGameState {
 	}
 
 	public void init(GameContainer container, StateBasedGame sbg) throws SlickException {
+		
 		cars = new ArrayList<Car>();
 		
 		redMustang = new Image("Sprites/fr_mustang_red.png");
@@ -104,6 +107,8 @@ public class GameCore extends BasicGameState {
 		ttf.drawString(50,100,"Biggest: " + biggest);
 		
 		g.translate(-camera.getX(), -camera.getY()); //End of camera
+		
+		ttf.drawString(Application.screenSize.width-250, Application.screenSize.height-30, IP); //Ip addresene nederst i venstre corner
 		
 	}
 	
@@ -190,5 +195,8 @@ public class GameCore extends BasicGameState {
 		return 1;
 	}
 
+	public void setIP(String iP) {
+		IP = iP;
+	}
 
 }
