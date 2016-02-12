@@ -2,17 +2,23 @@ package com.github.fredrikzkl.furyracers;
 
 import com.github.fredrikzkl.furyracers.game.GameCore;
 import com.github.fredrikzkl.furyracers.game.Level;
-
 import com.github.fredrikzkl.furyracers.network.GameSession;
+import com.github.fredrikzkl.furyracers.Menu;
 
 import org.lwjgl.opengl.Display;
 import org.newdawn.slick.AppGameContainer;
+import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.ScalableGame;
 import org.newdawn.slick.SlickException;
+import org.newdawn.slick.state.StateBasedGame;
 
 import java.awt.*;
 
-public class Application {
+public class Application extends StateBasedGame {
+	
+	private final static String gameName = "FuryRacers";
+	private final static int menu = 0;
+	private final static int GameCore = 1;
 	private static GameCore game;
 	private static GameSession gameSession;
 	
@@ -24,10 +30,17 @@ public class Application {
 	public static final int VIEW_WIDTH = WIDTH * 16; //TODO
 	public static final int FPS = 120;
 
-	private Application() {
-		game = new GameCore("Fury");
-		createGameSession();
-		startGame();
+	public Application(String gameName) {
+		super(gameName);
+		game = new GameCore(GameCore);
+		this.addState(new Menu(menu));
+		this.addState(game);
+	}
+	
+	public void initStatesList(GameContainer container) throws SlickException {
+		this.getState(menu).init(container, this);
+		this.getState(GameCore).init(container, this);
+		this.enterState(GameCore);
 	}
 
 	public static GameSession getGameSession() {
@@ -44,11 +57,8 @@ public class Application {
 		System.exit(1);
 	}
 
-	public static void main(String[] args) {
-		new Application();
-	}
 
-	private void createGameSession() {
+	private static void createGameSession() {
 		try {
 			gameSession = new GameSession(game);
 			gameSession.connect();
@@ -57,11 +67,11 @@ public class Application {
 		}
 	}
 	
-	private void startGame() {
+	private static void startGame() {
 		try {
 			screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 			//Display.setResizable(true);
-			AppGameContainer app = new AppGameContainer(new ScalableGame(game, (int)screenSize.getWidth(), (int)screenSize.getHeight()));
+			AppGameContainer app = new AppGameContainer(new ScalableGame(new Application(gameName), (int)screenSize.getWidth(), (int)screenSize.getHeight()));
 			app.setDisplayMode((int)screenSize.getWidth(), (int)screenSize.getHeight(), true);
 			//app.setTargetFrameRate(FPS);
 			// app.setMouseGrabbed(true);
@@ -72,4 +82,11 @@ public class Application {
 			fatalError("Could not start FuryRacers: " + e.getMessage());
 		}
 	}
+	
+	public static void main(String[] args) {
+		createGameSession();
+		startGame();
+	}
+
+	
 }

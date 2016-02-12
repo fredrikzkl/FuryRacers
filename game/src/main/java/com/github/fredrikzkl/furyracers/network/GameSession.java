@@ -228,7 +228,6 @@ public class GameSession {
 	    	System.out.println("Player '" + id + "' successfully added to the game! Assigned as player: " + playerNumber);
 	    	playerNumber++;
 		}
-    	
 	}
 	
 	private void printPlayers() {
@@ -239,12 +238,4 @@ public class GameSession {
         	count++;
         }
 	}
-
-        
-	}
-	
-
-	
-	
-	
-	
+}

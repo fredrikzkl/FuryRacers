@@ -4,6 +4,7 @@ import org.newdawn.slick.Image;
 import org.newdawn.slick.Input;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.geom.Vector2f;
+import org.newdawn.slick.state.StateBasedGame;
 import org.newdawn.slick.GameContainer;
 
 public class Car {
@@ -47,7 +48,7 @@ public class Car {
 		
 	}
 	
-	public void update(GameContainer container, int deltaTime)throws SlickException{
+	public void update(GameContainer container, StateBasedGame game, int deltaTime)throws SlickException{
 		Input input = container.getInput();
 		reactToControlls(input, deltaTime);
 		

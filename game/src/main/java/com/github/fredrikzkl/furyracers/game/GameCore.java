@@ -13,10 +13,12 @@ import org.newdawn.slick.SlickException;
 import org.newdawn.slick.SpriteSheet;
 import org.newdawn.slick.TrueTypeFont;
 import org.newdawn.slick.geom.Vector2f;
+import org.newdawn.slick.state.BasicGameState;
+import org.newdawn.slick.state.StateBasedGame;
 
 import com.github.fredrikzkl.furyracers.Application;
 
-public class GameCore extends BasicGame {
+public class GameCore extends BasicGameState {
 
 	Image p1car = null;
 	SpriteSheet sprite;
@@ -52,11 +54,11 @@ public class GameCore extends BasicGame {
 	
 	private boolean keyboardPlayer;
 
-	public GameCore(String title) {
-		super(title);
+	public GameCore(int state) {
+		
 	}
 
-	public void init(GameContainer container) throws SlickException {
+	public void init(GameContainer container, StateBasedGame sbg) throws SlickException {
 		cars = new ArrayList<Car>();
 		
 		redMustang = new Image("Sprites/fr_mustang_red.png");
@@ -75,29 +77,24 @@ public class GameCore extends BasicGame {
 		level = new Level(1);
 
 		camera = new Camera(0,0,level);
-		
-		
 	}
 
-	public void update(GameContainer container, int deltaTime) throws SlickException {
+	public void update(GameContainer container , StateBasedGame sbg, int deltaTime) throws SlickException {
 		checkForKeyboardInput(container);
 		for(Car cars: cars){
-			cars.update(container, deltaTime);
+			cars.update(container, sbg, deltaTime);
 		}
 				
 		checkDistances();
-		zoomLogic();
+		//zoomLogic();
 		
 		camera.update(smallestDistance.x-cameraMargin ,smallestDistance.y-cameraMargin);
 	}
 
-	
-
-	public void render(GameContainer container, Graphics g)
+	public void render(GameContainer container, StateBasedGame sbg, Graphics g)
 			throws SlickException {
 		g.translate(camera.getX(), camera.getY()); //Start of camera
-		camera.zoom(g,(float) zoom);//Crasher om verdien <=0 
-		
+		//camera.zoom(g,(float) zoom);//Crasher om verdien <=0 
 		
 		level.render(g,tilePos);
 		for(Car cars: cars){
@@ -105,7 +102,6 @@ public class GameCore extends BasicGame {
 		}
 		ttf.drawString(50,50, "X: " + deltaDistance.x + " Y: " + deltaDistance.y);
 		ttf.drawString(50,100,"Biggest: " + biggest);
-		
 		
 		g.translate(-camera.getX(), -camera.getY()); //End of camera
 		
@@ -124,7 +120,7 @@ public class GameCore extends BasicGame {
 			p3 = new Car(id, "medium", 3,greenMustang,480,100,75,110,1, level);
 			cars.add(p3);
 		}
-		if(nr ==4){
+		if(nr == 4){
 			p4 = new Car(id, "medium", 4,yellowMustang,480,100,75,110,1, level);
 			cars.add(p4);
 		}
@@ -150,7 +146,6 @@ public class GameCore extends BasicGame {
 		}else{
 			zoom = temp;
 		}
-		
 	}
 	
 	private void checkDistances() {
@@ -178,10 +173,7 @@ public class GameCore extends BasicGame {
 		
 		tilePos.x = (int)(longestDistance.x/level.getTileWidth());
 		tilePos.y = (int)(longestDistance.y/level.getTileHeight());
-		
-		
 	}
-	
 	
 	public void checkForKeyboardInput(GameContainer container) throws SlickException{
 		Input input = container.getInput();
@@ -193,6 +185,10 @@ public class GameCore extends BasicGame {
 		}
 	}
 
-
+	public int getID() {
 	
+		return 1;
+	}
+
+
 }
