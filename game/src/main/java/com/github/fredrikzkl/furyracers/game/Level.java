@@ -46,24 +46,18 @@ public class Level {
 				map.setTileId(i,j,edgeLayer,777);
 			}
 		}*/
-		
 		distanceHeight = map.getTileHeight() * map.getHeight();
 		distanceWidth = map.getTileWidth() * map.getWidth();
-		
 		determineStartPosition();
 	}
 
 	private void determineStartPosition() {
-		try{
-			for(int x = 0; x<map.getWidth();x++){
-				for(int y = 0/tileHeight; y<map.getHeight(); y++){
-					if(map.getTileProperty(map.getTileId(x, y, 1), "startPoss", "-1").equals("start")) {
-						startCoordinates = new Vector2f(x*tileWidth,y*tileHeight);
-					}
+		for(int x = 0; x<map.getWidth();x++){
+			for(int y = 0/tileHeight; y<map.getHeight(); y++){
+				if(map.getTileProperty(map.getTileId(x, y, 1), "startPos", "-1").equals("start")) {
+					startCoordinates = new Vector2f(x*tileWidth,y*tileHeight);
 				}
 			}
-		}catch (NullPointerException e){
-			System.out.println("No start position was found, please place a starting line in your map!");
 		}
 	}
 
