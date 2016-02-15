@@ -114,20 +114,31 @@ public class GameCore extends BasicGameState {
 	
 	public void createPlayer(int nr, String id) throws SlickException{
 		if(nr == 1){
-			p1 = new Car(id, "medium", 1,redMustang,level.getStartCoordinates().x,level.getStartCoordinates().y,
+			p1 = new Car(id, "medium", 1,redMustang,
+					level.getStartCoordinates().x-(level.tileWidth*4),
+					level.getStartCoordinates().y-(level.tileHeight*4),
 					480,100,75,110,1, level);
 			cars.add(p1);
 		}
 		if(nr == 2){
-			p2 = new Car(id, "medium", 2,blueMustang,0,0,480,100,75,110,1, level);
+			p2 = new Car(id, "medium", 2,blueMustang,
+					level.getStartCoordinates().x-(level.tileWidth*4),
+					level.getStartCoordinates().y-(level.tileHeight*1),
+					480,100,75,110,1, level);
 			cars.add(p2);
 		}
 		if(nr == 3){
-			p3 = new Car(id, "medium", 3,greenMustang,0,0,480,100,75,110,1, level);
+			p3 = new Car(id, "medium", 3,greenMustang,
+					level.getStartCoordinates().x-(level.tileWidth*4),
+					level.getStartCoordinates().y+(level.tileHeight*1),
+					480,100,75,110,1, level);
 			cars.add(p3);
 		}
 		if(nr == 4){
-			p4 = new Car(id, "medium", 4,yellowMustang,480,0,0,100,75,110,1, level);
+			p4 = new Car(id, "medium", 4,yellowMustang,480,
+					level.getStartCoordinates().x-(level.tileWidth*4),
+					level.getStartCoordinates().y+(level.tileHeight*64),
+					100,75,110,1, level);
 			cars.add(p4);
 		}
 		

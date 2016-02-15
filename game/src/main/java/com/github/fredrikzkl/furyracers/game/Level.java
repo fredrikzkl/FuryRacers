@@ -51,10 +51,7 @@ public class Level {
 		distanceWidth = map.getTileWidth() * map.getWidth();
 		
 	
-		
-		
-		
-		
+
 		for(int x = 0; x<map.getWidth();x++){
 			for(int y = 0/tileHeight; y<map.getHeight(); y++){
 				if(map.getTileProperty(map.getTileId(x, y, 1), "startPos", "-1").equals("start")) {
