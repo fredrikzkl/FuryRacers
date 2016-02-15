@@ -22,6 +22,8 @@ public class Level {
 	float distanceWidth;
 	float distanceHeight;
 	
+	private Vector2f startCoordinates;
+	
 	public Level(int id) {
 		
 		path = Dpath + id + ".tmx";
@@ -47,6 +49,23 @@ public class Level {
 		
 		distanceHeight = map.getTileHeight() * map.getHeight();
 		distanceWidth = map.getTileWidth() * map.getWidth();
+		
+	
+		
+		
+		
+		
+		for(int x = 0; x<map.getWidth();x++){
+			for(int y = 0/tileHeight; y<map.getHeight(); y++){
+				if(map.getTileProperty(map.getTileId(x, y, 1), "startPos", "-1").equals("start")) {
+					startCoordinates = new Vector2f(x*tileWidth,y*tileHeight);
+				}
+			}
+		}
+		
+		
+
+			
 	}
 
 	public void render(Graphics g, Vector2f tilePos) {
@@ -80,7 +99,12 @@ public class Level {
 	public float getDistanceHeight() {
 		return distanceHeight;
 	}
+	
 
+	public Vector2f getStartCoordinates() {
+		return startCoordinates;
+	}
+	
 	
 	
 }

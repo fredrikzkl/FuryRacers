@@ -61,7 +61,7 @@ public class GameCore extends BasicGameState {
 	}
 
 	public void init(GameContainer container, StateBasedGame sbg) throws SlickException {
-		
+		System.out.println("IP: " + IP);
 		cars = new ArrayList<Car>();
 		
 		redMustang = new Image("Sprites/fr_mustang_red.png");
@@ -114,19 +114,20 @@ public class GameCore extends BasicGameState {
 	
 	public void createPlayer(int nr, String id) throws SlickException{
 		if(nr == 1){
-			p1 = new Car(id, "medium", 1,redMustang,480,100,75,110,1, level);
+			p1 = new Car(id, "medium", 1,redMustang,level.getStartCoordinates().x,level.getStartCoordinates().y,
+					480,100,75,110,1, level);
 			cars.add(p1);
 		}
 		if(nr == 2){
-			p2 = new Car(id, "medium", 2,blueMustang,480,100,75,110,1, level);
+			p2 = new Car(id, "medium", 2,blueMustang,0,0,480,100,75,110,1, level);
 			cars.add(p2);
 		}
 		if(nr == 3){
-			p3 = new Car(id, "medium", 3,greenMustang,480,100,75,110,1, level);
+			p3 = new Car(id, "medium", 3,greenMustang,0,0,480,100,75,110,1, level);
 			cars.add(p3);
 		}
 		if(nr == 4){
-			p4 = new Car(id, "medium", 4,yellowMustang,480,100,75,110,1, level);
+			p4 = new Car(id, "medium", 4,yellowMustang,480,0,0,100,75,110,1, level);
 			cars.add(p4);
 		}
 		

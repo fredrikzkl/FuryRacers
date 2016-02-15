@@ -31,10 +31,10 @@ public class Car {
 	private Level level;
 	private int tilePosX, tilePosY;
 	
-	Vector2f position = new Vector2f();
+	Vector2f position;
 	Vector2f unitCirclePos = new Vector2f();
 	
-	public Car(String name, String type,int playernr, Image sprite,float topSpeed,
+	public Car(String name, String type,int playernr, Image sprite, float startX, float startY,float topSpeed,
 			float acceleration, float deAcceleration, float handling, float weight, Level level){
 		this.name = name;
 		this.type = type;
@@ -45,6 +45,8 @@ public class Car {
 		this.handling = handling;
 		this.weight = weight;
 		this.level = level;
+		
+		position = new Vector2f(startX,startY);
 		
 	}
 	
