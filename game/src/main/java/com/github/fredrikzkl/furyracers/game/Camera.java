@@ -4,9 +4,6 @@ import org.newdawn.slick.Graphics;
 
 import com.github.fredrikzkl.furyracers.Application;
 
-
-
-
 public class Camera {
 	
 	private float x,y;
@@ -19,8 +16,6 @@ public class Camera {
 		x = startX;
 		y= startY;
 		
-		
-		
 		edgeX = (float) (level.map.getWidth()*level.map.getTileWidth() - Application.screenSize.getWidth());
 		edgeY = (float) (level.map.getHeight()*level.map.getTileHeight() - Application.screenSize.getHeight());
 	}
@@ -28,8 +23,6 @@ public class Camera {
 	public void update(float posX, float posY) {
 		x = -posX;
 		y = -posY;
-		
-		/*
 		
 		if(posX<0)
 			x = 0;
@@ -41,7 +34,7 @@ public class Camera {
 		
 		if(-y > edgeY)
 			y = -(edgeY);
-		*/
+		
 	}
 
 	public float getX() {
@@ -56,7 +49,5 @@ public class Camera {
 	public void zoom(Graphics g, float i) {
 		g.scale(i, i);
 	}
-
-	
 }
 

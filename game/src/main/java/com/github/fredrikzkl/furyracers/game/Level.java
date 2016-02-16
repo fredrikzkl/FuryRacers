@@ -39,12 +39,6 @@ public class Level {
 		mapWidth = map.getWidth();
 		mapHeight = map.getHeight();
 		
-		/*for(int i = 0; i < mapWidth; i++){
-			for(int j = 0; j < mapHeight; j++){
-				map.setTileId(i,j,edgeLayer,777);
-			}
-		}*/
-		
 		distanceHeight = map.getTileHeight() * map.getHeight();
 		distanceWidth = map.getTileWidth() * map.getWidth();
 	}
@@ -80,7 +74,4 @@ public class Level {
 	public float getDistanceHeight() {
 		return distanceHeight;
 	}
-
-	
-	
 }

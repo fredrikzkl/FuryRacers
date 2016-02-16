@@ -44,9 +44,4 @@ public class Player {
 		return "Player " + getPlayerNr() + " ID:'" + getId() +"'";
 		
 	}
-
-	
-	
-	
-	
 }

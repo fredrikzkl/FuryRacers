@@ -3,8 +3,6 @@ package com.github.fredrikzkl.furyracers.game;
 import java.awt.Font;
 import java.util.ArrayList;
 import java.util.List;
-
-import org.newdawn.slick.BasicGame;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
@@ -53,7 +51,6 @@ public class GameCore extends BasicGameState {
 	
 	float biggest = 0;
 	
-	
 	private boolean keyboardPlayer;
 
 	public GameCore(int state) {
@@ -99,6 +96,7 @@ public class GameCore extends BasicGameState {
 		g.translate(camera.getX(), camera.getY()); //Start of camera
 		//camera.zoom(g,(float) zoom);//Crasher om verdien <=0 
 		
+		
 		level.render(g,tilePos);
 		for(Car cars: cars){
 			cars.render();
@@ -108,25 +106,27 @@ public class GameCore extends BasicGameState {
 		
 		g.translate(-camera.getX(), -camera.getY()); //End of camera
 		
+		//g.setWorldClip(smallestDistance.x-cameraMargin,smallestDistance.y-cameraMargin, 300, 300);
+		
 		ttf.drawString(Application.screenSize.width-300, Application.screenSize.height-30, IP); //Ip addresene nederst i venstre corner
 		
 	}
 	
 	public void createPlayer(int nr, String id) throws SlickException{
 		if(nr == 1){
-			p1 = new Car(id, "medium", 1,redMustang,480,100,75,110,1, level);
+			p1 = new Car(id, "medium", 1,redMustang,480, 200, 100,105,60, 110,1, level);
 			cars.add(p1);
 		}
 		if(nr == 2){
-			p2 = new Car(id, "medium", 2,blueMustang,480,100,75,110,1, level);
+			p2 = new Car(id, "medium", 1,redMustang,480, 200, 100,105,60, 110,1, level);
 			cars.add(p2);
 		}
 		if(nr == 3){
-			p3 = new Car(id, "medium", 3,greenMustang,480,100,75,110,1, level);
+			p3 = new Car(id, "medium", 1,redMustang,480, 200, 100,105,60, 110,1, level);
 			cars.add(p3);
 		}
 		if(nr == 4){
-			p4 = new Car(id, "medium", 4,yellowMustang,480,100,75,110,1, level);
+			p4 = new Car(id, "medium", 1,redMustang,480, 200, 100,105,60, 110,1, level);
 			cars.add(p4);
 		}
 		
@@ -189,14 +189,13 @@ public class GameCore extends BasicGameState {
 			keyboardPlayer = true;
 		}
 	}
-
-	public int getID() {
 	
-		return 1;
-	}
-
 	public void setIP(String iP) {
 		IP = iP + "/fury";
+	}
+
+	public int getID() {
+		return 1;
 	}
 
 }

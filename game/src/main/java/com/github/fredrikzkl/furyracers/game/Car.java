@@ -14,10 +14,11 @@ public class Car {
 	public Image sprite;
 	
 	public float topSpeed;
+	public float reverseTopSpeed;
 	public float acceleration;
+	public float reverseAcceleration;
 	public float deAcceleration;
 	public float handling;
-	
 	public float weight;
 	
 	boolean reverseKeyIsDown, throttleKeyIsDown, leftKeyIsDown, rightKeyIsDown, usingKeyboard = false;
@@ -26,7 +27,7 @@ public class Car {
 	float movementDegrees = 0;
 	float radDeg = 0;
 	
-	float carSize = (float) 0.3;
+	float carSize = (float) 0.4;
 	
 	private Level level;
 	private int tilePosX, tilePosY;
@@ -34,26 +35,38 @@ public class Car {
 	Vector2f position = new Vector2f();
 	Vector2f unitCirclePos = new Vector2f();
 	
-	public Car(String name, String type,int playernr, Image sprite,float topSpeed,
-			float acceleration, float deAcceleration, float handling, float weight, Level level){
+	public Car(String name, String type,int playernr, Image sprite,float topSpeed, float reverseTopSpeed,
+			float acceleration, float reverseAcceleration, float deAcceleration, float handling, float weight, Level level){
 		this.name = name;
 		this.type = type;
 		this.sprite = sprite;
 		this.topSpeed = topSpeed;
-		this.acceleration = acceleration;
+		this.reverseTopSpeed = reverseTopSpeed;
+		this.reverseAcceleration = reverseAcceleration;
 		this.deAcceleration = deAcceleration;
+		this.acceleration = acceleration;
 		this.handling = handling;
 		this.weight = weight;
 		this.level = level;
-		
 	}
 	
 	public void update(GameContainer container, StateBasedGame game, int deltaTime)throws SlickException{
 		Input input = container.getInput();
 		reactToControlls(input, deltaTime);
 		
-		radDeg = (float) Math.toRadians(movementDegrees);
+		rePositionCar(deltaTime);
+		
 		boolean slowDown = level.getTileType(tilePosX, tilePosY);
+		
+		if(slowDown){
+			currentSpeed = topSpeed/2;
+		}
+	}
+	
+	public void rePositionCar(int deltaTime){
+		
+		radDeg = (float) Math.toRadians(movementDegrees);
+		
 		
 		unitCirclePos.x = (float) (Math.cos(radDeg))*currentSpeed*deltaTime/1000;
 		unitCirclePos.y = (float) (Math.sin(radDeg))*currentSpeed*deltaTime/1000;
@@ -61,13 +74,21 @@ public class Car {
 		position.x += unitCirclePos.x;
 		position.y += unitCirclePos.y;	
 		
+		checkForEdgeOfMap();
+		
 		tilePosX = (int) (position.x/level.getTileWidth());
 		tilePosY = (int) (position.y/level.getTileHeight());
-		/*
-		if(slowDown){
-			currentSpeed = topSpeed/2;
+	}
+	
+	public void checkForEdgeOfMap(){
+		
+		if(position.x < 0 || position.x > level.getDistanceWidth()){
+			position.x -= unitCirclePos.x;
 		}
-		*/
+		
+		if(position.y < 0 || position.y > level.getDistanceHeight()){
+			position.y -= unitCirclePos.y;
+		}
 	}
 	
 	public void render() {
@@ -75,7 +96,6 @@ public class Car {
 		sprite.setCenterOfRotation(16, 32);
 		sprite.setRotation(movementDegrees);
 	}
-	
 
 	public Vector2f getPosition() {
 		return position;
@@ -98,16 +118,12 @@ public class Car {
 		}
 	}
 	
-	
-	
-	
 	public void reactToControlls(Input input, int deltaTime) {
 		
 		if(usingKeyboard){
 			reactToKeyboard(input);
 		}
 
-		
 		if(throttleKeyIsDown) {
 			if(currentSpeed < topSpeed) {
 				currentSpeed += acceleration*deltaTime/1000;
@@ -121,11 +137,11 @@ public class Car {
 		}
 
 		if(reverseKeyIsDown) {
-			if(currentSpeed > -topSpeed) {
-				currentSpeed -= deAcceleration*deltaTime/1000;
+			if(currentSpeed > -reverseTopSpeed) {
+				currentSpeed -= reverseAcceleration*deltaTime/1000;
 			}
 		} else{
-			if(currentSpeed < -acceleration) {
+			if(currentSpeed < -reverseAcceleration) {
 				currentSpeed += deAcceleration*deltaTime/1000;
 			}else if(currentSpeed < 0){
 				currentSpeed = 0;
@@ -207,7 +223,4 @@ public class Car {
 	public void activateKeyboardInput(){
 		usingKeyboard = true;
 	}
-
-	
-	
 }

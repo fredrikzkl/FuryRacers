@@ -4,7 +4,6 @@ import com.github.fredrikzkl.furyracers.game.GameCore;
 import com.github.fredrikzkl.furyracers.game.Level;
 import com.github.fredrikzkl.furyracers.network.GameSession;
 import com.github.fredrikzkl.furyracers.Menu;
-
 import org.lwjgl.opengl.Display;
 import org.newdawn.slick.AppGameContainer;
 import org.newdawn.slick.GameContainer;
@@ -21,9 +20,7 @@ public class Application extends StateBasedGame {
 	private final static int GameCore = 1;
 	private static GameCore game;
 	private static GameSession gameSession;
-	
 	public static Dimension screenSize;
-
 	public static final int HEIGHT = 24;
 	public static final int WIDTH = 32;
 	public static final int VIEW_HEIGHT = HEIGHT * 16; //TODO
@@ -73,8 +70,7 @@ public class Application extends StateBasedGame {
 			//Display.setResizable(true);
 			AppGameContainer app = new AppGameContainer(new ScalableGame(new Application(gameName), (int)screenSize.getWidth(), (int)screenSize.getHeight()));
 			app.setDisplayMode((int)screenSize.getWidth(), (int)screenSize.getHeight(), true);
-			//app.setTargetFrameRate(FPS);
-			// app.setMouseGrabbed(true);
+
 			app.setAlwaysRender(true);
 			app.start();
 			System.out.println("Launching the game! Setting resolution: " + screenSize.getWidth() + "x" + screenSize.getHeight());

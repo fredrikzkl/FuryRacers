@@ -15,11 +15,9 @@ public class Menu extends BasicGameState{
 	
 	public void init(GameContainer container, StateBasedGame game)
 			throws SlickException {
-		// TODO Auto-generated method stub
 		
 	}
 
-	
 	public void render(GameContainer container, StateBasedGame game, Graphics g)
 			throws SlickException {
 		g.drawString("Are you ready?!", 50, 50);
@@ -32,13 +30,9 @@ public class Menu extends BasicGameState{
 		if(mouse.isMouseButtonDown(0)){
 			game.enterState(1);
 		}
-		
 	}
 
-	
 	public int getID() {
-		// TODO Auto-generated method stub
 		return 0;
 	}
-
 }
