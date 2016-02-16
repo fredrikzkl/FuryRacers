@@ -73,6 +73,13 @@ public class Car {
 			currentSpeed = topSpeed/2;
 		}
 		*/
+		
+		for(int i = 0; i < level.getCheck1().size(); i++){
+			System.out.println("X" + i + ": " + level.getCheck1().get(i).x + " |Y" + i + ": " + level.getCheck1().get(i).y);
+			if(tilePosX == level.getCheck1().get(i).x && tilePosY == level.getCheck1().get(i).y){
+				System.out.println("CHECKPOINT!");
+			}
+		}
 	}
 	
 	public void render() {
