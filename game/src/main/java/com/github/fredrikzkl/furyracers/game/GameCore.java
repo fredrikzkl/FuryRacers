@@ -58,7 +58,7 @@ public class GameCore extends BasicGameState {
 	}
 
 	public void init(GameContainer container, StateBasedGame sbg) throws SlickException {
-		
+		System.out.println("IP: " + IP);
 		cars = new ArrayList<Car>();
 		
 		redMustang = new Image("Sprites/fr_mustang_red.png");
@@ -106,31 +106,10 @@ public class GameCore extends BasicGameState {
 		
 		g.translate(-camera.getX(), -camera.getY()); //End of camera
 		
-		//g.setWorldClip(smallestDistance.x-cameraMargin,smallestDistance.y-cameraMargin, 300, 300);
-		
-		ttf.drawString(Application.screenSize.width-300, Application.screenSize.height-30, IP); //Ip addresene nederst i venstre corner
-		
+		ttf.drawString(Application.screenSize.width-300, 0, IP); //Ip addresene nederst i venstre corner
 	}
 	
-	public void createPlayer(int nr, String id) throws SlickException{
-		
-		if(nr == 1){
-			p1 = new Car(id, "medium", 1,redMustang,480, 200, 100,105,60, 110,1, level);
-			cars.add(p1);
-		}
-		if(nr == 2){
-			p2 = new Car(id, "medium", 1,redMustang,480, 200, 100,105,60, 110,1, level);
-			cars.add(p2);
-		}
-		if(nr == 3){
-			p3 = new Car(id, "medium", 1,redMustang,480, 200, 100,105,60, 110,1, level);
-			cars.add(p3);
-		}
-		if(nr == 4){
-			p4 = new Car(id, "medium", 1,redMustang,480, 200, 100,105,60, 110,1, level);
-			cars.add(p4);
-		}
-	}
+	
 	
 	private void zoomLogic() {
 		float deltaX = deltaDistance.x/700;
@@ -194,6 +173,38 @@ public class GameCore extends BasicGameState {
 			createPlayer(amountOfPlayers+1,"keyboardPlayerTwo");
 			cars.get(amountOfPlayers).activateKeyboardInput();
 			keyboardPlayerTwo = true;
+		}
+	}
+	
+public void createPlayer(int nr, String id) throws SlickException{
+		
+		if(nr == 1){
+			p1 = new Car(id, "medium", nr,redMustang,
+					level.getStartCoordinates().x-(level.tileWidth*4),
+					level.getStartCoordinates().y-(level.tileHeight*4),300,
+					480,100, 105, 75,110,1, level);
+			cars.add(p1);
+		}
+		if(nr == 2){
+			p2 = new Car(id, "medium", nr,blueMustang,
+					level.getStartCoordinates().x-(level.tileWidth*4),
+					level.getStartCoordinates().y-(level.tileHeight*4),300,
+					480,100, 105, 75,110,1, level);
+			cars.add(p2);
+		}
+		if(nr == 3){
+			p3 = new Car(id, "medium", nr,greenMustang,
+					level.getStartCoordinates().x-(level.tileWidth*4),
+					level.getStartCoordinates().y-(level.tileHeight*4),300,
+					480,100, 105, 75,110,1, level);
+			cars.add(p3);
+		}
+		if(nr == 4){
+			p4 = new Car(id, "medium", nr,yellowMustang,
+					level.getStartCoordinates().x-(level.tileWidth*4),
+					level.getStartCoordinates().y-(level.tileHeight*4),300,
+					480,100, 105, 75,110,1, level);
+				cars.add(p4);
 		}
 	}
 	

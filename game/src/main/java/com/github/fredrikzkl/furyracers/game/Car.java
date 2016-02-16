@@ -33,11 +33,12 @@ public class Car {
 	private int tilePosX, tilePosY;
 	private int playerNr;
 	
-	Vector2f position = new Vector2f();
+	Vector2f position;
 	Vector2f unitCirclePos = new Vector2f();
 	
-	public Car(String name, String type, int playerNr, Image sprite,float topSpeed, float reverseTopSpeed,
+	public Car(String name, String type, int playerNr, Image sprite, float startX, float startY, float reverseTopSpeed,float topSpeed,
 			float acceleration, float reverseAcceleration, float deAcceleration, float handling, float weight, Level level){
+
 		this.name = name;
 		this.type = type;
 		this.sprite = sprite;
@@ -50,6 +51,8 @@ public class Car {
 		this.handling = handling;
 		this.weight = weight;
 		this.level = level;
+		
+		position = new Vector2f(startX,startY);
 	}
 	
 	public void update(GameContainer container, StateBasedGame game, int deltaTime)throws SlickException{
@@ -58,11 +61,11 @@ public class Car {
 		
 		rePositionCar(deltaTime);
 		
-		boolean slowDown = level.getTileType(tilePosX, tilePosY);
+		/*boolean slowDown = level.getTileType(tilePosX, tilePosY);
 		
 		if(slowDown){
 			currentSpeed = topSpeed/2;
-		}
+		}*/
 	}
 	
 	public void rePositionCar(int deltaTime){

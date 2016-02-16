@@ -80,8 +80,7 @@ public class GameSession {
                 String id = client.get(0).toString();
                 String username = client.get(1).toString();
                 
-                
-                if (player1.equals(id)) {
+                 if (player1.equals(id)) {
                     player1Username = username;
                 } else if (player2.equals(id)) {
                     player2Username = username;
