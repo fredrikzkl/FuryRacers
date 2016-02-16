@@ -114,11 +114,15 @@ public class GameCore extends BasicGameState {
 	
 	public void createPlayer(int nr, String id) throws SlickException{
 		if(nr == 1){
+			try{
 			p1 = new Car(id, "medium", 1,redMustang,
 					level.getStartCoordinates().x-(level.tileWidth*4),
 					level.getStartCoordinates().y-(level.tileHeight*4),
 					480,100,75,110,1, level);
 			cars.add(p1);
+			}catch(NullPointerException e){
+				System.out.println("No start line was found, your map needs a start line!\n" + e);
+			}
 		}
 		if(nr == 2){
 			p2 = new Car(id, "medium", 2,blueMustang,
@@ -126,6 +130,7 @@ public class GameCore extends BasicGameState {
 					level.getStartCoordinates().y-(level.tileHeight*1),
 					480,100,75,110,1, level);
 			cars.add(p2);
+			
 		}
 		if(nr == 3){
 			p3 = new Car(id, "medium", 3,greenMustang,
@@ -134,13 +139,16 @@ public class GameCore extends BasicGameState {
 					480,100,75,110,1, level);
 			cars.add(p3);
 		}
+		
 		if(nr == 4){
 			p4 = new Car(id, "medium", 4,yellowMustang,480,
 					level.getStartCoordinates().x-(level.tileWidth*4),
 					level.getStartCoordinates().y+(level.tileHeight*64),
 					100,75,110,1, level);
 			cars.add(p4);
+			
 		}
+		
 		
 	}
 	
@@ -203,7 +211,6 @@ public class GameCore extends BasicGameState {
 	}
 
 	public int getID() {
-	
 		return 1;
 	}
 

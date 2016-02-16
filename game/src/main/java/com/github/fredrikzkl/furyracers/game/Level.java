@@ -48,7 +48,9 @@ public class Level {
 		}*/
 		distanceHeight = map.getTileHeight() * map.getHeight();
 		distanceWidth = map.getTileWidth() * map.getWidth();
+		
 		determineStartPosition();
+		determineCheckpoints();
 	}
 
 	private void determineStartPosition() {
@@ -59,6 +61,10 @@ public class Level {
 				}
 			}
 		}
+	}
+	
+	private void determineCheckpoints(){
+		
 	}
 
 	public void render(Graphics g, Vector2f tilePos) {
@@ -92,7 +98,6 @@ public class Level {
 	public float getDistanceHeight() {
 		return distanceHeight;
 	}
-	
 
 	public Vector2f getStartCoordinates() {
 		return startCoordinates;

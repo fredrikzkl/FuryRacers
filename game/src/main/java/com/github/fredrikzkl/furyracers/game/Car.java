@@ -34,6 +34,9 @@ public class Car {
 	Vector2f position;
 	Vector2f unitCirclePos = new Vector2f();
 	
+	private boolean check1,check2,check3 = false;
+	private int laps = 0;
+	
 	public Car(String name, String type,int playernr, Image sprite, float startX, float startY,float topSpeed,
 			float acceleration, float deAcceleration, float handling, float weight, Level level){
 		this.name = name;
