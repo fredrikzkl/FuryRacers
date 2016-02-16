@@ -35,10 +35,13 @@ public class Car {
 	
 	Vector2f position;
 	Vector2f unitCirclePos = new Vector2f();
+
+	private boolean check1,check2,check3 = false;
+	private int laps = 0;
 	
 	public Car(String name, String type, int playerNr, Image sprite, float startX, float startY, float reverseTopSpeed,float topSpeed,
 			float acceleration, float reverseAcceleration, float deAcceleration, float handling, float weight, Level level){
-
+	
 		this.name = name;
 		this.type = type;
 		this.sprite = sprite;

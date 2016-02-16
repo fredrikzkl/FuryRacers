@@ -109,8 +109,6 @@ public class GameCore extends BasicGameState {
 		ttf.drawString(Application.screenSize.width-300, 0, IP); //Ip addresene nederst i venstre corner
 	}
 	
-	
-	
 	private void zoomLogic() {
 		float deltaX = deltaDistance.x/700;
 		float deltaY = deltaDistance.y/330;
