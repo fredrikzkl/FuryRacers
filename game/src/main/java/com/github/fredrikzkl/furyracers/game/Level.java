@@ -1,5 +1,8 @@
 package com.github.fredrikzkl.furyracers.game;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.geom.Vector2f;
@@ -23,6 +26,8 @@ public class Level {
 	float distanceHeight;
 	
 	private Vector2f startCoordinates;
+	private List<Vector2f> check1,check2,check3;
+	
 	
 	public Level(int id) {
 		
@@ -34,7 +39,7 @@ public class Level {
 		} catch (SlickException e) {
 			System.out.println("Error loading map");
 		}
-		
+		//TODO
 		edgeLayer = map.getLayerIndex("road");
 		tileWidth = map.getTileWidth();
 		tileHeight = map.getTileHeight();
@@ -43,8 +48,12 @@ public class Level {
 
 		distanceHeight = map.getTileHeight() * map.getHeight();
 		distanceWidth = map.getTileWidth() * map.getWidth();
+		//---------------------------
 		
 		determineStartPosition();
+		check1 = new ArrayList<Vector2f>();
+		check2 = new ArrayList<Vector2f>();
+		check3 = new ArrayList<Vector2f>();
 		determineCheckpoints();
 	}
 
@@ -59,7 +68,21 @@ public class Level {
 	}
 	
 	private void determineCheckpoints(){
-		
+		for(int x = 0; x<map.getWidth();x++){
+			for(int y = 0/tileHeight; y<map.getHeight(); y++){
+				
+				if(map.getTileProperty(map.getTileId(x, y, 1), "checkpoint", "-1").equals("1")) {
+					check1.add(new Vector2f(x*tileWidth,y*tileHeight));
+				}
+				if(map.getTileProperty(map.getTileId(x, y, 1), "checkpoint", "-1").equals("2")) {
+					check1.add(new Vector2f(x*tileWidth,y*tileHeight));
+				}
+				if(map.getTileProperty(map.getTileId(x, y, 1), "checkpoint", "-1").equals("3")) {
+					check1.add(new Vector2f(x*tileWidth,y*tileHeight));
+				}
+				
+			}
+		}
 	}
 
 	public void render(Graphics g, Vector2f tilePos) {
@@ -96,5 +119,19 @@ public class Level {
 
 	public Vector2f getStartCoordinates() {
 		return startCoordinates;
+	}
+
+	public List<Vector2f> getCheck1() {
+		return check1;
+	}
+
+	
+	public List<Vector2f> getCheck2() {
+		return check2;
+	}
+
+	
+	public List<Vector2f> getCheck3() {
+		return check3;
 	}
 }

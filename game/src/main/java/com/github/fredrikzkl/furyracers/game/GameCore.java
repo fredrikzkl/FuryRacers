@@ -75,7 +75,6 @@ public class GameCore extends BasicGameState {
 		ttf = new TrueTypeFont(font, true);
 		 
 		level = new Level(1);
-
 		camera = new Camera(0,0,level);
 	}
 

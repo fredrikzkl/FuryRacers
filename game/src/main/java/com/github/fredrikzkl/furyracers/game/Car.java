@@ -69,6 +69,7 @@ public class Car {
 		if(slowDown){
 			currentSpeed = topSpeed/2;
 		}*/
+		
 	}
 	
 	public void rePositionCar(int deltaTime){
