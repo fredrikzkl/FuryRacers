@@ -31,11 +31,12 @@ public class Car {
 	
 	private Level level;
 	private int tilePosX, tilePosY;
+	private int playerNr;
 	
 	Vector2f position = new Vector2f();
 	Vector2f unitCirclePos = new Vector2f();
 	
-	public Car(String name, String type,int playernr, Image sprite,float topSpeed, float reverseTopSpeed,
+	public Car(String name, String type, int playerNr, Image sprite,float topSpeed, float reverseTopSpeed,
 			float acceleration, float reverseAcceleration, float deAcceleration, float handling, float weight, Level level){
 		this.name = name;
 		this.type = type;
@@ -45,6 +46,7 @@ public class Car {
 		this.reverseAcceleration = reverseAcceleration;
 		this.deAcceleration = deAcceleration;
 		this.acceleration = acceleration;
+		this.playerNr = playerNr;
 		this.handling = handling;
 		this.weight = weight;
 		this.level = level;
@@ -66,7 +68,6 @@ public class Car {
 	public void rePositionCar(int deltaTime){
 		
 		radDeg = (float) Math.toRadians(movementDegrees);
-		
 		
 		unitCirclePos.x = (float) (Math.cos(radDeg))*currentSpeed*deltaTime/1000;
 		unitCirclePos.y = (float) (Math.sin(radDeg))*currentSpeed*deltaTime/1000;
@@ -93,7 +94,7 @@ public class Car {
 	
 	public void render() {
 		sprite.draw(position.x, position.y, carSize);
-		sprite.setCenterOfRotation(16, 32);
+		sprite.setCenterOfRotation(carSize*16, carSize*32);
 		sprite.setRotation(movementDegrees);
 	}
 
@@ -158,7 +159,16 @@ public class Car {
 	}
 	
 	public void reactToKeyboard(Input input){
+		
+		if(playerNr == 1){
+			reactToArrowKeys(input);
+		}else if(playerNr == 2){
+			reactToWasdKeys(input);
+		}
+	}
 
+	public void reactToArrowKeys(Input input){
+		
 		if(input.isKeyDown(Input.KEY_UP)) {
             throttleKeyDown();
 	    }else {
@@ -178,6 +188,33 @@ public class Car {
 		}
 
 		if(input.isKeyDown(Input.KEY_RIGHT)){
+			rightKeyDown();
+		}else{
+			rightKeyUp();
+		}
+	}
+	
+	public void reactToWasdKeys(Input input){
+		
+		if(input.isKeyDown(Input.KEY_W)) {
+            throttleKeyDown();
+	    }else {
+	    	throttleKeyUp();
+	    }
+
+		if(input.isKeyDown(Input.KEY_S)){
+			reverseKeyDown();
+		}else{
+			reverseKeyUp();
+		}
+
+		if(input.isKeyDown(Input.KEY_A)){
+			leftKeyDown();
+		}else{
+			leftKeyUp();
+		}
+
+		if(input.isKeyDown(Input.KEY_D)){
 			rightKeyDown();
 		}else{
 			rightKeyUp();

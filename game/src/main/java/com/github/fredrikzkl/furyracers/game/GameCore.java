@@ -51,7 +51,7 @@ public class GameCore extends BasicGameState {
 	
 	float biggest = 0;
 	
-	private boolean keyboardPlayer;
+	private boolean keyboardPlayerOne, keyboardPlayerTwo = false;
 
 	public GameCore(int state) {
 		
@@ -113,6 +113,7 @@ public class GameCore extends BasicGameState {
 	}
 	
 	public void createPlayer(int nr, String id) throws SlickException{
+		
 		if(nr == 1){
 			p1 = new Car(id, "medium", 1,redMustang,480, 200, 100,105,60, 110,1, level);
 			cars.add(p1);
@@ -129,7 +130,6 @@ public class GameCore extends BasicGameState {
 			p4 = new Car(id, "medium", 1,redMustang,480, 200, 100,105,60, 110,1, level);
 			cars.add(p4);
 		}
-		
 	}
 	
 	private void zoomLogic() {
@@ -182,16 +182,23 @@ public class GameCore extends BasicGameState {
 	
 	public void checkForKeyboardInput(GameContainer container) throws SlickException{
 		Input input = container.getInput();
-		if(input.isKeyDown(Input.KEY_A) && !keyboardPlayer){
+		if(input.isKeyDown(Input.KEY_A) && !keyboardPlayerOne){
 			int amountOfPlayers = cars.size();
-			createPlayer(amountOfPlayers+1,"futureReference");
+			createPlayer(amountOfPlayers+1,"keyboardPlayer");
 			cars.get(amountOfPlayers).activateKeyboardInput();
-			keyboardPlayer = true;
+			keyboardPlayerOne = true;
+		}
+		
+		if(input.isKeyDown(Input.KEY_B) && !keyboardPlayerTwo){
+			int amountOfPlayers = cars.size();
+			createPlayer(amountOfPlayers+1,"keyboardPlayerTwo");
+			cars.get(amountOfPlayers).activateKeyboardInput();
+			keyboardPlayerTwo = true;
 		}
 	}
 	
-	public void setIP(String iP) {
-		IP = iP + "/fury";
+	public void setIP(String ip) {
+		IP = ip + "/fury";
 	}
 
 	public int getID() {
