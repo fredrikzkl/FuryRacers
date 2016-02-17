@@ -194,6 +194,7 @@ public class GameSession {
             case "get ip":{
             	String ip = jsonObj.getJsonString("data").toString();
             	game.setIP(ip);
+            	
             }
         }
     }
