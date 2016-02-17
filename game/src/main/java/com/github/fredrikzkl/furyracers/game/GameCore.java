@@ -51,7 +51,7 @@ public class GameCore extends BasicGameState {
 	
 	float biggest = 0;
 	
-	private boolean keyboardPlayerOne, keyboardPlayerTwo = false;
+	private boolean keyboardPlayerOne, keyboardPlayerTwo;
 
 	public GameCore(int state) {
 		
@@ -71,6 +71,9 @@ public class GameCore extends BasicGameState {
 		deltaDistance = new Vector2f();
 		tilePos = new Vector2f();
 		
+		keyboardPlayerOne = false;
+		keyboardPlayerOne = false;
+		
 		font = new Font("Verdana", Font.BOLD, 20);
 		ttf = new TrueTypeFont(font, true);
 		 
@@ -78,10 +81,10 @@ public class GameCore extends BasicGameState {
 		camera = new Camera(0,0,level);
 	}
 
-	public void update(GameContainer container , StateBasedGame sbg, int deltaTime) throws SlickException {
-		checkForKeyboardInput(container);
+	public void update(GameContainer container , StateBasedGame game, int deltaTime) throws SlickException {
+		checkForKeyboardInput(container, game);
 		for(Car cars: cars){
-			cars.update(container, sbg, deltaTime);
+			cars.update(container, game, deltaTime);
 		}
 				
 		checkDistances();
@@ -97,15 +100,20 @@ public class GameCore extends BasicGameState {
 		
 		
 		level.render(g,tilePos);
-		for(Car cars: cars){
-			cars.render();
+		for(Car car: cars){
+			car.render();
 		}
-		ttf.drawString(50,50, "X: " + deltaDistance.x + " Y: " + deltaDistance.y);
-		ttf.drawString(50,100,"Biggest: " + biggest);
+		/*ttf.drawString(50,50, "X: " + deltaDistance.x + " Y: " + deltaDistance.y);
+		ttf.drawString(50,100,"Biggest: " + biggest);*/
 		
 		g.translate(-camera.getX(), -camera.getY()); //End of camera
 		
-		ttf.drawString(Application.screenSize.width-300, 0, IP); //Ip addresene nederst i venstre corner
+		for(Car car: cars){
+			ttf.drawString(Application.screenSize.width/2, 0, car.getTimeElapsed());
+		}
+		
+		ttf.drawString(Application.screenSize.width-300, 0, IP);//Ip addresene nederst i venstre corner
+		
 	}
 	
 	private void zoomLogic() {
@@ -156,7 +164,7 @@ public class GameCore extends BasicGameState {
 		tilePos.y = (int)(longestDistance.y/level.getTileHeight());
 	}
 	
-	public void checkForKeyboardInput(GameContainer container) throws SlickException{
+	public void checkForKeyboardInput(GameContainer container, StateBasedGame game) throws SlickException{
 		Input input = container.getInput();
 		if(input.isKeyDown(Input.KEY_A) && !keyboardPlayerOne){
 			int amountOfPlayers = cars.size();
@@ -171,6 +179,11 @@ public class GameCore extends BasicGameState {
 			cars.get(amountOfPlayers).activateKeyboardInput();
 			keyboardPlayerTwo = true;
 		}
+		
+	    if(input.isKeyPressed(Input.KEY_N)){
+	    	game.getState(1).init(container, game);
+	    	game.enterState(1);
+	    }
 	}
 	
 public void createPlayer(int nr, String id) throws SlickException{

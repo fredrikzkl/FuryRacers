@@ -1,6 +1,7 @@
 package com.github.fredrikzkl.furyracers.game;
 
 import java.sql.Time;
+import java.util.concurrent.TimeUnit;
 
 import org.newdawn.slick.Image;
 import org.newdawn.slick.Input;
@@ -24,7 +25,7 @@ public class Car {
 	public float handling;
 	public float weight;
 	
-	boolean reverseKeyIsDown, throttleKeyIsDown, leftKeyIsDown, rightKeyIsDown, usingKeyboard, stopClock = false;
+	boolean reverseKeyIsDown, throttleKeyIsDown, leftKeyIsDown, rightKeyIsDown, usingKeyboard, finishedRaced = false;
 	boolean startClock = true;
 	
 	
@@ -43,9 +44,15 @@ public class Car {
 
 	private int passedChekpoints = 0;
 	int tileType;
-	long startTime;
-	long endTime;
+	long startTime = 0;
+	long currentTime;
 	private int laps = 0;
+	private long nanoSecondsElapsed = 0;
+	private long secondsElapsed = 0;
+	private long minutesElapsed = 0;
+	private long minuteConverter = 0;
+	private long milliSecondsElapsed = 0;
+	private String timeElapsed;
 	
 	public Car(String name, String type, int playerNr, Image sprite, float startX, float startY, float reverseTopSpeed,float topSpeed,
 			float acceleration, float reverseAcceleration, float deAcceleration, float handling, float weight, Level level){
@@ -73,6 +80,7 @@ public class Car {
 		rePositionCar(deltaTime);
 		checkForEdgeOfMap();
 		checkTilePosition();
+		checkRaceTime();
 		
 		/*boolean slowDown = level.getTileType(tilePosX, tilePosY);
 		
@@ -85,8 +93,6 @@ public class Car {
 		
 		radDeg = (float) Math.toRadians(movementDegrees);
 		
-		checkIfRaceStarted();
-		
 		unitCirclePos.x = (float) (Math.cos(radDeg))*currentSpeed*deltaTime/1000;
 		unitCirclePos.y = (float) (Math.sin(radDeg))*currentSpeed*deltaTime/1000;
 		
@@ -94,19 +100,23 @@ public class Car {
 		position.y += unitCirclePos.y;	
 	}
 	
-	public void checkIfRaceStarted(){
+	public void checkRaceTime(){
 		if(currentSpeed > 0 && startClock){
 			startTime = System.nanoTime();
 			startClock = false;
 		}
 		
-		if(stopClock){
-			endTime = System.nanoTime();
-			stopClock = false;
-			System.out.println("final time " + (endTime - startTime)/100000000);
+		if(startTime != 0){
+			currentTime = System.nanoTime();
+			nanoSecondsElapsed = currentTime - startTime;
+			minutesElapsed = TimeUnit.NANOSECONDS.toMinutes(nanoSecondsElapsed);
+			secondsElapsed = TimeUnit.NANOSECONDS.toSeconds(nanoSecondsElapsed) - 60*minutesElapsed;
+			milliSecondsElapsed = TimeUnit.NANOSECONDS.toMillis(nanoSecondsElapsed) - secondsElapsed*1000;
 		}
 		
-		
+		if(!finishedRaced){
+			timeElapsed = minutesElapsed + ":" + secondsElapsed + ":" + milliSecondsElapsed;
+		}
 	}
 	
 	public void checkForEdgeOfMap(){
@@ -128,16 +138,16 @@ public class Car {
 		tileType = level.getTileType(tilePosX, tilePosY, passedChekpoints);
 		
 		switch(tileType){
-			case 1: passedChekpoints++; System.out.println("checkpoint1"); break;
-			case 2: passedChekpoints++; System.out.println("checkpoint2");break;
-			case 3: passedChekpoints++; System.out.println("checkpoint3");break;
-			case 4: stopClock = true; break;
+			case 1: passedChekpoints++; break;
+			case 2: passedChekpoints++; break;
+			case 3: passedChekpoints++; break;
+			case 4: finishedRaced = true;
 		}
 	}
 	
 	public void render() {
+		sprite.setCenterOfRotation(16, 32);
 		sprite.draw(position.x, position.y, carSize);
-		sprite.setCenterOfRotation(carSize*16, carSize*32);
 		sprite.setRotation(movementDegrees);
 	}
 
@@ -172,10 +182,10 @@ public class Car {
 			if(currentSpeed < topSpeed) {
 				currentSpeed += acceleration*deltaTime/1000;
 			}
-		} else{
-			if(currentSpeed > deAcceleration) {
+		}else{
+			if(currentSpeed > 0) {
 				currentSpeed -= deAcceleration*deltaTime/1000;
-			}else if(currentSpeed > 0){
+			}else if(currentSpeed < 0){
 				currentSpeed = 0;
 			}
 		}
@@ -184,7 +194,7 @@ public class Car {
 			if(currentSpeed > -reverseTopSpeed) {
 				currentSpeed -= reverseAcceleration*deltaTime/1000;
 			}
-		} else{
+		}else{
 			if(currentSpeed < -reverseAcceleration) {
 				currentSpeed += deAcceleration*deltaTime/1000;
 			}else if(currentSpeed < 0){
@@ -302,5 +312,9 @@ public class Car {
 
 	public void activateKeyboardInput(){
 		usingKeyboard = true;
+	}
+	
+	public String getTimeElapsed(){
+		return timeElapsed;
 	}
 }
