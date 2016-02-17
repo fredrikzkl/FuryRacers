@@ -59,11 +59,12 @@ public class Level {
 		}
 	}
 
-	public void render(Graphics g, Vector2f tilePos) {
+	public void render(Graphics g, Vector2f tilePos, Camera camera) {
 		int tilePosX = (int) tilePos.x;
 		int tilePosY = (int) tilePos.y;
-		map.render(0,0, 0, 0, (int)Application.screenSize.getWidth()/map.getTileWidth() + tilePosX,
-				(int)Application.screenSize.getHeight()/map.getTileHeight() + tilePosY);
+		map.render(0,0, 0, 0, 
+				(int)(camera.getSize().x-camera.getX())/map.getTileWidth()+1,
+				(int)(camera.getSize().y-camera.getY())/map.getTileHeight()+1);
 	}
 	
 	public int getTileWidth() {

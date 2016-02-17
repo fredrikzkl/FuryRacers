@@ -31,7 +31,7 @@ public class GameCore extends BasicGameState {
 	public static Camera camera;
 	public Level level = null;
 
-	public float initalZoom = (float) 1.2; //TODO
+	public float initalZoom = (float) 1; //TODO
 	public float zoom = (float) 1;
 	
 	Font font;
@@ -46,6 +46,9 @@ public class GameCore extends BasicGameState {
 	public Vector2f longestDistance;
 	public Vector2f smallestDistance;
 	public Vector2f deltaDistance;
+	public Vector2f closestEdge;
+	
+	
 	public Vector2f tilePos; 
 	public int cameraMargin = 250;
 	
@@ -69,6 +72,7 @@ public class GameCore extends BasicGameState {
 		longestDistance = new Vector2f();
 		smallestDistance = new Vector2f();
 		deltaDistance = new Vector2f();
+		closestEdge = new Vector2f();
 		tilePos = new Vector2f();
 		
 		keyboardPlayerOne = false;
@@ -78,7 +82,7 @@ public class GameCore extends BasicGameState {
 		ttf = new TrueTypeFont(font, true);
 		 
 		level = new Level(1);
-		camera = new Camera(0,0,level);
+		camera = new Camera(0,0,level,this);
 	}
 
 	public void update(GameContainer container , StateBasedGame game, int deltaTime) throws SlickException {
@@ -88,18 +92,21 @@ public class GameCore extends BasicGameState {
 		}
 				
 		checkDistances();
-		//zoomLogic();
-		
-		camera.update(smallestDistance.x-cameraMargin ,smallestDistance.y-cameraMargin);
+		zoomLogic();
+		camera.update(((deltaDistance.x/2+closestEdge.x)-Application.screenSize.width/2)*zoom,
+					  ((deltaDistance.y/2+closestEdge.y)-Application.screenSize.height/2)*zoom);
 	}
 
 	public void render(GameContainer container, StateBasedGame sbg, Graphics g)
 			throws SlickException {
+		
+		
+		//--------------------------------------------------------------------------//
+		camera.zoom(g,(float) zoom);//Crasher om verdien <=0 	
 		g.translate(camera.getX(), camera.getY()); //Start of camera
-		//camera.zoom(g,(float) zoom);//Crasher om verdien <=0 
 		
 		
-		level.render(g,tilePos);
+		level.render(g,tilePos,camera);
 		for(Car car: cars){
 			car.render();
 		}
@@ -107,32 +114,41 @@ public class GameCore extends BasicGameState {
 		ttf.drawString(50,100,"Biggest: " + biggest);*/
 		
 		g.translate(-camera.getX(), -camera.getY()); //End of camera
+		camera.zoom(g,(float) 1/zoom);
+		//--------------------------------------------------------------------------//
 		
 		for(Car car: cars){
-			ttf.drawString(car.getPosition().x+camera.getX()-25, car.getPosition().y+camera.getY()-30, car.getTimeElapsed());
+			//ttf.drawString(car.getPosition().x+camera.getX()-25, car.getPosition().y+camera.getY()-30, car.getTimeElapsed());
 		}
-		ttf.drawString(Application.screenSize.width-300, 0, IP);//Ip addresene nederst i venstre corner
+		ttf.drawString(Application.screenSize.width-300, 0, IP);//Ip addresene øverst i venstre corner
 	}
 	
 	private void zoomLogic() {
-		float deltaX = deltaDistance.x/700;
-		float deltaY = deltaDistance.y/330;
+		float deltaX = (float) (deltaDistance.x/(Application.screenSize.width/1.98)); //Høyere deleverdi gir mindre margin
+		float deltaY = (float) (deltaDistance.y/(Application.screenSize.height/1.92)); 
 		float temp = zoom;
+		boolean zoomLim = true;
+		
 		
 		if(deltaY>deltaX)
 			biggest=deltaY;
 		else
 			biggest=deltaX;
-		temp = initalZoom/ (biggest);
 		
-		if(temp > 1.2){
-			zoom = (float) 1.2;
-			System.out.println(zoom);
-		}else if(temp < 0.3){
-			zoom = (float) 0.3;
-		}else{
-			zoom = temp;
+		temp = initalZoom /(biggest);
+		
+		if(camera.getSize().x - camera.getX() >= level.distanceWidth && zoom>temp &&camera.getX()>=0 || 
+		   camera.getSize().y - camera.getY() >= level.distanceHeight && zoom>temp &&camera.getY()>=0)
+			zoomLim = false;
+		
+		if(zoomLim){
+			if(temp > initalZoom){
+				zoom = (float) initalZoom;
+			}else{
+				zoom = temp;
+			}
 		}
+
 	}
 	
 	private void checkDistances() {
@@ -140,6 +156,9 @@ public class GameCore extends BasicGameState {
 		longestDistance.y = 1;
 		smallestDistance.x = level.getDistanceWidth();
 		smallestDistance.y = level.getDistanceHeight();
+		closestEdge.x = level.getDistanceWidth();
+		closestEdge.y = level.getDistanceHeight();
+		
 		
 		for(int i = 0; i<cars.size();i++){
 			if(cars.get(i).position.x >longestDistance.x){
@@ -154,6 +173,14 @@ public class GameCore extends BasicGameState {
 			if(cars.get(i).position.y<smallestDistance.y){
 				smallestDistance.y = cars.get(i).position.y;
 			}
+			
+			if(cars.get(i).position.x<closestEdge.x){
+				closestEdge.x = cars.get(i).position.x;
+			}
+			if(cars.get(i).position.y<closestEdge.y){
+				closestEdge.y = cars.get(i).position.y;
+			}
+				
 		}
 		deltaDistance.x = longestDistance.x - smallestDistance.x;
 		deltaDistance.y = longestDistance.y - smallestDistance.y;
@@ -223,5 +250,12 @@ public void createPlayer(int nr, String id) throws SlickException{
 	public int getID() {
 		return 1;
 	}
+
+	public float getZoom() {
+		return zoom;
+	}
+	
+	
+	
 
 }
