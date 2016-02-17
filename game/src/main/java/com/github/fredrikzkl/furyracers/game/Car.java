@@ -38,7 +38,7 @@ public class Car {
 	private Level level;
 	private int tilePosX, tilePosY;
 	private int playerNr;
-	
+
 	Vector2f position;
 	Vector2f unitCirclePos = new Vector2f();
 
@@ -158,17 +158,19 @@ public class Car {
 	public void buttonDown(String data){
 		disableKeyboardInput();
         switch(data){
+        	case "0": reverseKeyDown();break;
         	case "1": throttleKeyDown();break;
         	case "2": rightKeyDown();break;
-        	case "3": leftKeyDown();break;
+        	case "3": leftKeyDown();
         }
 	}
 	
 	public void buttonUp(String data){
 		switch(data){
+			case "0": reverseKeyUp();break;
 			case "1": throttleKeyUp();break;
 			case "2": rightKeyUp();break;
-			case "3": leftKeyUp();break;
+			case "3": leftKeyUp();
 		}
 	}
 	
@@ -316,5 +318,9 @@ public class Car {
 	
 	public String getTimeElapsed(){
 		return timeElapsed;
+	}
+	
+	public int getPlayerNr() {
+		return playerNr;
 	}
 }
