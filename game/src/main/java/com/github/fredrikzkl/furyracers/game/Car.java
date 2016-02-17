@@ -1,5 +1,7 @@
 package com.github.fredrikzkl.furyracers.game;
 
+import java.sql.Time;
+
 import org.newdawn.slick.Image;
 import org.newdawn.slick.Input;
 import org.newdawn.slick.SlickException;
@@ -12,6 +14,7 @@ public class Car {
 	public String type;
 	
 	public Image sprite;
+	public Time duration;
 	
 	public float topSpeed;
 	public float reverseTopSpeed;
@@ -21,7 +24,9 @@ public class Car {
 	public float handling;
 	public float weight;
 	
-	boolean reverseKeyIsDown, throttleKeyIsDown, leftKeyIsDown, rightKeyIsDown, usingKeyboard = false;
+	boolean reverseKeyIsDown, throttleKeyIsDown, leftKeyIsDown, rightKeyIsDown, usingKeyboard, stopClock = false;
+	boolean startClock = true;
+	
 	
 	float currentSpeed = 0;
 	float movementDegrees = 0;
@@ -36,7 +41,10 @@ public class Car {
 	Vector2f position;
 	Vector2f unitCirclePos = new Vector2f();
 
-	private boolean check1,check2,check3 = false;
+	private int passedChekpoints = 0;
+	int tileType;
+	long startTime;
+	long endTime;
 	private int laps = 0;
 	
 	public Car(String name, String type, int playerNr, Image sprite, float startX, float startY, float reverseTopSpeed,float topSpeed,
@@ -63,36 +71,42 @@ public class Car {
 		reactToControlls(input, deltaTime);
 		
 		rePositionCar(deltaTime);
+		checkForEdgeOfMap();
+		checkTilePosition();
 		
 		/*boolean slowDown = level.getTileType(tilePosX, tilePosY);
 		
 		if(slowDown){
 			currentSpeed = topSpeed/2;
 		}*/
-		
-		for(int i = 0; i < level.getCheck1().size(); i++){
-			//System.out.println("X" + i + ": " + level.getCheck1().get(i).x + " |Y" + i + ": " + level.getCheck1().get(i).y);
-			if(tilePosX == level.getCheck1().get(i).x && tilePosY == level.getCheck1().get(i).y){
-				System.out.println("CHECKPOINT!");
-			}
-		}
-		
 	}
 	
 	public void rePositionCar(int deltaTime){
 		
 		radDeg = (float) Math.toRadians(movementDegrees);
 		
+		checkIfRaceStarted();
+		
 		unitCirclePos.x = (float) (Math.cos(radDeg))*currentSpeed*deltaTime/1000;
 		unitCirclePos.y = (float) (Math.sin(radDeg))*currentSpeed*deltaTime/1000;
 		
 		position.x += unitCirclePos.x;
 		position.y += unitCirclePos.y;	
+	}
+	
+	public void checkIfRaceStarted(){
+		if(currentSpeed > 0 && startClock){
+			startTime = System.nanoTime();
+			startClock = false;
+		}
 		
-		checkForEdgeOfMap();
+		if(stopClock){
+			endTime = System.nanoTime();
+			stopClock = false;
+			System.out.println("final time " + (endTime - startTime)/100000000);
+		}
 		
-		tilePosX = (int) (position.x/level.getTileWidth());
-		tilePosY = (int) (position.y/level.getTileHeight());
+		
 	}
 	
 	public void checkForEdgeOfMap(){
@@ -103,6 +117,21 @@ public class Car {
 		
 		if(position.y < 0 || position.y > level.getDistanceHeight()){
 			position.y -= unitCirclePos.y;
+		}
+	}
+	
+	public void checkTilePosition(){
+
+		tilePosX = (int) (position.x/level.getTileWidth());
+		tilePosY = (int) (position.y/level.getTileHeight());
+		
+		tileType = level.getTileType(tilePosX, tilePosY, passedChekpoints);
+		
+		switch(tileType){
+			case 1: passedChekpoints++; System.out.println("checkpoint1"); break;
+			case 2: passedChekpoints++; System.out.println("checkpoint2");break;
+			case 3: passedChekpoints++; System.out.println("checkpoint3");break;
+			case 4: stopClock = true; break;
 		}
 	}
 	

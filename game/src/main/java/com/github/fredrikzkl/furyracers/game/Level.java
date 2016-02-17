@@ -1,8 +1,5 @@
 package com.github.fredrikzkl.furyracers.game;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.geom.Vector2f;
@@ -18,7 +15,7 @@ public class Level {
 	public TiledMap map = null;
 	public int tileWidth;
 	public int tileHeight;
-	int edgeLayer;
+	int roadLayer;
 	int mapWidth;
 	int mapHeight;
 	
@@ -26,8 +23,6 @@ public class Level {
 	float distanceHeight;
 	
 	private Vector2f startCoordinates;
-	private List<Vector2f> check1,check2,check3;
-	
 	
 	public Level(int id) {
 		
@@ -40,7 +35,7 @@ public class Level {
 			System.out.println("Error loading map");
 		}
 		//TODO
-		edgeLayer = map.getLayerIndex("road");
+		roadLayer = map.getLayerIndex("road");
 		tileWidth = map.getTileWidth();
 		tileHeight = map.getTileHeight();
 		mapWidth = map.getWidth();
@@ -51,10 +46,7 @@ public class Level {
 		//---------------------------
 		
 		determineStartPosition();
-		check1 = new ArrayList<Vector2f>();
-		check2 = new ArrayList<Vector2f>();
-		check3 = new ArrayList<Vector2f>();
-		determineCheckpoints();
+		
 	}
 
 	private void determineStartPosition() {
@@ -63,24 +55,6 @@ public class Level {
 				if(map.getTileProperty(map.getTileId(x, y, 1), "startPos", "-1").equals("start")) {
 					startCoordinates = new Vector2f(x*tileWidth,y*tileHeight);
 				}
-			}
-		}
-	}
-	
-	private void determineCheckpoints(){
-		for(int x = 0; x<map.getWidth();x++){
-			for(int y = 0/tileHeight; y<map.getHeight(); y++){
-				
-				if(map.getTileProperty(map.getTileId(x, y, 1), "checkpoint", "-1").equals("1")) {
-					check1.add(new Vector2f(x*tileWidth,y*tileHeight));
-				}
-				if(map.getTileProperty(map.getTileId(x, y, 1), "checkpoint", "-1").equals("2")) {
-					check1.add(new Vector2f(x*tileWidth,y*tileHeight));
-				}
-				if(map.getTileProperty(map.getTileId(x, y, 1), "checkpoint", "-1").equals("3")) {
-					check1.add(new Vector2f(x*tileWidth,y*tileHeight));
-				}
-				
 			}
 		}
 	}
@@ -100,13 +74,23 @@ public class Level {
 		return tileHeight;
 	}
 	
-	public boolean getTileType(int xTile, int yTile){
-		int tileID = map.getTileId(xTile, yTile, edgeLayer);
+	public int getTileType(int xTile, int yTile, int passedCheckpoints){
+		int tileID = map.getTileId(xTile, yTile, roadLayer);
 			
-		if(tileID != 0){
-			return false;
+		if(tileID == 0){
+			return 0;
 		}
-		return true;
+		
+		if(map.getTileProperty(tileID, "checkpoint", "-1").equals("1") && passedCheckpoints == 0) {
+			return 1;
+		}else if(map.getTileProperty(tileID, "checkpoint", "-1").equals("2") && passedCheckpoints == 1) {
+			return 2;
+		}else if(map.getTileProperty(tileID, "checkpoint", "-1").equals("3") && passedCheckpoints == 2) {
+			return 3;
+		}else if(map.getTileProperty(tileID, "goal", "-1").equals("finish") && passedCheckpoints == 3) {
+			return 4;
+		}
+		return 5;
 	}
 
 	public float getDistanceWidth() {
@@ -119,19 +103,5 @@ public class Level {
 
 	public Vector2f getStartCoordinates() {
 		return startCoordinates;
-	}
-
-	public List<Vector2f> getCheck1() {
-		return check1;
-	}
-
-	
-	public List<Vector2f> getCheck2() {
-		return check2;
-	}
-
-	
-	public List<Vector2f> getCheck3() {
-		return check3;
 	}
 }
