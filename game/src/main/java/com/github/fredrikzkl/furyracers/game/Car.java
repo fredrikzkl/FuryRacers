@@ -25,7 +25,7 @@ public class Car {
 	public float handling;
 	public float weight;
 	
-	boolean reverseKeyIsDown, throttleKeyIsDown, leftKeyIsDown, rightKeyIsDown, usingKeyboard, finishedRaced = false;
+	boolean reverseKeyIsDown, throttleKeyIsDown, leftKeyIsDown, rightKeyIsDown, usingKeyboard, finishedRace = false;
 	boolean startClock = true;
 	
 	
@@ -114,7 +114,7 @@ public class Car {
 			milliSecondsElapsed = TimeUnit.NANOSECONDS.toMillis(nanoSecondsElapsed) - secondsElapsed*1000;
 		}
 		
-		if(!finishedRaced){
+		if(!finishedRace){
 			timeElapsed = minutesElapsed + ":" + secondsElapsed + ":" + milliSecondsElapsed;
 		}
 	}
@@ -141,7 +141,7 @@ public class Car {
 			case 1: passedChekpoints++; break;
 			case 2: passedChekpoints++; break;
 			case 3: passedChekpoints++; break;
-			case 4: finishedRaced = true;
+			case 4: finishedRace = true;
 		}
 	}
 	
@@ -185,7 +185,7 @@ public class Car {
 		}else{
 			if(currentSpeed > 0) {
 				currentSpeed -= deAcceleration*deltaTime/1000;
-			}else if(currentSpeed < 0){
+			}else if(!reverseKeyIsDown && currentSpeed > 0){
 				currentSpeed = 0;
 			}
 		}
@@ -195,9 +195,9 @@ public class Car {
 				currentSpeed -= reverseAcceleration*deltaTime/1000;
 			}
 		}else{
-			if(currentSpeed < -reverseAcceleration) {
+			if(currentSpeed < 0) {
 				currentSpeed += deAcceleration*deltaTime/1000;
-			}else if(currentSpeed < 0){
+			}else if(!throttleKeyIsDown && currentSpeed < 0){
 				currentSpeed = 0;
 			}
 		}

@@ -109,11 +109,9 @@ public class GameCore extends BasicGameState {
 		g.translate(-camera.getX(), -camera.getY()); //End of camera
 		
 		for(Car car: cars){
-			ttf.drawString(Application.screenSize.width/2, 0, car.getTimeElapsed());
+			ttf.drawString(car.getPosition().x+camera.getX()-25, car.getPosition().y+camera.getY()-30, car.getTimeElapsed());
 		}
-		
 		ttf.drawString(Application.screenSize.width-300, 0, IP);//Ip addresene nederst i venstre corner
-		
 	}
 	
 	private void zoomLogic() {
