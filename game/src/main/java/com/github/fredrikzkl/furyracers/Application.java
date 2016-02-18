@@ -6,15 +6,20 @@ import com.github.fredrikzkl.furyracers.network.GameSession;
 import org.lwjgl.opengl.Display;
 import org.newdawn.slick.AppGameContainer;
 import org.newdawn.slick.GameContainer;
+import org.newdawn.slick.Graphics;
 import org.newdawn.slick.ScalableGame;
 import org.newdawn.slick.SlickException;
+import org.newdawn.slick.state.GameState;
 import org.newdawn.slick.state.StateBasedGame;
 
 import java.awt.*;
 
 public class Application extends StateBasedGame {
 	
+	private final static String version = "0.01" + "a";
+	
 	private final static String gameName = "FuryRacers";
+	
 	private final static int menuID = 0;
 	private final static int GameCore = 1;
 	private static GameCore game;
@@ -58,6 +63,7 @@ public class Application extends StateBasedGame {
 		try {
 			game = new GameCore(GameCore);
 			menu = new Menu(menuID);
+			menu.setVersion(version);
 			gameSession = new GameSession(game,menu);
 			gameSession.connect();
 		} catch (Exception e) {
@@ -84,5 +90,10 @@ public class Application extends StateBasedGame {
 		createGameSession();
 		startGame();
 	}
+
+	
+		
+	
+	
 	
 }

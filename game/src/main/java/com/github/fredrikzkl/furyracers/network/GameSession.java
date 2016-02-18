@@ -10,6 +10,7 @@ import javax.websocket.Session;
 import org.glassfish.tyrus.client.ClientManager;
 import org.newdawn.slick.SlickException;
 
+import com.github.fredrikzkl.furyracers.Application;
 import com.github.fredrikzkl.furyracers.Menu;
 import com.github.fredrikzkl.furyracers.game.GameCore;
 import com.github.fredrikzkl.furyracers.game.Player;
@@ -24,6 +25,7 @@ import java.util.Set;
 
 public class GameSession {
 
+	
 	private final GameCore game;
 	private Menu menu;
 	private Session backend;
@@ -36,7 +38,7 @@ public class GameSession {
     private String player1Username = "Player 1";
     private String player2Username = "Player 2";
     
-    private static List<Player> players;
+    private static ArrayList<Player> players;
     
 	public GameSession(GameCore game,Menu menu) throws DeploymentException {
 		this.game = game;
@@ -134,6 +136,7 @@ public class GameSession {
                 String from = jsonObj.getString("from");
                 checkIfPlayerExist(from);
                 
+             
                 for(int i = 0; i < players.size(); i++){
                 	if(players.get(i).getId().equals(from)){
                 		if(players.get(i).getPlayerNr() == 1){
@@ -213,6 +216,7 @@ public class GameSession {
 		}
 		if(notExist){
 			System.out.println("Player: '" + from + "' doesnt exist as a player! Added to plyerlist..");
+			menu.printConsole("Player: '" + from + "' doesnt exist as a player! Added to plyerlist..");
 			addPlayer(from);
 		}
 	}
@@ -220,12 +224,14 @@ public class GameSession {
 	private void addPlayer(String id) throws IOException, EncodeException, SlickException{
 		if(players.size() > 4){
 			System.out.println("The game is full!");
+			menu.printConsole("The game is full!");
 			printPlayers();
 		}else{
 	    	players.add(new Player(id, playerNumber));
 	    	sendToBackend("get username", id);
-	    	game.createPlayer(playerNumber, id);
-	    	System.out.println("Player '" + id + "' successfully added to the game! Assigned as player: " + playerNumber);
+	    	menu.createPlayer(playerNumber, id, players);
+	    	//game.createPlayer(playerNumber, id);
+	    	menu.printConsole("Player '" + id + "' successfully added to the game! Assigned as player: " + playerNumber);
 	    	playerNumber++;
 		}
 	}

@@ -209,9 +209,10 @@ public class GameCore extends BasicGameState {
 	    	game.getState(1).init(container, game);
 	    	game.enterState(1);
 	    }
+	    
 	}
 	
-public void createPlayer(int nr, String id) throws SlickException{
+	public void createPlayer(int nr, String id) throws SlickException{
 		
 		if(nr == 1){
 			p1 = new Car(id, "medium", nr,redMustang,
