@@ -29,6 +29,8 @@ public class Menu extends BasicGameState {
 
 	Font regularFont;
 	TrueTypeFont ip;
+	
+	private final int ICONSIZE = 128;
 
 	private static String IP = null;
 	private String version = null;
@@ -40,8 +42,7 @@ public class Menu extends BasicGameState {
 	private Color headerColor = new Color(221, 0, 0);
 	private Image icons, cars;
 
-	private boolean p1, p2, p3, p4 = false;
-	private int p1Sel, p2Sel, p3Sel, p4Sel = 0;
+
 
 	private int tick;
 	private double seconds;
@@ -52,6 +53,7 @@ public class Menu extends BasicGameState {
 	private int counter;
 	private int secondsToNextGame = 10;
 	private boolean allReady = true;
+	double allReadyTimestamp = -1;
 
 	public List<String> console;
 	public List<Player> players;
@@ -116,9 +118,9 @@ public class Menu extends BasicGameState {
 		if (players.isEmpty())
 			blinkingText = "Need at least 1 player to begin!";
 		else
-			blinkingText = "Ready up and the game will begin!";
+			blinkingText = "Ready up and the game will begin";
 		if (allReady && !players.isEmpty())
-			blinkingText = "Game is starting!!!";
+			blinkingText = "Game is starting";
 
 		// Blinking text
 		if (Math.sin(tick / 400) > 0) {
@@ -138,22 +140,10 @@ public class Menu extends BasicGameState {
 	}
 
 	private void drawPlayerIcons(GameContainer container, StateBasedGame game, Graphics g) {
-
-		if (p1) {
-			g.drawImage(cars.getSubImage(0, (128 * p1Sel), 128, 128),
-					(float) (Application.screenSize.width / 3.8 + (0 * 160)), Application.screenSize.height / 4);
-		}
-		if (p2) {
-			g.drawImage(cars.getSubImage(0, 128, 128, 128), (float) (Application.screenSize.width / 3.8 + (1 * 160)),
-					Application.screenSize.height / 4);
-		}
-		if (p3) {
-			g.drawImage(cars.getSubImage(0, 128 * 2, 128, 128),
-					(float) (Application.screenSize.width / 3.8 + (2 * 160)), Application.screenSize.height / 4);
-		}
-		if (p4) {
-			g.drawImage(cars.getSubImage(0, 128 * 3, 128, 128),
-					(float) (Application.screenSize.width / 3.8 + (3 * 160)), Application.screenSize.height / 4);
+		//Cars - tegner ingenting om spiller ikke finnes
+		for(int i = 0 ; i<players.size();i++){
+			g.drawImage(cars.getSubImage(players.get(i).getSelect()*128,i*ICONSIZE,ICONSIZE, ICONSIZE),
+					(float) (Application.screenSize.width / 3.8 + (i * 160)), Application.screenSize.height / 4);
 		}
 
 		// Bordersene
@@ -169,7 +159,6 @@ public class Menu extends BasicGameState {
 
 	}
 
-	double allReadyTimestamp = -1;
 
 	public void update(GameContainer container, StateBasedGame game, int delta) throws SlickException {
 		GameSession.setGameState(game.getCurrentStateID());
@@ -187,6 +176,7 @@ public class Menu extends BasicGameState {
 			}
 			if (allReady && allReadyTimestamp < 0) {
 				allReadyTimestamp = seconds;
+				printConsole("Everyone is ready, the game will begin shortly!");
 			}
 		}else{
 			allReady = false;
@@ -195,7 +185,7 @@ public class Menu extends BasicGameState {
 		if (allReady) {
 			secondsToNextGame = (int) (allReadyTimestamp + counter - seconds);
 			if(secondsToNextGame <= 0){
-				// Start
+				startGame(game);
 			}
 			countDown = String.valueOf(secondsToNextGame);
 		}else{
@@ -210,16 +200,12 @@ public class Menu extends BasicGameState {
 		last = System.nanoTime();
 	}
 
-	public void createPlayer(int nr, String id, ArrayList<Player> list) throws SlickException {
+	private void startGame(StateBasedGame game) {
+		game.enterState(1);
+	}
+
+	public void updatePlayerList(ArrayList<Player> list){
 		players = list;
-		if (nr == 1)
-			p1 = true;
-		if (nr == 2)
-			p2 = true;
-		if (nr == 3)
-			p3 = true;
-		if (nr == 4)
-			p4 = true;
 	}
 
 	public void printConsole(String text) {
@@ -231,31 +217,32 @@ public class Menu extends BasicGameState {
 	public void buttonDown(String data, int playerNr) {
 		switch (data) {
 		case "1":
-			printConsole(playerNr + "");
-
-			if (playerNr == 1) {
-				if(players.get(playerNr-1).isReady())
-					players.get(playerNr-1).setReady(false);
-				else
-					players.get(playerNr-1).setReady(true);
+			for(int i = 0; i<players.size();i++){
+				if(playerNr == i +1){
+					if(players.get(i).isReady())
+						players.get(i).setReady(false);
+					else
+						players.get(i).setReady(true);
+				}
 			}
-			if(playerNr == 2){
-				printConsole("hey");
-				if(players.get(playerNr-1).isReady())
-					players.get(playerNr-1).setReady(false);
-				else
-					players.get(playerNr-1).setReady(true);
-			}
-			
 			break;
 		case "2":
-			if (playerNr == 1)
-				p1Sel++;
+			for(int i = 0; i<players.size();i++){
+				if(playerNr == i +1){
+					if(!players.get(i).isReady()){
+						players.get(i).setSelect(players.get(i).getSelect() + 1);
+					}
+				}
+			}
 			break;
 		case "3":
-			if (playerNr == 1)
-				p1Sel--;
-
+			for(int i = 0; i<players.size();i++){
+				if(playerNr == i +1){
+					if(!players.get(i).isReady()){
+						players.get(i).setSelect(players.get(i).getSelect() - 1);
+					}
+				}
+			}
 			break;
 		}
 	}

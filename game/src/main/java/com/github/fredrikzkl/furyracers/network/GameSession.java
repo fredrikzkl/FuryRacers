@@ -99,6 +99,7 @@ public class GameSession {
             
             case "added client": {
             	System.out.println("New player connecting...");
+            	menu.printConsole("New player connecting...");
             	String id = jsonObj.getString("data");
             	addPlayer(id);
             	break;
@@ -149,15 +150,27 @@ public class GameSession {
                 			break;
                 		}
                 		if(players.get(i).getPlayerNr() == 2){
-                			game.p2.buttonDown(data);
+                			if(getGameState() == 0){
+                				menu.buttonDown(data,2);
+                			}else{
+                				game.p2.buttonDown(data);
+                			}
                 			break;
                 		}
                 		if(players.get(i).getPlayerNr() == 3){
-                			game.p3.buttonDown(data);
+                			if(getGameState() == 0){
+                				menu.buttonDown(data,3);
+                			}else{
+                				game.p3.buttonDown(data);
+                			}
                 			break;
                 		}
                 		if(players.get(i).getPlayerNr() == 4){
-                			game.p4.buttonDown(data);
+                			if(getGameState() == 0){
+                				menu.buttonDown(data,4);
+                			}else{
+                				game.p4.buttonDown(data);
+                			}
                 			break;
                 		}
                 	}
@@ -184,19 +197,25 @@ public class GameSession {
                 			}
                 		}
                 		if(players.get(i).getPlayerNr() == 2){
-                			game.p2.buttonUp(data);
-                			game.p2.disableKeyboardInput();
-                			break;
+                			if(getGameState() == 1){ // Checks if the game is in the menu or in a map
+	                			game.p2.buttonUp(data);
+	                			game.p2.disableKeyboardInput();
+	                			break;
+                			}
                 		}
                 		if(players.get(i).getPlayerNr() == 3){
-                			game.p3.buttonUp(data);
-                			game.p3.disableKeyboardInput();
-                			break;
+                			if(getGameState() == 1){ // Checks if the game is in the menu or in a map
+	                			game.p3.buttonUp(data);
+	                			game.p3.disableKeyboardInput();
+	                			break;
+                			}
                 		}
                 		if(players.get(i).getPlayerNr() == 4){
-                			game.p4.buttonUp(data);
-                			game.p4.disableKeyboardInput();
-                			break;
+                			if(getGameState() == 1){ // Checks if the game is in the menu or in a map
+	                			game.p4.buttonUp(data);
+	                			game.p4.disableKeyboardInput();
+	                			break;
+                			}
                 		}
                 	}
                 }
@@ -242,7 +261,7 @@ public class GameSession {
 		}else{
 	    	players.add(new Player(id, playerNumber));
 	    	sendToBackend("get username", id);
-	    	menu.createPlayer(playerNumber, id, players);
+	    	menu.updatePlayerList(players);
 	    	//game.createPlayer(playerNumber, id);
 	    	menu.printConsole("Player '" + id + "' successfully added to the game! Assigned as player: " + playerNumber);
 	    	playerNumber++;
