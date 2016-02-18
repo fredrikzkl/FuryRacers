@@ -6,6 +6,9 @@ public class Player {
 	private int playerNr;
 	private int score = 0;
 	
+	private boolean ready = false;;
+	private int select = 0;
+	
 	public Player(String id, int playerNr){
 		this.id=id;
 		this.playerNr=playerNr;
@@ -44,4 +47,22 @@ public class Player {
 		return "Player " + getPlayerNr() + " ID:'" + getId() +"'";
 		
 	}
+
+	public boolean isReady() {
+		return ready;
+	}
+
+	public void setReady(boolean ready) {
+		this.ready = ready;
+	}
+
+	public int getSelect() {
+		return select;
+	}
+
+	public void setSelect(int select) {
+		this.select = select;
+	}
+	
+	
 }

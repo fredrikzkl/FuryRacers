@@ -40,6 +40,8 @@ public class GameSession {
     
     private static ArrayList<Player> players;
     
+    private static int gameState;
+    
 	public GameSession(GameCore game,Menu menu) throws DeploymentException {
 		this.game = game;
 		this.menu = menu;
@@ -132,15 +134,18 @@ public class GameSession {
 
             case "buttonDown": {	
                 String data = jsonObj.getJsonNumber("data").toString();
-                
                 String from = jsonObj.getString("from");
-                checkIfPlayerExist(from);
                 
-             
+                if(!checkIfPlayerExist(from)){
+                	
                 for(int i = 0; i < players.size(); i++){
                 	if(players.get(i).getId().equals(from)){
                 		if(players.get(i).getPlayerNr() == 1){
-                			game.p1.buttonDown(data);
+                			if(getGameState() == 0){
+                				menu.buttonDown(data,1);
+                			}else{
+                				game.p1.buttonDown(data);
+                			}
                 			break;
                 		}
                 		if(players.get(i).getPlayerNr() == 2){
@@ -157,6 +162,8 @@ public class GameSession {
                 		}
                 	}
                 }
+                }
+                
                 if (!jsonObj.containsKey("from")) {
                     return;
                 }
@@ -166,13 +173,15 @@ public class GameSession {
             case "buttonUp":{
             	String data = jsonObj.getJsonNumber("data").toString();
             	String from = jsonObj.getString("from");
-            	
+        	
             	for(int i = 0; i < players.size(); i++){
                 	if(players.get(i).getId().equals(from)){
                 		if(players.get(i).getPlayerNr() == 1){
-                			game.p1.buttonUp(data);
-                			game.p1.disableKeyboardInput();
-                			break;
+                			if(getGameState() == 1){ // Checks if the game is in the menu or in a map
+	                			game.p1.buttonUp(data);
+	                			game.p1.disableKeyboardInput();
+	                			break;
+                			}
                 		}
                 		if(players.get(i).getPlayerNr() == 2){
                 			game.p2.buttonUp(data);
@@ -191,6 +200,8 @@ public class GameSession {
                 		}
                 	}
                 }
+        	
+            	
                 if (!jsonObj.containsKey("from")) {
                      return;
                 }
@@ -207,7 +218,7 @@ public class GameSession {
         }
     }
 
-	private void checkIfPlayerExist(String from) throws IOException, EncodeException, SlickException {
+	private boolean checkIfPlayerExist(String from) throws IOException, EncodeException, SlickException {
 		boolean notExist = true;
 		for(Player player:players){
 			if(player.getId().equals(from)){
@@ -219,6 +230,8 @@ public class GameSession {
 			menu.printConsole("Player: '" + from + "' doesnt exist as a player! Added to plyerlist..");
 			addPlayer(from);
 		}
+		
+		return notExist;
 	}
 	
 	private void addPlayer(String id) throws IOException, EncodeException, SlickException{
@@ -244,4 +257,14 @@ public class GameSession {
         	count++;
         }
 	}
+
+	public static int getGameState() {
+		return gameState;
+	}
+
+	public static void setGameState(int gameState) {
+		GameSession.gameState = gameState;
+	}
+	
+	
 }

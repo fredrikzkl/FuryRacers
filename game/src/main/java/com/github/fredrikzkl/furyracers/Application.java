@@ -31,6 +31,8 @@ public class Application extends StateBasedGame {
 	public static final int VIEW_HEIGHT = HEIGHT * 16; //TODO
 	public static final int VIEW_WIDTH = WIDTH * 16; //TODO
 	public static final int FPS = 120;
+	
+	public static boolean inMenu;
 
 	public Application(String gameName) {
 		super(gameName);
@@ -91,9 +93,13 @@ public class Application extends StateBasedGame {
 		startGame();
 	}
 
-	
-		
-	
-	
+	public static boolean isInMenu() {
+		return inMenu;
+	}
+
+	public static void setInMenu(boolean inMenu) {
+		Application.inMenu = inMenu;
+	}
+
 	
 }

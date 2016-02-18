@@ -15,6 +15,7 @@ import org.newdawn.slick.state.BasicGameState;
 import org.newdawn.slick.state.StateBasedGame;
 
 import com.github.fredrikzkl.furyracers.Application;
+import com.github.fredrikzkl.furyracers.network.GameSession;
 
 public class GameCore extends BasicGameState {
 	
@@ -61,6 +62,7 @@ public class GameCore extends BasicGameState {
 	}
 
 	public void init(GameContainer container, StateBasedGame sbg) throws SlickException {
+		Application.setInMenu(false);
 		System.out.println("IP: " + IP);
 		cars = new ArrayList<Car>();
 		
@@ -86,6 +88,7 @@ public class GameCore extends BasicGameState {
 	}
 
 	public void update(GameContainer container , StateBasedGame game, int deltaTime) throws SlickException {
+		GameSession.setGameState(game.getCurrentStateID());
 		checkForKeyboardInput(container, game);
 		for(Car cars: cars){
 			cars.update(container, game, deltaTime);
