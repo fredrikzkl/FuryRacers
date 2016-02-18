@@ -9,6 +9,8 @@ import javax.websocket.EncodeException;
 import javax.websocket.Session;
 import org.glassfish.tyrus.client.ClientManager;
 import org.newdawn.slick.SlickException;
+
+import com.github.fredrikzkl.furyracers.Menu;
 import com.github.fredrikzkl.furyracers.game.GameCore;
 import com.github.fredrikzkl.furyracers.game.Player;
 import java.io.IOException;
@@ -23,6 +25,7 @@ import java.util.Set;
 public class GameSession {
 
 	private final GameCore game;
+	private Menu menu;
 	private Session backend;
 	private int playerNumber;
 	
@@ -35,8 +38,9 @@ public class GameSession {
     
     private static List<Player> players;
     
-	public GameSession(GameCore game) throws DeploymentException {
+	public GameSession(GameCore game,Menu menu) throws DeploymentException {
 		this.game = game;
+		this.menu = menu;
 		players = new ArrayList<Player>();
 		playerNumber = 1;
 	}
@@ -194,6 +198,7 @@ public class GameSession {
             case "get ip":{
             	String ip = jsonObj.getJsonString("data").toString();
             	game.setIP(ip);
+            	menu.setIP(ip);
             	
             }
         }

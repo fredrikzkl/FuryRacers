@@ -3,7 +3,6 @@ package com.github.fredrikzkl.furyracers;
 import com.github.fredrikzkl.furyracers.game.GameCore;
 import com.github.fredrikzkl.furyracers.game.Level;
 import com.github.fredrikzkl.furyracers.network.GameSession;
-import com.github.fredrikzkl.furyracers.Menu;
 import org.lwjgl.opengl.Display;
 import org.newdawn.slick.AppGameContainer;
 import org.newdawn.slick.GameContainer;
@@ -16,9 +15,10 @@ import java.awt.*;
 public class Application extends StateBasedGame {
 	
 	private final static String gameName = "FuryRacers";
-	private final static int menu = 0;
+	private final static int menuID = 0;
 	private final static int GameCore = 1;
 	private static GameCore game;
+	private static Menu menu;
 	private static GameSession gameSession;
 	public static Dimension screenSize;
 	public static final int HEIGHT = 24;
@@ -29,14 +29,14 @@ public class Application extends StateBasedGame {
 
 	public Application(String gameName) {
 		super(gameName);
-		this.addState(new Menu(menu));
+		this.addState(menu);
 		this.addState(game);
 	}
 	
 	public void initStatesList(GameContainer container) throws SlickException {
-		this.getState(menu).init(container, this);
+		this.getState(menuID).init(container, this);
 		this.getState(GameCore).init(container, this);
-		this.enterState(menu);
+		this.enterState(menuID);
 	}
 
 	public static GameSession getGameSession() {
@@ -57,7 +57,8 @@ public class Application extends StateBasedGame {
 	private static void createGameSession() {
 		try {
 			game = new GameCore(GameCore);
-			gameSession = new GameSession(game);
+			menu = new Menu(menuID);
+			gameSession = new GameSession(game,menu);
 			gameSession.connect();
 		} catch (Exception e) {
 			fatalError("Could not start websocket server: " + e.getMessage());

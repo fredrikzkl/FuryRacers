@@ -84,7 +84,7 @@ public class Menu extends BasicGameState{
 			throws SlickException {
 		
 		//TODO
-		//ip.drawString(Application.screenSize.width-300, 0, IP);
+		ip.drawString(Application.screenSize.width-300, 0, IP);
 		
 		header.drawString(Application.screenSize.width/3, 50, "Fury Racers", headerColor);
 		
