@@ -3,6 +3,8 @@ package com.github.fredrikzkl.furyracers.game;
 import java.awt.Font;
 import java.util.ArrayList;
 import java.util.List;
+
+import org.newdawn.slick.Color;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
@@ -10,6 +12,7 @@ import org.newdawn.slick.Input;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.SpriteSheet;
 import org.newdawn.slick.TrueTypeFont;
+import org.newdawn.slick.geom.Circle;
 import org.newdawn.slick.geom.Vector2f;
 import org.newdawn.slick.state.BasicGameState;
 import org.newdawn.slick.state.StateBasedGame;
@@ -22,6 +25,8 @@ public class GameCore extends BasicGameState {
 	
 	Image p1car = null;
 	SpriteSheet sprite;
+	Circle dot;
+	Circle center;
 	
 	Image redMustang;
 	Image blueMustang;
@@ -80,6 +85,9 @@ public class GameCore extends BasicGameState {
 		
 		font = new Font("Verdana", Font.BOLD, 20);
 		ttf = new TrueTypeFont(font, true);
+		
+		dot = new Circle(0, 0, 3);
+		center = new Circle(0,0,3);
 		 
 		level = new Level(1);
 		camera = new Camera(0,0,level,this);
@@ -100,7 +108,6 @@ public class GameCore extends BasicGameState {
 	public void render(GameContainer container, StateBasedGame sbg, Graphics g)
 			throws SlickException {
 		
-		
 		//--------------------------------------------------------------------------//
 		camera.zoom(g,(float) zoom);//Crasher om verdien <=0 	
 		g.translate(camera.getX(), camera.getY()); //Start of camera
@@ -109,9 +116,13 @@ public class GameCore extends BasicGameState {
 		level.render(g,tilePos,camera);
 		for(Car car: cars){
 			car.render();
+			g.setColor(Color.green);
+			dot.setLocation(car.getPosition());
+			center.setLocation(car.getPosition().x, car.getPosition().y+32);
+			g.draw(dot);
+			g.draw(center);
 		}
-		/*ttf.drawString(50,50, "X: " + deltaDistance.x + " Y: " + deltaDistance.y);
-		ttf.drawString(50,100,"Biggest: " + biggest);*/
+		
 		
 		g.translate(-camera.getX(), -camera.getY()); //End of camera
 		camera.zoom(g,(float) 1/zoom);
