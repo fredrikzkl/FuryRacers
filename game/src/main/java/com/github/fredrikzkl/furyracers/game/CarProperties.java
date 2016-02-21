@@ -5,8 +5,10 @@ import org.newdawn.slick.SlickException;
 
 public enum CarProperties {
 	
-	mustang("mustang", "medium", "Sprites/fr_mustang_red.png", 300,480,100, 105, 75,110,1);
-	
+	mustangR("mustang", "medium", "Sprites/fr_mustang_red.png", 300,480,100, 105, 75,110,1),
+	mustangB("mustang", "medium", "Sprites/fr_mustang_blue.png", 300,480,100, 105, 75,110,1),
+	mustangG("mustang", "medium", "Sprites/fr_mustang_green.png", 300,480,100, 105, 75,110,1),
+	mustangY("mustang", "medium", "Sprites/fr_mustang_yellow.png", 300,480,100, 105, 75,110,1);
 	
 	public String name;
 	public String type;
