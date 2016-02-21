@@ -23,11 +23,13 @@ public class GameCore extends BasicGameState {
 	
 	Image p1car = null;
 	SpriteSheet sprite;
-	
-	Image redMustang;
+	/*
 	Image blueMustang;
 	Image greenMustang;
 	Image yellowMustang;
+	 * 
+	Image redMustang;
+	 */
 
 	public static Camera camera;
 	public Level level = null;
@@ -38,10 +40,7 @@ public class GameCore extends BasicGameState {
 	Font font;
 	TrueTypeFont ttf;
 	
-	public Car p1;
-	public Car p2;
-	public Car p3;
-	public Car p4;
+	
 	public List<Car> cars;
 	public List<Player> players;
 	
@@ -67,12 +66,12 @@ public class GameCore extends BasicGameState {
 		System.out.println("IP: " + IP);
 		cars = new ArrayList<Car>();
 		
-		
+		/*
 		redMustang = new Image("Sprites/fr_mustang_red.png");
 		blueMustang = new Image("Sprites/fr_mustang_blue.png");
 		greenMustang = new Image("Sprites/fr_mustang_green.png");
 		yellowMustang = new Image("Sprites/fr_mustang_yellow.png");
-		
+		*/
 		longestDistance = new Vector2f();
 		smallestDistance = new Vector2f();
 		deltaDistance = new Vector2f();
@@ -232,34 +231,12 @@ public class GameCore extends BasicGameState {
 	
 	public void createPlayer(int nr, String id, int playerChoice) throws SlickException{
 		
-		if(nr == 1){
-			p1 = new Car(id, "medium", nr,redMustang,
-					level.getStartCoordinates().x-(level.tileWidth*4),
-					level.getStartCoordinates().y-(level.tileHeight*4),300,
-					480,100, 105, 75,110,1, level);
-			cars.add(p1);
-		}
-		if(nr == 2){
-			p2 = new Car(id, "medium", nr,blueMustang,
-					level.getStartCoordinates().x-(level.tileWidth*4),
-					level.getStartCoordinates().y-(level.tileHeight*4),300,
-					480,100, 105, 75,110,1, level);
-			cars.add(p2);
-		}
-		if(nr == 3){
-			p3 = new Car(id, "medium", nr,greenMustang,
-					level.getStartCoordinates().x-(level.tileWidth*4),
-					level.getStartCoordinates().y-(level.tileHeight*4),300,
-					480,100, 105, 75,110,1, level);
-			cars.add(p3);
-		}
-		if(nr == 4){
-			p4 = new Car(id, "medium", nr,yellowMustang,
-					level.getStartCoordinates().x-(level.tileWidth*4),
-					level.getStartCoordinates().y-(level.tileHeight*4),300,
-					480,100, 105, 75,110,1, level);
-				cars.add(p4);
-		}
+		CarProperties temp = CarProperties.values()[playerChoice];
+		
+		cars.add(new Car(temp,id,nr,
+				level.getStartCoordinates().x-(level.tileWidth*4),
+				level.getStartCoordinates().y-(level.tileHeight*4),
+				level));
 	}
 	
 	public void setIP(String ip) {

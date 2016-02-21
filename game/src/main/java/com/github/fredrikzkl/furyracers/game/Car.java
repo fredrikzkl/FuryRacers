@@ -13,22 +13,16 @@ import org.newdawn.slick.GameContainer;
 public class Car {
 	public String name;
 	public String type;
-	
 	public Image sprite;
-	public Time duration;
+	public CarProperties stats;
 	
-	public float topSpeed;
-	public float reverseTopSpeed;
-	public float acceleration;
-	public float reverseAcceleration;
-	public float deAcceleration;
-	public float handling;
-	public float weight;
+	public String id;
 	
 	boolean reverseKeyIsDown, throttleKeyIsDown, leftKeyIsDown, rightKeyIsDown, usingKeyboard, finishedRace = false;
 	boolean startClock = true;
 	
 	
+	public Time duration;
 	float currentSpeed = 0;
 	float movementDegrees = 0;
 	float radDeg = 0;
@@ -54,21 +48,20 @@ public class Car {
 	private long milliSecondsElapsed = 0;
 	private String timeElapsed;
 	
-	public Car(String name, String type, int playerNr, Image sprite, float startX, float startY, float reverseTopSpeed,float topSpeed,
-			float acceleration, float reverseAcceleration, float deAcceleration, float handling, float weight, Level level){
-	
-		this.name = name;
-		this.type = type;
-		this.sprite = sprite;
-		this.topSpeed = topSpeed;
-		this.reverseTopSpeed = reverseTopSpeed;
-		this.reverseAcceleration = reverseAcceleration;
-		this.deAcceleration = deAcceleration;
-		this.acceleration = acceleration;
+	public Car(CarProperties stats, String id, int playerNr, float startX, float startY, Level level){
+		this.stats = stats;
+		this.id = id;
 		this.playerNr = playerNr;
-		this.handling = handling;
-		this.weight = weight;
 		this.level = level;
+		
+		try {
+			sprite  = new Image(stats.imageFile);
+		} catch (SlickException e) {
+			System.out.println("Could not find image file " + stats.imageFile);
+			e.printStackTrace();
+		}
+		
+		
 		
 		position = new Vector2f(startX,startY);
 	}
@@ -179,24 +172,24 @@ public class Car {
 		}
 
 		if(throttleKeyIsDown) {
-			if(currentSpeed < topSpeed) {
-				currentSpeed += acceleration*deltaTime/1000;
+			if(currentSpeed < stats.topSpeed) {
+				currentSpeed += stats.acceleration*deltaTime/1000;
 			}
 		}else{
 			if(currentSpeed > 0) {
-				currentSpeed -= deAcceleration*deltaTime/1000;
+				currentSpeed -= stats.deAcceleration*deltaTime/1000;
 			}else if(!reverseKeyIsDown && currentSpeed > 0){
 				currentSpeed = 0;
 			}
 		}
 
 		if(reverseKeyIsDown) {
-			if(currentSpeed > -reverseTopSpeed) {
-				currentSpeed -= reverseAcceleration*deltaTime/1000;
+			if(currentSpeed > -stats.reverseTopSpeed) {
+				currentSpeed -= stats.reverseAcceleration*deltaTime/1000;
 			}
 		}else{
 			if(currentSpeed < 0) {
-				currentSpeed += deAcceleration*deltaTime/1000;
+				currentSpeed += stats.deAcceleration*deltaTime/1000;
 			}else if(!throttleKeyIsDown && currentSpeed < 0){
 				currentSpeed = 0;
 			}
@@ -204,9 +197,9 @@ public class Car {
 
 		if(currentSpeed != 0){
 			if(leftKeyIsDown){
-				movementDegrees -= handling*deltaTime/1000;
+				movementDegrees -= stats.handling*deltaTime/1000;
 			}else if(rightKeyIsDown){
-				movementDegrees += handling*deltaTime/1000;
+				movementDegrees += stats.handling*deltaTime/1000;
 			}
 		}
 	}
