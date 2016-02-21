@@ -1,11 +1,6 @@
 package com.github.fredrikzkl.furyracers;
 
 import java.awt.Font;
-import java.awt.FontFormatException;
-import java.awt.GraphicsEnvironment;
-import java.awt.geom.RectangularShape;
-import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -15,18 +10,22 @@ import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
 import org.newdawn.slick.Input;
+import org.newdawn.slick.Music;
 import org.newdawn.slick.SlickException;
+import org.newdawn.slick.Sound;
 import org.newdawn.slick.TrueTypeFont;
-import org.newdawn.slick.geom.Rectangle;
 import org.newdawn.slick.state.BasicGameState;
 import org.newdawn.slick.state.StateBasedGame;
 import org.newdawn.slick.util.ResourceLoader;
 
+import com.github.fredrikzkl.furyracers.game.GameCore;
 import com.github.fredrikzkl.furyracers.game.Player;
 import com.github.fredrikzkl.furyracers.network.GameSession;
 
 public class Menu extends BasicGameState {
 
+	private GameCore core;
+	
 	Font regularFont;
 	TrueTypeFont ip;
 	
@@ -42,8 +41,6 @@ public class Menu extends BasicGameState {
 	private Color headerColor = new Color(221, 0, 0);
 	private Image icons, cars;
 
-
-
 	private int tick;
 	private double seconds;
 	// used to count seconds
@@ -51,15 +48,20 @@ public class Menu extends BasicGameState {
 
 	private String countDown;
 	private int counter;
-	private int secondsToNextGame = 10;
+	private int secondsToNextGame = 3;
 	private boolean allReady = true;
 	double allReadyTimestamp = -1;
 
 	public List<String> console;
 	public List<Player> players;
+	
+	
+	//--------------//
 
-	public Menu(int state) {
+	private Music music;
 
+	public Menu(int state, GameCore game) {
+			core = game;
 	}
 
 	public void init(GameContainer container, StateBasedGame game) throws SlickException {
@@ -103,6 +105,11 @@ public class Menu extends BasicGameState {
 		} catch (RuntimeException e) {
 			printConsole("ERROR! Sprite sheet not found!");
 		}
+		
+		music = new Music("Sound/menu.ogg");
+		music.setVolume(0.5f);
+		music.loop();
+		
 
 	}
 
@@ -123,8 +130,8 @@ public class Menu extends BasicGameState {
 			blinkingText = "Game is starting";
 
 		// Blinking text
-		if (Math.sin(tick / 400) > 0) {
-			regularText.drawString((float) (Application.screenSize.width / 3.1 - blinkingText.length()),
+		if (Math.sin(tick / 500) > 0) {
+			regularText.drawString((float) (Application.screenSize.width / 2.8 - blinkingText.length()),
 					Application.screenSize.height / 2, blinkingText);
 		}
 
@@ -195,13 +202,15 @@ public class Menu extends BasicGameState {
 
 		Input mouse = container.getInput();
 		if (mouse.isMouseButtonDown(0)) {
-			game.enterState(1);
+			
 		}
+		
 		last = System.nanoTime();
 	}
 
-	private void startGame(StateBasedGame game) {
+	private void startGame(StateBasedGame game) throws SlickException {
 		game.enterState(1);
+		core.gameStart(1,players);
 	}
 
 	public void updatePlayerList(ArrayList<Player> list){

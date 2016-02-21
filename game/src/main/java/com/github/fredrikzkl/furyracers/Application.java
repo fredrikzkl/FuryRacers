@@ -64,7 +64,7 @@ public class Application extends StateBasedGame {
 	private static void createGameSession() {
 		try {
 			game = new GameCore(GameCore);
-			menu = new Menu(menuID);
+			menu = new Menu(menuID,game);
 			menu.setVersion(version);
 			gameSession = new GameSession(game,menu);
 			gameSession.connect();

@@ -246,7 +246,7 @@ public class GameSession {
 		}
 		if(notExist){
 			System.out.println("Player: '" + from + "' doesnt exist as a player! Added to plyerlist..");
-			menu.printConsole("Player: '" + from + "' doesnt exist as a player! Added to plyerlist..");
+			menu.printConsole("Player: '" + from + "' doesnt exist as a player! Adding to plyerlist..");
 			addPlayer(from);
 		}
 		
@@ -262,8 +262,7 @@ public class GameSession {
 	    	players.add(new Player(id, playerNumber));
 	    	sendToBackend("get username", id);
 	    	menu.updatePlayerList(players);
-	    	//game.createPlayer(playerNumber, id);
-	    	menu.printConsole("Player '" + id + "' successfully added to the game! Assigned as player: " + playerNumber);
+	    	menu.printConsole("Player '" + id + "' joined the game! Assigned as player: " + playerNumber);
 	    	playerNumber++;
 		}
 	}

@@ -43,6 +43,7 @@ public class GameCore extends BasicGameState {
 	public Car p3;
 	public Car p4;
 	public List<Car> cars;
+	public List<Player> players;
 	
 	public Vector2f longestDistance;
 	public Vector2f smallestDistance;
@@ -66,6 +67,7 @@ public class GameCore extends BasicGameState {
 		System.out.println("IP: " + IP);
 		cars = new ArrayList<Car>();
 		
+		
 		redMustang = new Image("Sprites/fr_mustang_red.png");
 		blueMustang = new Image("Sprites/fr_mustang_blue.png");
 		greenMustang = new Image("Sprites/fr_mustang_green.png");
@@ -83,8 +85,21 @@ public class GameCore extends BasicGameState {
 		font = new Font("Verdana", Font.BOLD, 20);
 		ttf = new TrueTypeFont(font, true);
 		 
-		level = new Level(1);
+	}
+	
+	public void gameStart(int levelNr, List<Player> players2) throws SlickException{
+		Application.setInMenu(false);
+		level = new Level(levelNr);
 		camera = new Camera(0,0,level,this);
+		
+		players = players2;
+		for(Player player:players){
+			createPlayer(player.getPlayerNr(),player.getId(), player.getSelect());
+		}
+		
+		//For cinematic effect, bruh
+    	zoom = (float) 0.3;
+
 	}
 
 	public void update(GameContainer container , StateBasedGame game, int deltaTime) throws SlickException {
@@ -196,14 +211,14 @@ public class GameCore extends BasicGameState {
 		Input input = container.getInput();
 		if(input.isKeyDown(Input.KEY_A) && !keyboardPlayerOne){
 			int amountOfPlayers = cars.size();
-			createPlayer(amountOfPlayers+1,"keyboardPlayer");
+			createPlayer(amountOfPlayers+1,"keyboardPlayer",1);
 			cars.get(amountOfPlayers).activateKeyboardInput();
 			keyboardPlayerOne = true;
 		}
 		
 		if(input.isKeyDown(Input.KEY_B) && !keyboardPlayerTwo){
 			int amountOfPlayers = cars.size();
-			createPlayer(amountOfPlayers+1,"keyboardPlayerTwo");
+			createPlayer(amountOfPlayers+1,"keyboardPlayerTwo",1);
 			cars.get(amountOfPlayers).activateKeyboardInput();
 			keyboardPlayerTwo = true;
 		}
@@ -215,7 +230,7 @@ public class GameCore extends BasicGameState {
 	    
 	}
 	
-	public void createPlayer(int nr, String id) throws SlickException{
+	public void createPlayer(int nr, String id, int playerChoice) throws SlickException{
 		
 		if(nr == 1){
 			p1 = new Car(id, "medium", nr,redMustang,
