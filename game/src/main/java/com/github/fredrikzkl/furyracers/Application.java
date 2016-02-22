@@ -1,10 +1,7 @@
 package com.github.fredrikzkl.furyracers;
 
 import com.github.fredrikzkl.furyracers.game.GameCore;
-import com.github.fredrikzkl.furyracers.game.Level;
 import com.github.fredrikzkl.furyracers.network.GameSession;
-import com.github.fredrikzkl.furyracers.Menu;
-import org.lwjgl.opengl.Display;
 import org.newdawn.slick.AppGameContainer;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.ScalableGame;
@@ -15,10 +12,14 @@ import java.awt.*;
 
 public class Application extends StateBasedGame {
 	
+	private final static String version = "0.01" + "a";
+	
 	private final static String gameName = "FuryRacers";
-	private final static int menu = 0;
+	
+	private final static int menuID = 0;
 	private final static int GameCore = 1;
 	private static GameCore game;
+	private static Menu menu;
 	private static GameSession gameSession;
 	public static Dimension screenSize;
 	public static final int HEIGHT = 24;
@@ -26,17 +27,19 @@ public class Application extends StateBasedGame {
 	public static final int VIEW_HEIGHT = HEIGHT * 16; //TODO
 	public static final int VIEW_WIDTH = WIDTH * 16; //TODO
 	public static final int FPS = 120;
+	
+	public static boolean inMenu;
 
 	public Application(String gameName) {
 		super(gameName);
-		this.addState(new Menu(menu));
+		this.addState(menu);
 		this.addState(game);
 	}
 	
 	public void initStatesList(GameContainer container) throws SlickException {
-		this.getState(menu).init(container, this);
+		this.getState(menuID).init(container, this);
 		this.getState(GameCore).init(container, this);
-		this.enterState(GameCore);
+		this.enterState(menuID);
 	}
 
 	public static GameSession getGameSession() {
@@ -56,7 +59,9 @@ public class Application extends StateBasedGame {
 	private static void createGameSession() {
 		try {
 			game = new GameCore(GameCore);
-			gameSession = new GameSession(game);
+			menu = new Menu(menuID,game);
+			menu.setVersion(version);
+			gameSession = new GameSession(game,menu);
 			gameSession.connect();
 		} catch (Exception e) {
 			fatalError("Could not start websocket server: " + e.getMessage());
@@ -70,6 +75,7 @@ public class Application extends StateBasedGame {
 			AppGameContainer app = new AppGameContainer(new ScalableGame(new Application(gameName), (int)screenSize.getWidth(), (int)screenSize.getHeight()));
 			app.setDisplayMode((int)screenSize.getWidth(), (int)screenSize.getHeight(), false);
 
+
 			app.setAlwaysRender(true);
 			app.start();
 			System.out.println("Launching the game! Setting resolution: " + screenSize.getWidth() + "x" + screenSize.getHeight());
@@ -81,5 +87,13 @@ public class Application extends StateBasedGame {
 	public static void main(String[] args) {
 		createGameSession();
 		startGame();
+	}
+
+	public static boolean isInMenu() {
+		return inMenu;
+	}
+
+	public static void setInMenu(boolean inMenu) {
+		Application.inMenu = inMenu;
 	}
 }

@@ -3,8 +3,6 @@ package com.github.fredrikzkl.furyracers.game;
 import java.awt.Font;
 import java.util.ArrayList;
 import java.util.List;
-
-import org.newdawn.slick.Color;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
@@ -18,6 +16,7 @@ import org.newdawn.slick.state.BasicGameState;
 import org.newdawn.slick.state.StateBasedGame;
 
 import com.github.fredrikzkl.furyracers.Application;
+import com.github.fredrikzkl.furyracers.network.GameSession;
 
 public class GameCore extends BasicGameState {
 	
@@ -42,11 +41,9 @@ public class GameCore extends BasicGameState {
 	Font font;
 	TrueTypeFont ttf;
 	
-	public Car p1;
-	public Car p2;
-	public Car p3;
-	public Car p4;
+	
 	public List<Car> cars;
+	public List<Player> players;
 	
 	public Vector2f longestDistance;
 	public Vector2f smallestDistance;
@@ -66,13 +63,9 @@ public class GameCore extends BasicGameState {
 	}
 
 	public void init(GameContainer container, StateBasedGame sbg) throws SlickException {
+		Application.setInMenu(false);
 		System.out.println("IP: " + IP);
 		cars = new ArrayList<Car>();
-		
-		redMustang = new Image("Sprites/fr_mustang_red.png");
-		blueMustang = new Image("Sprites/fr_mustang_blue.png");
-		greenMustang = new Image("Sprites/fr_mustang_green.png");
-		yellowMustang = new Image("Sprites/fr_mustang_yellow.png");
 		
 		longestDistance = new Vector2f();
 		smallestDistance = new Vector2f();
@@ -86,14 +79,25 @@ public class GameCore extends BasicGameState {
 		font = new Font("Verdana", Font.BOLD, 20);
 		ttf = new TrueTypeFont(font, true);
 		
-		dot = new Circle(0, 0, 1);
 		center = new Circle(0,0,1);
 		 
-		level = new Level(1);
+	}
+	
+	public void gameStart(int levelNr, List<Player> players2) throws SlickException{
+		Application.setInMenu(false);
+		level = new Level(levelNr);
 		camera = new Camera(0,0,level,this);
+		
+		players = players2;
+		for(Player player:players){
+			createPlayer(player.getPlayerNr(),player.getId(), player.getSelect());
+		}
+		//For cinematic effect, bruh
+    	zoom = (float) 0.3;
 	}
 
 	public void update(GameContainer container , StateBasedGame game, int deltaTime) throws SlickException {
+		GameSession.setGameState(game.getCurrentStateID());
 		checkForKeyboardInput(container, game);
 		for(Car cars: cars){
 			cars.update(container, game, deltaTime);
@@ -116,11 +120,6 @@ public class GameCore extends BasicGameState {
 		level.render(g,tilePos,camera);
 		for(Car car: cars){
 			car.render(g);
-			g.setColor(Color.green);
-			dot.setLocation(car.getPosition());
-			center.setLocation(car.getPosition().x, car.getPosition().y+26);
-			g.draw(dot);
-			g.draw(center);
 		}
 		
 		
@@ -129,7 +128,8 @@ public class GameCore extends BasicGameState {
 		//--------------------------------------------------------------------------//
 		
 		for(Car car: cars){
-			ttf.drawString(0,car.getPlayerNr()*20, "Player"+car.getPlayerNr() + ": " + car.getTimeElapsed());
+
+			ttf.drawString(car.getPosition().x+camera.getX()-25, car.getPosition().y+camera.getY()-30, car.getTimeElapsed());
 		}
 		ttf.drawString(Application.screenSize.width-300, 0, IP);//Ip addresene øverst i venstre corner
 	}
@@ -159,7 +159,6 @@ public class GameCore extends BasicGameState {
 				zoom = temp;
 			}
 		}
-
 	}
 	
 	private void checkDistances() {
@@ -204,14 +203,14 @@ public class GameCore extends BasicGameState {
 		Input input = container.getInput();
 		if(input.isKeyDown(Input.KEY_A) && !keyboardPlayerOne){
 			int amountOfPlayers = cars.size();
-			createPlayer(amountOfPlayers+1,"keyboardPlayer");
+			createPlayer(amountOfPlayers+1,"keyboardPlayer",1);
 			cars.get(amountOfPlayers).activateKeyboardInput();
 			keyboardPlayerOne = true;
 		}
 		
 		if(input.isKeyDown(Input.KEY_B) && !keyboardPlayerTwo){
 			int amountOfPlayers = cars.size();
-			createPlayer(amountOfPlayers+1,"keyboardPlayerTwo");
+			createPlayer(amountOfPlayers+1,"keyboardPlayerTwo",1);
 			cars.get(amountOfPlayers).activateKeyboardInput();
 			keyboardPlayerTwo = true;
 		}
@@ -220,38 +219,17 @@ public class GameCore extends BasicGameState {
 	    	game.getState(1).init(container, game);
 	    	game.enterState(1);
 	    }
+	    
 	}
 	
-public void createPlayer(int nr, String id) throws SlickException{
+	public void createPlayer(int nr, String id, int playerChoice) throws SlickException{
 		
-		if(nr == 1){
-			p1 = new Car(id, "medium", nr,redMustang,
-					level.getStartCoordinates().x-(level.tileWidth*4),
-					level.getStartCoordinates().y-(level.tileHeight*4),300,
-					480,100, 105, 75,110,1, level);
-			cars.add(p1);
-		}
-		if(nr == 2){
-			p2 = new Car(id, "medium", nr,blueMustang,
-					level.getStartCoordinates().x-(level.tileWidth*4),
-					level.getStartCoordinates().y-(level.tileHeight*4),300,
-					480,100, 105, 75,110,1, level);
-			cars.add(p2);
-		}
-		if(nr == 3){
-			p3 = new Car(id, "medium", nr,greenMustang,
-					level.getStartCoordinates().x-(level.tileWidth*4),
-					level.getStartCoordinates().y-(level.tileHeight*4),300,
-					480,100, 105, 75,110,1, level);
-			cars.add(p3);
-		}
-		if(nr == 4){
-			p4 = new Car(id, "medium", nr,yellowMustang,
-					level.getStartCoordinates().x-(level.tileWidth*4),
-					level.getStartCoordinates().y-(level.tileHeight*4),300,
-					480,100, 105, 75,110,1, level);
-				cars.add(p4);
-		}
+		CarProperties temp = CarProperties.values()[playerChoice];
+		
+		cars.add(new Car(temp,id,nr,
+				level.getStartCoordinates().x-(level.tileWidth*4),
+				level.getStartCoordinates().y-(level.tileHeight*4),
+				level));
 	}
 	
 	public void setIP(String ip) {
@@ -265,8 +243,5 @@ public void createPlayer(int nr, String id) throws SlickException{
 	public float getZoom() {
 		return zoom;
 	}
-	
-	
-	
 
 }

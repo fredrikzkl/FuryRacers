@@ -18,18 +18,19 @@ import org.newdawn.slick.GameContainer;
 public class Car {
 	public String name;
 	public String type;
-	
 	public Image sprite;
-	public Time duration;
-	public Circle dot;
 	
 	public float topSpeed, reverseTopSpeed, acceleration, reverseAcceleration, deAcceleration, handling,weight;
+
+	public CarProperties stats;
+	public String id;
 	
 	boolean reverseKeyIsDown, throttleKeyIsDown, leftKeyIsDown, rightKeyIsDown, usingKeyboard, finishedRace = false;
 	boolean startClock = true;
 	
 	String side = "error";
 	
+	public Time duration;
 	float currentSpeed = 0;
 	float movementDegrees = 0;
 	float radDeg = 0;
@@ -56,21 +57,20 @@ public class Car {
 	private float deltaAngleChange, deltaDeAcceleration;
 	
 	
-	public Car(String name, String type, int playerNr, Image sprite, float startX, float startY, float reverseTopSpeed,float topSpeed,
-			float acceleration, float reverseAcceleration, float deAcceleration, float handling, float weight, Level level){
-	
-		this.name = name;
-		this.type = type;
-		this.sprite = sprite;
-		this.topSpeed = topSpeed;
-		this.reverseTopSpeed = reverseTopSpeed;
-		this.reverseAcceleration = reverseAcceleration;
-		this.deAcceleration = deAcceleration;
-		this.acceleration = acceleration;
+	public Car(CarProperties stats, String id, int playerNr, float startX, float startY, Level level){
+		this.stats = stats;
+		this.id = id;
 		this.playerNr = playerNr;
-		this.handling = handling;
-		this.weight = weight;
 		this.level = level;
+		
+		try {
+			sprite  = new Image(stats.imageFile);
+		} catch (SlickException e) {
+			System.out.println("Could not find image file " + stats.imageFile);
+			e.printStackTrace();
+		}
+		
+		
 		
 		position = new Vector2f(startX,startY);
 		collisionBoxPoints  = new float[4];
@@ -156,7 +156,6 @@ public class Car {
 		}else if(rightKeyIsDown){
 			movementDegrees -= deltaAngleChange*1.1;
 		}*/
-		collisionSlowdownConstant = 4
 		if(currentSpeed < -deAcceleration) {
 			
 			currentSpeed += deltaDeAcceleration*4;
@@ -261,22 +260,22 @@ public class Car {
 			reactToKeyboard(input);
 		}
 
-		if(throttleKeyIsDown && currentSpeed < topSpeed) {
+		if(throttleKeyIsDown && currentSpeed < stats.topSpeed) {
 			
-				currentSpeed += acceleration*deltaTime/1000;
+				currentSpeed += stats.acceleration*deltaTime/1000;
 		}else if(reverseKeyIsDown && currentSpeed > -reverseTopSpeed) {
 			
-				currentSpeed -= reverseAcceleration*deltaTime/1000;
-		}else if(currentSpeed < -deAcceleration) {
+				currentSpeed -= stats.reverseAcceleration*deltaTime/1000;
+		}else if(currentSpeed < -stats.deAcceleration) {
 				
-			deltaDeAcceleration = deAcceleration*deltaTime/1000;
+			deltaDeAcceleration = stats.deAcceleration*deltaTime/1000;
 			currentSpeed += deltaDeAcceleration;
-		}else if(currentSpeed > -deAcceleration && currentSpeed < 0){
+		}else if(currentSpeed > -stats.deAcceleration && currentSpeed < 0){
 			
 			currentSpeed = 0;
-		}else if(currentSpeed > deAcceleration) {
+		}else if(currentSpeed > stats.deAcceleration) {
 				
-			deltaDeAcceleration = deAcceleration*deltaTime/1000;
+			deltaDeAcceleration = stats.deAcceleration*deltaTime/1000;
 			currentSpeed -= deltaDeAcceleration;
 		}else if(currentSpeed > 0 && currentSpeed < deAcceleration){
 			
@@ -286,10 +285,10 @@ public class Car {
 		if(currentSpeed != 0){
 			deltaAngleChange = 0;
 			if(leftKeyIsDown){
-				deltaAngleChange = handling*deltaTime/1000;
+				deltaAngleChange = stats.handling*deltaTime/1000;
 				movementDegrees -= deltaAngleChange;
 			}else if(rightKeyIsDown){
-				deltaAngleChange = handling*deltaTime/1000;
+				deltaAngleChange = stats.handling*deltaTime/1000;
 				movementDegrees += deltaAngleChange;
 			}
 		}
