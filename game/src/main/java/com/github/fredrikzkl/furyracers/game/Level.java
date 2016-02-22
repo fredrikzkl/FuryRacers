@@ -143,12 +143,6 @@ public class Level {
 	
 	public String getTileType(int xTile, int yTile, int passedCheckpoints){
 		int tileIDroad = map.getTileId(xTile, yTile, roadLayer);
-		int tileIDprops = map.getTileId(xTile, yTile, propsLayer);
-		
-			
-		/*if(tileIDroad == 0){
-			return "";
-		}*/
 		
 		if(map.getTileProperty(tileIDroad, "checkpoint", "-1").equals("1") && passedCheckpoints == 0) {
 			return "checkpoint1";
@@ -158,15 +152,27 @@ public class Level {
 			return "checkpoint3";
 		}else if(map.getTileProperty(tileIDroad, "goal", "-1").equals("finish") && passedCheckpoints == 3) {
 			return "finishLine";
-		}else if(map.getTileProperty(tileIDprops, "collision", "-1").equals("1")) {
-			
-			return "collisionObstacle";
 		}
 		return "openRoad";
 	}
 	
-	public ArrayList<String> whichSideHasBeenCrossed(int tileX, int tileY, float xPos, float yPos, float xVector, float yVector){
+	public boolean collision(float xPos, float yPos){
+		
+		int tileX = (int)(xPos/tileWidth);
+		int tileY = (int)(yPos/tileHeight);
+		int tileIDprops = map.getTileId(tileX, tileY, propsLayer);
+		boolean isColliding = map.getTileProperty(tileIDprops, "collision", "-1").equals("1");
+		
+		return isColliding;
+	}
+	
+	public ArrayList<String> whichDirectionToStop(float xPos, float yPos, float xVector, float yVector){
+	
+		
 		ArrayList<String> stopCarMovement = new ArrayList<String>();
+		
+		int tileX = (int)(xPos/tileWidth);
+		int tileY = (int)(yPos/tileHeight);
 		
 		leftTileIsObstacle = isCollisionObstacle(tileX-1, tileY);
 		rightTileIsObstacle = isCollisionObstacle(tileX+1, tileY);
@@ -180,9 +186,6 @@ public class Level {
 		
 		prevPosX = xPos - xVector;
 		prevPosY = yPos - yVector;
-		
-		this.xPos = xPos;
-		this.yPos = yPos;
 		
 		tileStartX = tileX * tileWidth;
 		tileStartY = tileY * tileHeight;
@@ -205,124 +208,105 @@ public class Level {
 		isTopTileLineCrossed = isTileLineCrossed(tileStartX, tileEndX, carIntersectsTop);
 		isBottomTileLineCrossed = isTileLineCrossed(tileStartX, tileEndX, carIntersectsBottom);
 		
-		if(isRightTileLineCrossed){
-			if(carMovingLeft){
-				if(rightTileIsObstacle) {
-					if(carMovingUp){
-						if(bottomTileIsObstacle){ 
-							stopCarMovement.add("yMovNeg");
-							stopCarMovement.add("xMovNeg");
-							return stopCarMovement;
-						}else{
-							stopCarMovement.add("yMovNeg");
-							stopCarMovement.add("");
-							return stopCarMovement;
-						}
-					}else if(carMovingDown){
-						if(topTileIsObstacle){ 
-							stopCarMovement.add("yMovPos");
-							stopCarMovement.add("xMovNeg");
-							return stopCarMovement;
-						}else{
-							stopCarMovement.add("yMovNeg");
-							stopCarMovement.add("");
-							return stopCarMovement;
-						}
+		if(isRightTileLineCrossed && carMovingLeft){
+			if(rightTileIsObstacle) {
+				if(carMovingUp){
+					if(bottomTileIsObstacle){ 
+						stopCarMovement.add("negativeY");
+						stopCarMovement.add("negativeX");
+						return stopCarMovement;
+					}else{
+						stopCarMovement.add("negativeY");
+						return stopCarMovement;
 					}
-				}else{
-					stopCarMovement.add("xMovNeg");
-					stopCarMovement.add("");
-					return stopCarMovement;
+				}else if(carMovingDown){
+					if(topTileIsObstacle){ 
+						stopCarMovement.add("positiveY");
+						stopCarMovement.add("negativeX");
+						return stopCarMovement;
+					}else{
+						stopCarMovement.add("negativeY");
+						return stopCarMovement;
+					}
 				}
+			}else{
+				stopCarMovement.add("negativeX");
+				return stopCarMovement;
 			}
 		}
 		
-		if(isLeftTileLineCrossed){
-			if(carMovingRight){
-				if(leftTileIsObstacle) {
-					if(carMovingUp){
-						if(bottomTileIsObstacle){
-							stopCarMovement.add("yMovNeg");
-							stopCarMovement.add("xMovPos");
-							return stopCarMovement;
-						}else{
-							stopCarMovement.add("yMovNeg");
-							stopCarMovement.add("");
-							return stopCarMovement;
-						}
-					}else if(carMovingDown){
-						if(topTileIsObstacle){
-							stopCarMovement.add("yMovPos");
-							stopCarMovement.add("xMovPos");
-							return stopCarMovement;
-						}
+		if(isLeftTileLineCrossed && carMovingRight){
+			if(leftTileIsObstacle) {
+				if(carMovingUp){
+					if(bottomTileIsObstacle){
+						stopCarMovement.add("negativeY");
+						stopCarMovement.add("positiveX");
+						return stopCarMovement;
+					}else{
+						stopCarMovement.add("negativeY");
+						return stopCarMovement;
 					}
-				}else{
-					stopCarMovement.add("xMovPos");
-					stopCarMovement.add("");
-					return stopCarMovement;
+				}else if(carMovingDown){
+					if(topTileIsObstacle){
+						stopCarMovement.add("positiveY");
+						stopCarMovement.add("positiveX");
+						return stopCarMovement;
+					}
 				}
+			}else{
+				stopCarMovement.add("positiveX");
+				return stopCarMovement;
 			}
 		}
 		
-		if(isBottomTileLineCrossed){
-			if(carMovingUp){
-				if(bottomTileIsObstacle) {
-					if(carMovingLeft){
-						if(rightTileIsObstacle){
-							stopCarMovement.add("yMovNeg");
-							stopCarMovement.add("xMovNeg");
-							return stopCarMovement;
-						}else{
-							stopCarMovement.add("xMovNeg");
-							stopCarMovement.add("");
-							return stopCarMovement;
-						}
-					}else if(carMovingRight){
-						if(topTileIsObstacle){
-							stopCarMovement.add("yMovNeg");
-							stopCarMovement.add("xMovPos");
-							return stopCarMovement;
-						}
+		if(isBottomTileLineCrossed && carMovingUp){
+			if(bottomTileIsObstacle){
+				if(carMovingLeft){
+					if(rightTileIsObstacle){
+						stopCarMovement.add("negativeY");
+						stopCarMovement.add("negativeX");
+						return stopCarMovement;
+					}else{
+						stopCarMovement.add("negativeX");
+						return stopCarMovement;
 					}
-				}else{
-					stopCarMovement.add("yMovNeg");
-					stopCarMovement.add("");
-					return stopCarMovement;
+				}else if(carMovingRight){
+					if(topTileIsObstacle){
+						stopCarMovement.add("negativeY");
+						stopCarMovement.add("positiveX");
+						return stopCarMovement;
+					}
 				}
+			}else{
+				stopCarMovement.add("negativeY");
+				return stopCarMovement;
 			}
 		}
 		
-		if(isTopTileLineCrossed){
-			if(carMovingDown){
-				if(topTileIsObstacle) {
-					if(carMovingRight){
-						if(rightTileIsObstacle){
-							stopCarMovement.add("yMovPos");
-							stopCarMovement.add("xMovNeg");
-							return stopCarMovement;
-						}else{
-							stopCarMovement.add("xMovNeg");
-							stopCarMovement.add("");
-							return stopCarMovement;
-						}
-					}else if(carMovingLeft){
-						if(topTileIsObstacle){
-							stopCarMovement.add("yMovPos");
-							stopCarMovement.add("xMovNeg");
-							return stopCarMovement;
-						}
+		if(isTopTileLineCrossed && carMovingDown){
+			if(topTileIsObstacle) {
+				if(carMovingRight){
+					if(rightTileIsObstacle){
+						stopCarMovement.add("positiveY");
+						stopCarMovement.add("negativeX");
+						return stopCarMovement;
+					}else{
+						stopCarMovement.add("negativeX");
+						return stopCarMovement;
 					}
-				}else{
-					stopCarMovement.add("yMovPos");
-					stopCarMovement.add("");
-					return stopCarMovement;
+				}else if(carMovingLeft){
+					if(topTileIsObstacle){
+						stopCarMovement.add("positiveY");
+						stopCarMovement.add("negativeX");
+						return stopCarMovement;
+					}
 				}
+			}else{
+				stopCarMovement.add("positiveY");
+				return stopCarMovement;
 			}
 		}
 		
-		stopCarMovement.add("");
-		stopCarMovement.add("");
 		return stopCarMovement;
 	}
 		

@@ -86,8 +86,8 @@ public class GameCore extends BasicGameState {
 		font = new Font("Verdana", Font.BOLD, 20);
 		ttf = new TrueTypeFont(font, true);
 		
-		dot = new Circle(0, 0, 3);
-		center = new Circle(0,0,3);
+		dot = new Circle(0, 0, 1);
+		center = new Circle(0,0,1);
 		 
 		level = new Level(1);
 		camera = new Camera(0,0,level,this);
@@ -115,10 +115,10 @@ public class GameCore extends BasicGameState {
 		
 		level.render(g,tilePos,camera);
 		for(Car car: cars){
-			car.render();
+			car.render(g);
 			g.setColor(Color.green);
 			dot.setLocation(car.getPosition());
-			center.setLocation(car.getPosition().x, car.getPosition().y+32);
+			center.setLocation(car.getPosition().x, car.getPosition().y+26);
 			g.draw(dot);
 			g.draw(center);
 		}

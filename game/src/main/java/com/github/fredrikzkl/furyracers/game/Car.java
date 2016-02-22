@@ -4,10 +4,13 @@ import java.sql.Time;
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
+import org.newdawn.slick.Color;
+import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
 import org.newdawn.slick.Input;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.geom.Circle;
+import org.newdawn.slick.geom.Polygon;
 import org.newdawn.slick.geom.Vector2f;
 import org.newdawn.slick.state.StateBasedGame;
 import org.newdawn.slick.GameContainer;
@@ -20,13 +23,7 @@ public class Car {
 	public Time duration;
 	public Circle dot;
 	
-	public float topSpeed;
-	public float reverseTopSpeed;
-	public float acceleration;
-	public float reverseAcceleration;
-	public float deAcceleration;
-	public float handling;
-	public float weight;
+	public float topSpeed, reverseTopSpeed, acceleration, reverseAcceleration, deAcceleration, handling,weight;
 	
 	boolean reverseKeyIsDown, throttleKeyIsDown, leftKeyIsDown, rightKeyIsDown, usingKeyboard, finishedRace = false;
 	boolean startClock = true;
@@ -36,27 +33,28 @@ public class Car {
 	float currentSpeed = 0;
 	float movementDegrees = 0;
 	float radDeg = 0;
-	
 	float carSize = (float) 0.4;
+	
 	
 	private Level level;
 	private int tilePosX, tilePosY;
 	private int playerNr;
-
-	Vector2f position;
+	int collisionSlowdownConstant = 4;
+	
+	Polygon collisionBox;
+	float[] collisionBoxPoints;
+	Vector2f position; 
+	float backLeftX, backLeftY, backRightX, backRightY, frontLeftX, frontLeftY, frontRightX, frontRightY;
 	Vector2f movementVector = new Vector2f();
 
 	private int passedChekpoints = 0;
 	String tileType = null;
-	long startTime = 0;
 	long currentTime;
 	private int laps = 0;
-	private long nanoSecondsElapsed = 0;
-	private long secondsElapsed = 0;
-	private long minutesElapsed = 0;
-	private long minuteConverter = 0;
-	private long milliSecondsElapsed = 0;
+	private long startTime, nanoSecondsElapsed, secondsElapsed,minutesElapsed, minuteConverter, milliSecondsElapsed = 0;
 	private String timeElapsed;
+	private float deltaAngleChange, deltaDeAcceleration;
+	
 	
 	public Car(String name, String type, int playerNr, Image sprite, float startX, float startY, float reverseTopSpeed,float topSpeed,
 			float acceleration, float reverseAcceleration, float deAcceleration, float handling, float weight, Level level){
@@ -75,6 +73,8 @@ public class Car {
 		this.level = level;
 		
 		position = new Vector2f(startX,startY);
+		collisionBoxPoints  = new float[4];
+		collisionBox = new Polygon(collisionBoxPoints);
 	}
 	
 	public void update(GameContainer container, StateBasedGame game, int deltaTime)throws SlickException{
@@ -83,25 +83,136 @@ public class Car {
 		
 		rePositionCar(deltaTime);
 		checkForEdgeOfMap();
-		checkTilePosition();
+		checkForCheckpoint();
+		checkForCollision();
 		checkRaceTime();
-		
-		/*boolean slowDown = level.getTileType(tilePosX, tilePosY);
-		
-		if(slowDown){
-			currentSpeed = topSpeed/2;
-		}*/
 	}
 	
 	public void rePositionCar(int deltaTime){
 		
 		radDeg = (float) Math.toRadians(movementDegrees);
 		
-		movementVector.x = (float) (Math.cos(radDeg))*currentSpeed*deltaTime/1000;
-		movementVector.y = (float) (Math.sin(radDeg))*currentSpeed*deltaTime/1000;
+		movementVector.x = (float) Math.cos(radDeg)*currentSpeed*deltaTime/1000;
+		movementVector.y = (float) Math.sin(radDeg)*currentSpeed*deltaTime/1000;
 		
 		position.x += movementVector.x;
 		position.y += movementVector.y;	
+	}
+	
+	
+	public void checkForEdgeOfMap(){
+		
+		if(position.x < 0 || position.x > level.getDistanceWidth()){
+			position.x -= movementVector.x;
+		}
+		
+		if(position.y < 0 || position.y > level.getDistanceHeight()){
+			position.y -= movementVector.y;
+		}
+	}
+	
+	public void checkForCheckpoint(){
+
+		tilePosX = (int) (position.x/level.getTileWidth());
+		tilePosY = (int) (position.y/level.getTileHeight());
+		
+		tileType = level.getTileType(tilePosX, tilePosY, passedChekpoints);
+		
+		switch(tileType){
+			case "checkpoint1": passedChekpoints++; break;
+			case "checkpoint2": passedChekpoints++; break;
+			case "checkpoint3": passedChekpoints++; break;
+			case "finishLine": finishedRace = true;
+		}	
+	}
+	
+	public void checkForCollision(){
+
+		ArrayList<String> directionsToStop;
+		float[] colBoxPoints = collisionBox.getPoints();
+		float xPos;
+		float yPos;
+		int stoppedDirections = 0;
+		
+		for(int i = 0; i < colBoxPoints.length; i+=2){
+			
+			xPos = colBoxPoints[i];
+			yPos = colBoxPoints[i+1];
+			
+			if(level.collision(xPos, yPos) && stoppedDirections !=2){
+				directionsToStop = level.whichDirectionToStop(xPos, yPos, movementVector.x, movementVector.y);
+				stopCarDirection(directionsToStop);
+				if(directionsToStop.size() == 2)
+					break;
+				stoppedDirections++;
+			}
+		}
+	}
+	
+	public void stopCarDirection(ArrayList<String> directionsToStop){
+
+		/*if(leftKeyIsDown){
+			movementDegrees += deltaAngleChange*1.1;
+		}else if(rightKeyIsDown){
+			movementDegrees -= deltaAngleChange*1.1;
+		}*/
+		collisionSlowdownConstant = 4
+		if(currentSpeed < -deAcceleration) {
+			
+			currentSpeed += deltaDeAcceleration*4;
+		}else if(currentSpeed > -deAcceleration && currentSpeed < 0){
+		
+			currentSpeed = 0;
+		}else if(currentSpeed > deAcceleration) {
+		
+			currentSpeed -= deltaDeAcceleration*4;
+		}else if(currentSpeed > 0 && currentSpeed < deAcceleration){
+		
+			currentSpeed = 0;
+		}
+		
+		for(String directionToStop : directionsToStop){
+			System.out.println(directionToStop);
+			switch(directionToStop){
+				case "positiveX": /*if(movementVector.x > 0)*/ position.x -= movementVector.x; break;
+				case "negativeX": /*if(movementVector.x < 0)*/position.x -= movementVector.x; break;
+				case "positiveY": /*if(movementVector.y > 0)*/position.y -= movementVector.y; break;
+				case "negativeY": /*if(movementVector.y < 0)*/position.y -= movementVector.y;break;
+			}
+		}
+	}
+	
+	public void render(Graphics g) {
+		sprite.setCenterOfRotation(0, 26);
+		sprite.draw(position.x, position.y, carSize);
+		sprite.setRotation(movementDegrees);
+		collisionBox = new Polygon();
+		collisionBox.setClosed(true);
+		generateCollisionBoxPoints();
+	}
+	
+	public void generateCollisionBoxPoints(){
+		
+		int carLength = 52;
+		int carWidth = 15;
+		
+		float centerOfRotationX = position.x;
+		float centerOfRotationY = position.y + 26;
+		
+		backLeftX = (float)(centerOfRotationX+ Math.cos(radDeg+Math.PI/2)*carWidth);
+		backLeftY = (float)((centerOfRotationY) + Math.sin(radDeg+Math.PI/2)*carWidth);
+		frontLeftX = (float)(backLeftX + Math.cos(radDeg)*carLength);
+		frontLeftY = (float)(backLeftY + Math.sin(radDeg)*carLength);
+		
+		backRightX = (float)(centerOfRotationX + Math.cos(radDeg-Math.PI/2)*carWidth);
+		backRightY = (float)((centerOfRotationY) + Math.sin(radDeg-Math.PI/2)*carWidth);
+		frontRightX = (float)(backRightX + Math.cos(radDeg)*carLength);
+		frontRightY = (float)(backRightY + Math.sin(radDeg)*carLength);
+		
+		collisionBox.addPoint(backLeftX, backLeftY);
+		collisionBox.addPoint(frontLeftX, frontLeftY);
+		collisionBox.addPoint(frontRightX, frontRightY);
+		collisionBox.addPoint(backRightX, backRightY);
 	}
 	
 	public void checkRaceTime(){
@@ -119,72 +230,6 @@ public class Car {
 			
 			timeElapsed = minutesElapsed + ":" + secondsElapsed + ":" + milliSecondsElapsed;
 		}
-	}
-	
-	public void checkForEdgeOfMap(){
-		
-		if(position.x < 0 || position.x > level.getDistanceWidth()){
-			position.x -= movementVector.x;
-		}
-		
-		if(position.y < 0 || position.y > level.getDistanceHeight()){
-			position.y -= movementVector.y;
-		}
-	}
-	
-	public void checkTilePosition(){
-
-		tilePosX = (int) (position.x/level.getTileWidth());
-		tilePosY = (int) (position.y/level.getTileHeight());
-		
-		tileType = level.getTileType(tilePosX, tilePosY, passedChekpoints);
-		
-		ArrayList<String> siden = new ArrayList<String>();
-		siden.add("");
-		siden.add("");
-		switch(tileType){
-			case "checkpoint1": passedChekpoints++; break;
-			case "checkpoint2": passedChekpoints++; break;
-			case "checkpoint3": passedChekpoints++; break;
-			case "finishLine": finishedRace = true; break;
-			case "collisionObstacle": 
-				siden = level.whichSideHasBeenCrossed(tilePosX, tilePosY, 
-												position.x, position.y, 
-												movementVector.x, movementVector.y);
-												if(!siden.get(0).equals(side)){System.out.println("startTileX: " + level.getTileStartX() + " startTileY: " + level.getTileStartY());
-												System.out.println(level.isTopLineCrossed());
-												System.out.println("EndTileX: " + level.getTileEndX() + " EndTileY: " + level.getTileEndY());
-												System.out.println("startX: " + level.getxPos()+ " startY: " + level.getyPos());
-												System.out.println("prevX: " + level.getPrevPosX()+ " prevY: " + level.getPrevPosY());
-												System.out.println("bottom: " + level.getLineIntersectsBottom()+ " top: " + level.getLineIntersectsTop());
-												System.out.println("left: " + level.getLineIntersectsLeft()+ " right: " + level.getLineIntersectsRight());
-												
-												System.out.println("alleged: " + siden);
-												side = siden.get(0);
-												}
-				
-		}	
-		
-		switch(siden.get(0)){
-			case "xMovPos": position.x -= movementVector.x; break;
-			case "xMovNeg": position.x -= movementVector.x; break;
-			case "yMovPos": position.y -= movementVector.y; break;
-			case "yMovNeg": position.y -= movementVector.y; break;
-		}
-		
-		switch(siden.get(1)){
-			case "xMovPos": position.x -= movementVector.x; break;
-			case "xMovNeg": position.x -= movementVector.x; break;
-			case "yMovPos": position.y -= movementVector.y; break;
-			case "yMovNeg": position.y -= movementVector.y; break;
-		}
-	}
-	
-	public void render() {
-		sprite.setCenterOfRotation(0, 32);
-		sprite.draw(position.x, position.y, carSize);
-		
-		sprite.setRotation(movementDegrees);
 	}
 
 	public Vector2f getPosition() {
@@ -216,35 +261,36 @@ public class Car {
 			reactToKeyboard(input);
 		}
 
-		if(throttleKeyIsDown) {
-			if(currentSpeed < topSpeed) {
+		if(throttleKeyIsDown && currentSpeed < topSpeed) {
+			
 				currentSpeed += acceleration*deltaTime/1000;
-			}
-		}else{
-			if(currentSpeed > 0) {
-				currentSpeed -= deAcceleration*deltaTime/1000;
-			}else if(!reverseKeyIsDown && currentSpeed > 0){
-				currentSpeed = 0;
-			}
-		}
-
-		if(reverseKeyIsDown) {
-			if(currentSpeed > -reverseTopSpeed) {
+		}else if(reverseKeyIsDown && currentSpeed > -reverseTopSpeed) {
+			
 				currentSpeed -= reverseAcceleration*deltaTime/1000;
-			}
-		}else{
-			if(currentSpeed < 0) {
-				currentSpeed += deAcceleration*deltaTime/1000;
-			}else if(!throttleKeyIsDown && currentSpeed < 0){
-				currentSpeed = 0;
-			}
+		}else if(currentSpeed < -deAcceleration) {
+				
+			deltaDeAcceleration = deAcceleration*deltaTime/1000;
+			currentSpeed += deltaDeAcceleration;
+		}else if(currentSpeed > -deAcceleration && currentSpeed < 0){
+			
+			currentSpeed = 0;
+		}else if(currentSpeed > deAcceleration) {
+				
+			deltaDeAcceleration = deAcceleration*deltaTime/1000;
+			currentSpeed -= deltaDeAcceleration;
+		}else if(currentSpeed > 0 && currentSpeed < deAcceleration){
+			
+			currentSpeed = 0;
 		}
-
+		
 		if(currentSpeed != 0){
+			deltaAngleChange = 0;
 			if(leftKeyIsDown){
-				movementDegrees -= handling*deltaTime/1000;
+				deltaAngleChange = handling*deltaTime/1000;
+				movementDegrees -= deltaAngleChange;
 			}else if(rightKeyIsDown){
-				movementDegrees += handling*deltaTime/1000;
+				deltaAngleChange = handling*deltaTime/1000;
+				movementDegrees += deltaAngleChange;
 			}
 		}
 	}
