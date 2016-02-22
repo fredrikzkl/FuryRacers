@@ -9,9 +9,10 @@ public class Player {
 	private boolean ready = false;;
 	private boolean carChosen = false;
 	
-	public int maxX = 2; 
-	public int maxY = 4;
 	
+	//Select variables
+	public int maxX = 3; 
+	public int maxY = 4;
 	private int xSel = 0;
 	private int ySel = 0;
 	private int select = 0;

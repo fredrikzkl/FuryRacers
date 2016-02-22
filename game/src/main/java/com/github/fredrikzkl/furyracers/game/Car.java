@@ -34,7 +34,7 @@ public class Car {
 	float currentSpeed = 0;
 	float movementDegrees = 0;
 	float radDeg = 0;
-	float carSize = (float) 0.4;
+	
 	
 	
 	private Level level;
@@ -183,7 +183,7 @@ public class Car {
 	
 	public void render(Graphics g) {
 		sprite.setCenterOfRotation(0, 26);
-		sprite.draw(position.x, position.y, carSize);
+		sprite.draw(position.x, position.y, stats.carSize);
 		sprite.setRotation(movementDegrees);
 		collisionBox = new Polygon();
 		collisionBox.setClosed(true);
