@@ -113,7 +113,7 @@ public class Menu extends BasicGameState {
 	public void render(GameContainer container, StateBasedGame game, Graphics g) throws SlickException {
 
 		// TODO
-		ip.drawString(Application.screenSize.width - 300, 0, IP);
+		ip.drawString(Application.screenSize.width - 300, 250, IP);
 		// ip.drawString(Application.screenSize.width-125,20,version);
 
 		header.drawString(Application.screenSize.width / 3, 50, "Fury Racers", headerColor);

@@ -19,8 +19,6 @@ public class Car {
 	public String name;
 	public String type;
 	public Image sprite;
-	
-	public float topSpeed, reverseTopSpeed, acceleration, reverseAcceleration, deAcceleration, handling,weight;
 
 	public CarProperties stats;
 	public String id;
@@ -52,7 +50,7 @@ public class Car {
 	String tileType = null;
 	long currentTime;
 	private int laps = 0;
-	private long startTime, nanoSecondsElapsed, secondsElapsed,minutesElapsed, minuteConverter, milliSecondsElapsed = 0;
+	private long startTime, nanoSecondsElapsed, secondsElapsed,minutesElapsed, milliSecondsElapsed = 0;
 	private String timeElapsed;
 	private float deltaAngleChange, deltaDeAcceleration;
 	
@@ -70,8 +68,6 @@ public class Car {
 			e.printStackTrace();
 		}
 		
-		
-		
 		position = new Vector2f(startX,startY);
 		collisionBoxPoints  = new float[4];
 		collisionBox = new Polygon(collisionBoxPoints);
@@ -80,7 +76,6 @@ public class Car {
 	public void update(GameContainer container, StateBasedGame game, int deltaTime)throws SlickException{
 		Input input = container.getInput();
 		reactToControlls(input, deltaTime);
-		
 		rePositionCar(deltaTime);
 		checkForEdgeOfMap();
 		checkForCheckpoint();
@@ -102,12 +97,15 @@ public class Car {
 	
 	public void checkForEdgeOfMap(){
 		
-		if(position.x < 0 || position.x > level.getDistanceWidth()){
-			position.x -= movementVector.x;
-		}
+		float[] colBoxPoints = collisionBox.getPoints();
 		
-		if(position.y < 0 || position.y > level.getDistanceHeight()){
-			position.y -= movementVector.y;
+		for(int i = 0; i < colBoxPoints.length; i+=2){
+			
+			if(colBoxPoints[i] < 5 || colBoxPoints[i] > level.getDistanceWidth()-5)
+				position.x -= movementVector.x;
+			
+			if(colBoxPoints[i+1] < 5 || colBoxPoints[i+1] > level.getDistanceHeight()-5)
+				position.y -= movementVector.y;
 		}
 	}
 	
@@ -156,16 +154,16 @@ public class Car {
 		}else if(rightKeyIsDown){
 			movementDegrees -= deltaAngleChange*1.1;
 		}*/
-		if(currentSpeed < -deAcceleration) {
+		if(currentSpeed < -stats.deAcceleration) {
 			
 			currentSpeed += deltaDeAcceleration*4;
-		}else if(currentSpeed > -deAcceleration && currentSpeed < 0){
+		}else if(currentSpeed > -stats.deAcceleration && currentSpeed < 0){
 		
 			currentSpeed = 0;
-		}else if(currentSpeed > deAcceleration) {
+		}else if(currentSpeed > stats.deAcceleration) {
 		
 			currentSpeed -= deltaDeAcceleration*4;
-		}else if(currentSpeed > 0 && currentSpeed < deAcceleration){
+		}else if(currentSpeed > 0 && currentSpeed < stats.deAcceleration){
 		
 			currentSpeed = 0;
 		}
@@ -260,26 +258,27 @@ public class Car {
 			reactToKeyboard(input);
 		}
 
+		deltaDeAcceleration = stats.deAcceleration*deltaTime/1000;
 		if(throttleKeyIsDown && currentSpeed < stats.topSpeed) {
 			
 				currentSpeed += stats.acceleration*deltaTime/1000;
-		}else if(reverseKeyIsDown && currentSpeed > -reverseTopSpeed) {
-			
+		}else if(reverseKeyIsDown && currentSpeed > -stats.reverseTopSpeed) {
+	
 				currentSpeed -= stats.reverseAcceleration*deltaTime/1000;
 		}else if(currentSpeed < -stats.deAcceleration) {
 				
-			deltaDeAcceleration = stats.deAcceleration*deltaTime/1000;
 			currentSpeed += deltaDeAcceleration;
 		}else if(currentSpeed > -stats.deAcceleration && currentSpeed < 0){
 			
 			currentSpeed = 0;
 		}else if(currentSpeed > stats.deAcceleration) {
 				
-			deltaDeAcceleration = stats.deAcceleration*deltaTime/1000;
 			currentSpeed -= deltaDeAcceleration;
-		}else if(currentSpeed > 0 && currentSpeed < deAcceleration){
+		}else if(currentSpeed > 0 && currentSpeed < stats.deAcceleration){
 			
 			currentSpeed = 0;
+		}else{
+			deltaDeAcceleration = 0;
 		}
 		
 		if(currentSpeed != 0){
