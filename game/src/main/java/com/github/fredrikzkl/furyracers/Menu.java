@@ -25,10 +25,10 @@ import com.github.fredrikzkl.furyracers.network.GameSession;
 public class Menu extends BasicGameState {
 
 	private GameCore core;
-	
+
 	Font regularFont;
 	TrueTypeFont ip;
-	
+
 	private final int ICONSIZE = 128;
 
 	private static String IP = null;
@@ -54,13 +54,12 @@ public class Menu extends BasicGameState {
 
 	public List<String> console;
 	public List<Player> players;
-	
-	
-	//--------------//
+
+	// --------------//
 	private Music music;
 
 	public Menu(int state, GameCore game) {
-			core = game;
+		core = game;
 	}
 
 	public void init(GameContainer container, StateBasedGame game) throws SlickException {
@@ -104,11 +103,10 @@ public class Menu extends BasicGameState {
 		} catch (RuntimeException e) {
 			printConsole("ERROR! Sprite sheet not found!");
 		}
-		
+
 		music = new Music("Sound/menu.ogg");
 		music.setVolume(0.5f);
 		music.loop();
-		
 
 	}
 
@@ -146,9 +144,9 @@ public class Menu extends BasicGameState {
 	}
 
 	private void drawPlayerIcons(GameContainer container, StateBasedGame game, Graphics g) {
-		//Cars - tegner ingenting om spiller ikke finnes
-		for(int i = 0 ; i<players.size();i++){
-			g.drawImage(cars.getSubImage(players.get(i).getSelect()*128,i*ICONSIZE,ICONSIZE, ICONSIZE),
+		// Cars - tegner ingenting om spiller ikke finnes
+		for (int i = 0; i < players.size(); i++) {
+			g.drawImage(cars.getSubImage(players.get(i).getxSel() * ICONSIZE, players.get(i).getySel() * ICONSIZE, ICONSIZE, ICONSIZE),
 					(float) (Application.screenSize.width / 3.8 + (i * 160)), Application.screenSize.height / 4);
 		}
 
@@ -164,7 +162,6 @@ public class Menu extends BasicGameState {
 		}
 
 	}
-
 
 	public void update(GameContainer container, StateBasedGame game, int delta) throws SlickException {
 		GameSession.setGameState(game.getCurrentStateID());
@@ -184,35 +181,35 @@ public class Menu extends BasicGameState {
 				allReadyTimestamp = seconds;
 				printConsole("Everyone is ready, the game will begin shortly!");
 			}
-		}else{
+		} else {
 			allReady = false;
 		}
 
 		if (allReady) {
 			secondsToNextGame = (int) (allReadyTimestamp + counter - seconds);
-			if(secondsToNextGame <= 0){
+			if (secondsToNextGame <= 0) {
 				startGame(game);
 			}
 			countDown = String.valueOf(secondsToNextGame);
-		}else{
+		} else {
 			allReadyTimestamp = -1;
 			countDown = String.valueOf(counter);
 		}
 
 		Input mouse = container.getInput();
 		if (mouse.isMouseButtonDown(0)) {
-			
+
 		}
-		
+
 		last = System.nanoTime();
 	}
 
 	private void startGame(StateBasedGame game) throws SlickException {
 		game.enterState(1);
-		core.gameStart(1,players);
+		core.gameStart(1, players);
 	}
 
-	public void updatePlayerList(ArrayList<Player> list){
+	public void updatePlayerList(ArrayList<Player> list) {
 		players = list;
 	}
 
@@ -225,29 +222,42 @@ public class Menu extends BasicGameState {
 	public void buttonDown(String data, int playerNr) {
 		switch (data) {
 		case "1":
-			for(int i = 0; i<players.size();i++){
-				if(playerNr == i +1){
-					if(players.get(i).isReady())
-						players.get(i).setReady(false);
-					else
-						players.get(i).setReady(true);
+			for (int i = 0; i < players.size(); i++) {
+				if (playerNr == i + 1) {
+					if (players.get(i).isCarChosen()) {
+						if (players.get(i).isReady())
+							players.get(i).setReady(false);
+						else
+							players.get(i).setReady(true);
+					} else {
+						players.get(i).setCarChosen(true);
+					}
+
 				}
 			}
 			break;
 		case "2":
-			for(int i = 0; i<players.size();i++){
-				if(playerNr == i +1){
-					if(!players.get(i).isReady()){
-						players.get(i).setSelect(players.get(i).getSelect() + 1);
+			for (int i = 0; i < players.size(); i++) {
+				if (playerNr == i + 1) {
+					if (!players.get(i).isReady()) {
+						if (players.get(i).isCarChosen()) {
+							players.get(i).setySel(players.get(i).getySel() + 1);
+						} else {
+							players.get(i).setxSel(players.get(i).getxSel() + 1);
+						}
 					}
 				}
 			}
 			break;
 		case "3":
-			for(int i = 0; i<players.size();i++){
-				if(playerNr == i +1){
-					if(!players.get(i).isReady()){
-						players.get(i).setSelect(players.get(i).getSelect() - 1);
+			for (int i = 0; i < players.size(); i++) {
+				if (playerNr == i + 1) {
+					if (!players.get(i).isReady()) {
+						if (players.get(i).isCarChosen()) {
+							players.get(i).setySel(players.get(i).getySel() - 1);
+						} else {
+							players.get(i).setxSel(players.get(i).getxSel() - 1);
+						}
 					}
 				}
 			}

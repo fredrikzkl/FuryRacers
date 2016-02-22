@@ -78,7 +78,8 @@ public class Application extends StateBasedGame {
 			screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 			//Display.setResizable(true);
 			AppGameContainer app = new AppGameContainer(new ScalableGame(new Application(gameName), (int)screenSize.getWidth(), (int)screenSize.getHeight()));
-			app.setDisplayMode((int)screenSize.getWidth()/2, (int)screenSize.getHeight()/2, false);
+			//app.setDisplayMode((int)screenSize.getWidth()/2, (int)screenSize.getHeight()/2, false);
+			app.setDisplayMode((int)screenSize.getWidth(), (int)screenSize.getHeight(), true);
 
 			app.setAlwaysRender(true);
 			app.start();

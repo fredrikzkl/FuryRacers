@@ -7,11 +7,15 @@ public class Player {
 	private int score = 0;
 	
 	private boolean ready = false;;
+	private boolean carChosen = false;
+	private int xSel = 0;
+	private int ySel;
 	private int select = 0;
 	
 	public Player(String id, int playerNr){
 		this.id=id;
 		this.playerNr=playerNr;
+		ySel = playerNr*128;
 	}
 
 	public boolean equals(Object o){
@@ -62,6 +66,30 @@ public class Player {
 
 	public void setSelect(int select) {
 		this.select = select;
+	}
+
+	public int getxSel() {
+		return xSel;
+	}
+
+	public void setxSel(int xSel) {
+		this.xSel = xSel;
+	}
+
+	public int getySel() {
+		return ySel;
+	}
+
+	public void setySel(int ySel) {
+		this.ySel = ySel;
+	}
+
+	public boolean isCarChosen() {
+		return carChosen;
+	}
+
+	public void setCarChosen(boolean carChosen) {
+		this.carChosen = carChosen;
 	}
 	
 	

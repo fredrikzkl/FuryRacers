@@ -23,13 +23,6 @@ public class GameCore extends BasicGameState {
 	
 	Image p1car = null;
 	SpriteSheet sprite;
-	/*
-	Image blueMustang;
-	Image greenMustang;
-	Image yellowMustang;
-	 * 
-	Image redMustang;
-	 */
 
 	public static Camera camera;
 	public Level level = null;
@@ -66,12 +59,6 @@ public class GameCore extends BasicGameState {
 		System.out.println("IP: " + IP);
 		cars = new ArrayList<Car>();
 		
-		/*
-		redMustang = new Image("Sprites/fr_mustang_red.png");
-		blueMustang = new Image("Sprites/fr_mustang_blue.png");
-		greenMustang = new Image("Sprites/fr_mustang_green.png");
-		yellowMustang = new Image("Sprites/fr_mustang_yellow.png");
-		*/
 		longestDistance = new Vector2f();
 		smallestDistance = new Vector2f();
 		deltaDistance = new Vector2f();
