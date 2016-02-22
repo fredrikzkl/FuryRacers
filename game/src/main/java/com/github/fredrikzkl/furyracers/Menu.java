@@ -48,7 +48,7 @@ public class Menu extends BasicGameState {
 
 	private String countDown;
 	private int counter;
-	private int secondsToNextGame = 3;
+	private int secondsToNextGame = 5;
 	private boolean allReady = true;
 	double allReadyTimestamp = -1;
 
@@ -57,6 +57,13 @@ public class Menu extends BasicGameState {
 
 	// --------------//
 	private Music music;
+	private Sound car_select;
+	private Sound select_car;
+	private Sound spray;
+	private Sound playerJoin;
+	private Sound playerReady;
+	private Sound deSelect;
+	private Sound peep;
 
 	public Menu(int state, GameCore game) {
 		core = game;
@@ -105,10 +112,12 @@ public class Menu extends BasicGameState {
 		}
 
 		music = new Music("Sound/menu.ogg");
-		music.setVolume(0.5f);
 		music.loop();
-
+		music.setVolume((float) 0.4);
+		
+		initSounds();
 	}
+
 
 	public void render(GameContainer container, StateBasedGame game, Graphics g) throws SlickException {
 
@@ -190,6 +199,7 @@ public class Menu extends BasicGameState {
 			if (secondsToNextGame <= 0) {
 				startGame(game);
 			}
+			
 			countDown = String.valueOf(secondsToNextGame);
 		} else {
 			allReadyTimestamp = -1;
@@ -205,12 +215,14 @@ public class Menu extends BasicGameState {
 	}
 
 	private void startGame(StateBasedGame game) throws SlickException {
+		music.stop();
 		game.enterState(1);
 		core.gameStart(1, players);
 	}
 
 	public void updatePlayerList(ArrayList<Player> list) {
 		players = list;
+		playerJoin.play();
 	}
 
 	public void printConsole(String text) {
@@ -225,12 +237,17 @@ public class Menu extends BasicGameState {
 			for (int i = 0; i < players.size(); i++) {
 				if (playerNr == i + 1) {
 					if (players.get(i).isCarChosen()) {
-						if (players.get(i).isReady())
+						if (players.get(i).isReady()){
 							players.get(i).setReady(false);
-						else
+							deSelect.play();
+						}else{
+							determinePlayerChoice(players.get(i));
 							players.get(i).setReady(true);
+							playerReady.play();
+						}
 					} else {
 						players.get(i).setCarChosen(true);
+						select_car.play();
 					}
 
 				}
@@ -242,9 +259,13 @@ public class Menu extends BasicGameState {
 					if (!players.get(i).isReady()) {
 						if (players.get(i).isCarChosen()) {
 							players.get(i).setySel(players.get(i).getySel() + 1);
+							spray.play();
 						} else {
 							players.get(i).setxSel(players.get(i).getxSel() + 1);
+							car_select.play();
+
 						}
+						
 					}
 				}
 			}
@@ -255,14 +276,22 @@ public class Menu extends BasicGameState {
 					if (!players.get(i).isReady()) {
 						if (players.get(i).isCarChosen()) {
 							players.get(i).setySel(players.get(i).getySel() - 1);
+							spray.play();
 						} else {
 							players.get(i).setxSel(players.get(i).getxSel() - 1);
+							car_select.play();
 						}
 					}
 				}
 			}
 			break;
 		}
+	}
+
+	private void determinePlayerChoice(Player player) {
+		int car = player.getxSel();
+		int color = player.getySel();
+		player.setSelect(car*player.maxY + color);
 	}
 
 	public int getID() {
@@ -275,6 +304,25 @@ public class Menu extends BasicGameState {
 
 	public void setVersion(String version) {
 		this.version = version;
+	}
+
+	private void initSounds() {
+		try {
+			String path = "Sound/";
+			car_select = new Sound(path + "car_select.ogg");
+			select_car = new Sound(path +"select_car.ogg");
+			spray = new Sound(path + "spray.ogg");
+			playerJoin = new Sound(path + "playerJoin.ogg");
+			playerReady = new Sound(path + "ready.ogg");
+			deSelect = new Sound(path + "deselect.ogg");
+			peep = new Sound(path + "countdown.ogg");
+		} catch (SlickException e) {
+			System.out.println("Could not load sound file" + e);
+			e.printStackTrace();
+		}
+		
+		
+		
 	}
 
 }
