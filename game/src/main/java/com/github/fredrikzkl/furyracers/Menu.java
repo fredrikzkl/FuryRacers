@@ -58,7 +58,7 @@ public class Menu extends BasicGameState {
 	// --------------//
 	private Music music;
 
-	public Menu(int state, GameCore game) {
+	public Menu(GameCore game) {
 		core = game;
 	}
 

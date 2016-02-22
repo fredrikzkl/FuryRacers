@@ -58,10 +58,6 @@ public class GameCore extends BasicGameState {
 	
 	private boolean keyboardPlayerOne, keyboardPlayerTwo;
 
-	public GameCore(int state) {
-		
-	}
-
 	public void init(GameContainer container, StateBasedGame sbg) throws SlickException {
 		Application.setInMenu(false);
 		System.out.println("IP: " + IP);
@@ -129,7 +125,7 @@ public class GameCore extends BasicGameState {
 		
 		for(Car car: cars){
 
-			//ttf.drawString(car.getPosition().x+camera.getX()-25, car.getPosition().y+camera.getY()-30, car.getTimeElapsed());
+			ttf.drawString(50, 50, car.getTimeElapsed());
 		}
 		ttf.drawString(Application.screenSize.width-300, 0, IP);//Ip addresene øverst i venstre corner
 	}

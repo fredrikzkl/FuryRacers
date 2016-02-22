@@ -58,8 +58,8 @@ public class Application extends StateBasedGame {
 
 	private static void createGameSession() {
 		try {
-			game = new GameCore(GameCore);
-			menu = new Menu(menuID,game);
+			game = new GameCore();
+			menu = new Menu(game);
 			menu.setVersion(version);
 			gameSession = new GameSession(game,menu);
 			gameSession.connect();
