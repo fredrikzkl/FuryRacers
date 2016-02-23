@@ -39,6 +39,7 @@ public class Car {
 	private int tilePosX, tilePosY;
 	private int playerNr;
 	int collisionSlowdownConstant = 4;
+	int offRoadSlowDownConstant = 4;
 	
 	Polygon collisionBox;
 	float[] collisionBoxPoints;
@@ -51,8 +52,9 @@ public class Car {
 	long currentTime;
 	private int laps = 0;
 	private long startTime, nanoSecondsElapsed, secondsElapsed,minutesElapsed, milliSecondsElapsed = 0;
-	private String timeElapsed;
+	private String timeElapsed = "";
 	private float deltaAngleChange, deltaDeAcceleration;
+	private boolean offRoad = false;
 	
 	
 	public Car(CarProperties stats, String id, int playerNr, float startX, float startY, Level level){
@@ -80,6 +82,7 @@ public class Car {
 		checkForEdgeOfMap();
 		checkForCheckpoint();
 		checkForCollision();
+		checkForOffRoad();
 		checkRaceTime();
 	}
 	
@@ -124,6 +127,27 @@ public class Car {
 		}	
 	}
 	
+	public void checkForOffRoad(){
+
+		float[] colBoxPoints = collisionBox.getPoints();
+		float xPos;
+		float yPos;
+		
+		for(int i = 0; i < colBoxPoints.length; i+=2){
+			xPos = colBoxPoints[i];
+			yPos = colBoxPoints[i+1];
+			
+			if(level.offRoad(xPos, yPos) && !offRoad){
+				offRoad  = true;
+				stats.topSpeed /= 3.5;
+				stats.deAcceleration *= 3;
+			}else if(!level.offRoad(xPos, yPos) && offRoad){
+				offRoad = false;
+				stats.topSpeed *= 3.5;
+				stats.deAcceleration /= 3;
+			}
+		}
+	}
 	public void checkForCollision(){
 
 		ArrayList<String> directionsToStop;
@@ -154,19 +178,8 @@ public class Car {
 		}else if(rightKeyIsDown){
 			movementDegrees -= deltaAngleChange*1.1;
 		}*/
-		if(currentSpeed < -stats.deAcceleration) {
-			
-			currentSpeed += deltaDeAcceleration*4;
-		}else if(currentSpeed > -stats.deAcceleration && currentSpeed < 0){
 		
-			currentSpeed = 0;
-		}else if(currentSpeed > stats.deAcceleration) {
-		
-			currentSpeed -= deltaDeAcceleration*4;
-		}else if(currentSpeed > 0 && currentSpeed < stats.deAcceleration){
-		
-			currentSpeed = 0;
-		}
+		deAccelerate(collisionSlowdownConstant);
 		
 		for(String directionToStop : directionsToStop){
 			System.out.println(directionToStop);
@@ -179,6 +192,22 @@ public class Car {
 		}
 	}
 	
+	public void deAccelerate(int slowdownConstant){
+		
+		if(currentSpeed < -stats.deAcceleration) {
+			
+			currentSpeed += deltaDeAcceleration*slowdownConstant;
+		}else if(currentSpeed > -stats.deAcceleration && currentSpeed < 0){
+		
+			currentSpeed = 0;
+		}else if(currentSpeed > stats.deAcceleration) {
+		
+			currentSpeed -= deltaDeAcceleration*slowdownConstant;
+		}else if(currentSpeed > 0 && currentSpeed < stats.deAcceleration){
+		
+			currentSpeed = 0;
+		}
+	}
 	public void render(Graphics g) {
 		sprite.setCenterOfRotation(0, 26);
 		sprite.draw(position.x, position.y, carSize);

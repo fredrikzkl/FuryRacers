@@ -2,6 +2,8 @@ package com.github.fredrikzkl.furyracers;
 
 import com.github.fredrikzkl.furyracers.game.GameCore;
 import com.github.fredrikzkl.furyracers.network.GameSession;
+
+import org.lwjgl.opengl.Display;
 import org.newdawn.slick.AppGameContainer;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.ScalableGame;
@@ -71,10 +73,9 @@ public class Application extends StateBasedGame {
 	private static void startGame() {
 		try {
 			screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-			//Display.setResizable(true);
+			Display.setResizable(true);
 			AppGameContainer app = new AppGameContainer(new ScalableGame(new Application(gameName), (int)screenSize.getWidth(), (int)screenSize.getHeight()));
 			app.setDisplayMode((int)screenSize.getWidth(), (int)screenSize.getHeight(), false);
-
 
 			app.setAlwaysRender(true);
 			app.start();

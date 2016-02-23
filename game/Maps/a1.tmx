@@ -2,6 +2,41 @@
 <map version="1.0" orientation="orthogonal" renderorder="right-down" width="200" height="150" tilewidth="16" tileheight="16" nextobjectid="3">
  <tileset firstgid="1" name="terrain" tilewidth="16" tileheight="16" tilecount="288" columns="24">
   <image source="../Sprites/terrain.png" width="384" height="192"/>
+  <tile id="95">
+   <properties>
+    <property name="collision" value="1"/>
+   </properties>
+  </tile>
+  <tile id="144">
+   <properties>
+    <property name="collision" value="1"/>
+   </properties>
+  </tile>
+  <tile id="145">
+   <properties>
+    <property name="collision" value="1"/>
+   </properties>
+  </tile>
+  <tile id="146">
+   <properties>
+    <property name="collision" value="1"/>
+   </properties>
+  </tile>
+  <tile id="147">
+   <properties>
+    <property name="collision" value="1"/>
+   </properties>
+  </tile>
+  <tile id="148">
+   <properties>
+    <property name="collision" value="1"/>
+   </properties>
+  </tile>
+  <tile id="149">
+   <properties>
+    <property name="collision" value="1"/>
+   </properties>
+  </tile>
   <tile id="157">
    <properties>
     <property name="collision" value="1"/>
@@ -12,12 +47,162 @@
     <property name="collision" value="1"/>
    </properties>
   </tile>
+  <tile id="168">
+   <properties>
+    <property name="collision" value="1"/>
+   </properties>
+  </tile>
+  <tile id="169">
+   <properties>
+    <property name="collision" value="1"/>
+   </properties>
+  </tile>
+  <tile id="170">
+   <properties>
+    <property name="collision" value="1"/>
+   </properties>
+  </tile>
+  <tile id="171">
+   <properties>
+    <property name="collision" value="1"/>
+   </properties>
+  </tile>
+  <tile id="172">
+   <properties>
+    <property name="collision" value="1"/>
+   </properties>
+  </tile>
+  <tile id="173">
+   <properties>
+    <property name="collision" value="1"/>
+   </properties>
+  </tile>
   <tile id="181">
    <properties>
     <property name="collision" value="1"/>
    </properties>
   </tile>
   <tile id="182">
+   <properties>
+    <property name="collision" value="1"/>
+   </properties>
+  </tile>
+  <tile id="192">
+   <properties>
+    <property name="collision" value="1"/>
+   </properties>
+  </tile>
+  <tile id="193">
+   <properties>
+    <property name="collision" value="1"/>
+   </properties>
+  </tile>
+  <tile id="194">
+   <properties>
+    <property name="collision" value="1"/>
+   </properties>
+  </tile>
+  <tile id="195">
+   <properties>
+    <property name="collision" value="1"/>
+   </properties>
+  </tile>
+  <tile id="196">
+   <properties>
+    <property name="collision" value="1"/>
+   </properties>
+  </tile>
+  <tile id="197">
+   <properties>
+    <property name="collision" value="1"/>
+   </properties>
+  </tile>
+  <tile id="216">
+   <properties>
+    <property name="collision" value="1"/>
+   </properties>
+  </tile>
+  <tile id="217">
+   <properties>
+    <property name="collision" value="1"/>
+   </properties>
+  </tile>
+  <tile id="218">
+   <properties>
+    <property name="collision" value="1"/>
+   </properties>
+  </tile>
+  <tile id="219">
+   <properties>
+    <property name="collision" value="1"/>
+   </properties>
+  </tile>
+  <tile id="220">
+   <properties>
+    <property name="collision" value="1"/>
+   </properties>
+  </tile>
+  <tile id="221">
+   <properties>
+    <property name="collision" value="1"/>
+   </properties>
+  </tile>
+  <tile id="240">
+   <properties>
+    <property name="collision" value="1"/>
+   </properties>
+  </tile>
+  <tile id="241">
+   <properties>
+    <property name="collision" value="1"/>
+   </properties>
+  </tile>
+  <tile id="242">
+   <properties>
+    <property name="collision" value="1"/>
+   </properties>
+  </tile>
+  <tile id="243">
+   <properties>
+    <property name="collision" value="1"/>
+   </properties>
+  </tile>
+  <tile id="244">
+   <properties>
+    <property name="collision" value="1"/>
+   </properties>
+  </tile>
+  <tile id="245">
+   <properties>
+    <property name="collision" value="1"/>
+   </properties>
+  </tile>
+  <tile id="264">
+   <properties>
+    <property name="collision" value="1"/>
+   </properties>
+  </tile>
+  <tile id="265">
+   <properties>
+    <property name="collision" value="1"/>
+   </properties>
+  </tile>
+  <tile id="266">
+   <properties>
+    <property name="collision" value="1"/>
+   </properties>
+  </tile>
+  <tile id="267">
+   <properties>
+    <property name="collision" value="1"/>
+   </properties>
+  </tile>
+  <tile id="268">
+   <properties>
+    <property name="collision" value="1"/>
+   </properties>
+  </tile>
+  <tile id="269">
    <properties>
     <property name="collision" value="1"/>
    </properties>
@@ -5880,7 +6065,7 @@
    <property name="collision" value="1"/>
   </properties>
   <data encoding="base64" compression="gzip">
-   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
+   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
   </data>
  </layer>
 </map>

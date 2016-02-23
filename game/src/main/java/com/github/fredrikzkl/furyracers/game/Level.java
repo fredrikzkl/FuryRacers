@@ -82,6 +82,7 @@ public class Level {
 	private boolean isRightTileLineCrossed;
 	private boolean isTopTileLineCrossed;
 	private boolean isBottomTileLineCrossed;
+	private int backgroundLayer;
 	
 	public Level(int id) {
 		
@@ -96,6 +97,7 @@ public class Level {
 		//TODO
 		roadLayer = map.getLayerIndex("road");
 		propsLayer = map.getLayerIndex("props");
+		backgroundLayer = map.getLayerIndex("background");
 		tileWidth = map.getTileWidth();
 		tileHeight = map.getTileHeight();
 		mapWidth = map.getWidth();
@@ -125,9 +127,7 @@ public class Level {
 		}
 	}
 
-	public void render(Graphics g, Vector2f tilePos, Camera camera) {
-		int tilePosX = (int) tilePos.x;
-		int tilePosY = (int) tilePos.y;
+	public void render(Graphics g, Camera camera) {
 		map.render(0,0, 0, 0, 
 				(int)(camera.getSize().x-camera.getX())/map.getTileWidth()+1,
 				(int)(camera.getSize().y-camera.getY())/map.getTileHeight()+1);
@@ -139,6 +139,19 @@ public class Level {
 
 	public int getTileHeight() {
 		return tileHeight;
+	}
+	
+	public boolean offRoad(float xPos, float yPos){
+		int tileX = (int)(xPos/tileWidth);
+		int tileY = (int)(yPos/tileHeight);
+		
+		int tileIDroad = map.getTileId(tileX, tileY, roadLayer);
+		
+		if(tileIDroad != 0){
+			return false;
+		}
+		
+		return true;
 	}
 	
 	public String getTileType(int xTile, int yTile, int passedCheckpoints){
@@ -168,7 +181,6 @@ public class Level {
 	
 	public ArrayList<String> whichDirectionToStop(float xPos, float yPos, float xVector, float yVector){
 	
-		
 		ArrayList<String> stopCarMovement = new ArrayList<String>();
 		
 		int tileX = (int)(xPos/tileWidth);

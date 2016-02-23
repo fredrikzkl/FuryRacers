@@ -1,9 +1,13 @@
 package com.github.fredrikzkl.furyracers;
 
 import java.awt.Font;
+
 import java.io.InputStream;
+
 import java.util.ArrayList;
 import java.util.List;
+
+
 
 import org.newdawn.slick.Color;
 import org.newdawn.slick.GameContainer;
@@ -22,6 +26,7 @@ import com.github.fredrikzkl.furyracers.game.GameCore;
 import com.github.fredrikzkl.furyracers.game.Player;
 import com.github.fredrikzkl.furyracers.network.GameSession;
 
+
 public class Menu extends BasicGameState {
 
 	private GameCore core;
@@ -31,7 +36,7 @@ public class Menu extends BasicGameState {
 
 	private final int ICONSIZE = 128;
 
-	private static String IP = null;
+	private static String controllerIP = null;
 	private String version = null;
 	private TrueTypeFont header;
 	private TrueTypeFont regularText;
@@ -39,7 +44,7 @@ public class Menu extends BasicGameState {
 	private float consoleSize = 15f;
 
 	private Color headerColor = new Color(221, 0, 0);
-	private Image icons, cars;
+	private Image icons, cars, controllerQR;
 
 	private int tick;
 	private double seconds;
@@ -51,6 +56,8 @@ public class Menu extends BasicGameState {
 	private int secondsToNextGame = 3;
 	private boolean allReady = true;
 	double allReadyTimestamp = -1;
+	
+	QRgenerator QR = new QRgenerator();
 
 	public List<String> console;
 	public List<Player> players;
@@ -63,84 +70,47 @@ public class Menu extends BasicGameState {
 	}
 
 	public void init(GameContainer container, StateBasedGame game) throws SlickException {
+		QR.genQR(controllerIP);
+		
 		Application.setInMenu(true);
 		players = new ArrayList<Player>();
 		console = new ArrayList<String>();
 		console.add("Welcome to FuryRacers! Version: " + version);
 
-		regularFont = new Font("Verdana", Font.BOLD, 20);
-		ip = new TrueTypeFont(regularFont, true);
-
+		addFonts();
 		counter = secondsToNextGame;
 		countDown = Integer.toString(counter);
 		duration = last = System.nanoTime();
 
-		InputStream inputStream;
-		try {
-			inputStream = ResourceLoader.getResourceAsStream("Font/Orbitron-Regular.ttf");
-			Font awtFont1 = Font.createFont(Font.TRUETYPE_FONT, inputStream);
-
-			inputStream = ResourceLoader.getResourceAsStream("Font/Orbitron-Regular.ttf");
-			Font awtFont2 = Font.createFont(Font.TRUETYPE_FONT, inputStream);
-
-			inputStream = ResourceLoader.getResourceAsStream("Font/Orbitron-Regular.ttf");
-			Font awtFont3 = Font.createFont(Font.TRUETYPE_FONT, inputStream);
-
-			awtFont1 = awtFont1.deriveFont(60f); // set font size
-			awtFont2 = awtFont1.deriveFont(24f);
-			awtFont3 = awtFont1.deriveFont(consoleSize);
-
-			header = new TrueTypeFont(awtFont1, true);
-			regularText = new TrueTypeFont(awtFont2, true);
-			consoleText = new TrueTypeFont(awtFont3, true);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
-		try {
-			icons = new Image("Sprites/menu_sheet.png");
-			cars = new Image("Sprites/carSheet.png");
-		} catch (RuntimeException e) {
-			printConsole("ERROR! Sprite sheet not found!");
-		}
+		getImages();
 
 		music = new Music("Sound/menu.ogg");
 		music.setVolume(0.5f);
 		music.loop();
 
 	}
+	
+	public void update(GameContainer container, StateBasedGame game, int delta) throws SlickException {
+		
+		GameSession.setGameState(game.getCurrentStateID());
+		tick++;
+		duration = System.nanoTime() - last;
+		seconds += duration / 1_000_000_000.0f;
+		
+		readyCheck(game);
+
+		last = System.nanoTime();
+	}
 
 	public void render(GameContainer container, StateBasedGame game, Graphics g) throws SlickException {
 
-		// TODO
-		ip.drawString(Application.screenSize.width - 300, 250, IP);
-		// ip.drawString(Application.screenSize.width-125,20,version);
-
 		header.drawString(Application.screenSize.width / 3, 50, "Fury Racers", headerColor);
-
-		String blinkingText;
-		if (players.isEmpty())
-			blinkingText = "Need at least 1 player to begin!";
-		else
-			blinkingText = "Ready up and the game will begin";
-		if (allReady && !players.isEmpty())
-			blinkingText = "Game is starting";
-
-		// Blinking text
-		if (Math.sin(tick / 500) > 0) {
-			regularText.drawString((float) (Application.screenSize.width / 2.8 - blinkingText.length()),
-					Application.screenSize.height / 2, blinkingText);
-		}
-
-		header.drawString(Application.screenSize.width - 125, Application.screenSize.height - 75, countDown);
-
-		String consoleTxt;
-		for (int i = console.size(); i > 0; i--) {
-			consoleText.drawString(0, Application.screenSize.height - (consoleSize * (console.size() - i + 1)),
-					console.get(i - 1));// Draws the console
-		}
-
+		
+		drawGameInfo(g);
+		drawBacksideInfo();
 		drawPlayerIcons(container, game, g);
+		g.drawImage(controllerQR, 150, 150);
+		
 	}
 
 	private void drawPlayerIcons(GameContainer container, StateBasedGame game, Graphics g) {
@@ -162,46 +132,39 @@ public class Menu extends BasicGameState {
 		}
 
 	}
-
-	public void update(GameContainer container, StateBasedGame game, int delta) throws SlickException {
-		GameSession.setGameState(game.getCurrentStateID());
-
-		tick++;
-		duration = System.nanoTime() - last;
-		seconds += duration / 1_000_000_000.0f;
-
-		allReady = true;
+	
+	public boolean allPlayersAreReady(){
+		
 		if (players.size() > 0) {
-			for (Player player : players) {
-				if (!player.isReady()) {
-					allReady = false;
-				}
-			}
-			if (allReady && allReadyTimestamp < 0) {
-				allReadyTimestamp = seconds;
-				printConsole("Everyone is ready, the game will begin shortly!");
-			}
-		} else {
-			allReady = false;
+			for (Player player : players) 
+				if (!player.isReady()) 
+					return false;
+			
+		}else{
+			return false;
 		}
+		
+		return true;
+	}
+	
+	public void readyCheck(StateBasedGame game) throws SlickException{
+		
+		if (allPlayersAreReady()) {
 
-		if (allReady) {
 			secondsToNextGame = (int) (allReadyTimestamp + counter - seconds);
-			if (secondsToNextGame <= 0) {
+			if (secondsToNextGame <= 0)
 				startGame(game);
-			}
+			
 			countDown = String.valueOf(secondsToNextGame);
-		} else {
+		}else{
 			allReadyTimestamp = -1;
 			countDown = String.valueOf(counter);
 		}
 
-		Input mouse = container.getInput();
-		if (mouse.isMouseButtonDown(0)) {
-
+		if (allReadyTimestamp < 0) {
+			allReadyTimestamp = seconds;
+			printConsole("Everyone is ready, the game will begin shortly!");
 		}
-
-		last = System.nanoTime();
 	}
 
 	private void startGame(StateBasedGame game) throws SlickException {
@@ -264,13 +227,83 @@ public class Menu extends BasicGameState {
 			break;
 		}
 	}
+	
+	
+	public void addFonts(){
+		
+		regularFont = new Font("Verdana", Font.BOLD, 20);
+		InputStream inputStream;
+		
+		try {
+			inputStream = ResourceLoader.getResourceAsStream("Font/Orbitron-Regular.ttf");
+			Font awtFont1 = Font.createFont(Font.TRUETYPE_FONT, inputStream);
 
+			inputStream = ResourceLoader.getResourceAsStream("Font/Orbitron-Regular.ttf");
+			Font awtFont2 = Font.createFont(Font.TRUETYPE_FONT, inputStream);
+
+			inputStream = ResourceLoader.getResourceAsStream("Font/Orbitron-Regular.ttf");
+			Font awtFont3 = Font.createFont(Font.TRUETYPE_FONT, inputStream);
+
+			awtFont1 = awtFont1.deriveFont(60f); // set font size
+			awtFont2 = awtFont1.deriveFont(24f);
+			awtFont3 = awtFont1.deriveFont(consoleSize);
+
+			header = new TrueTypeFont(awtFont1, true);
+			regularText = new TrueTypeFont(awtFont2, true);
+			consoleText = new TrueTypeFont(awtFont3, true);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public void getImages(){
+		try {
+			icons = new Image("Sprites/menu_sheet.png");
+			cars = new Image("Sprites/carSheet.png");
+			controllerQR = new Image("QRcode/controllerQR.JPG");
+		} catch (RuntimeException e) {
+			printConsole("ERROR! Sprite sheet not found!");
+		} catch (SlickException e) {
+			
+			e.printStackTrace();
+			
+		}
+	}
+	
+	public void drawGameInfo(Graphics g){
+		
+		//countdown
+		header.drawString(Application.screenSize.width - 125, Application.screenSize.height - 75, countDown);
+		
+		String blinkingText;
+		if (players.isEmpty())
+			blinkingText = "Need at least 1 player to begin!";
+		else
+			blinkingText = "Ready up and the game will begin";
+		if (allReady && !players.isEmpty())
+			blinkingText = "Game is starting";
+
+		// Blinking text
+		if (Math.sin(tick / 500) > 0) {
+			regularText.drawString((float) (Application.screenSize.width / 2.8 - blinkingText.length()),
+					Application.screenSize.height / 2, blinkingText);
+		}
+	}
+	
+	public void drawBacksideInfo(){
+		for (int i = console.size(); i > 0; i--) {
+			consoleText.drawString(0, Application.screenSize.height - (consoleSize * (console.size() - i + 1)),
+					console.get(i - 1));// Draws the console
+		}
+	}
+
+	
 	public int getID() {
 		return 0;
 	}
 
 	public void setIP(String ip) {
-		IP = ip + "/fury";
+		controllerIP = "http://" + ip + "/fury";
 	}
 
 	public void setVersion(String version) {
