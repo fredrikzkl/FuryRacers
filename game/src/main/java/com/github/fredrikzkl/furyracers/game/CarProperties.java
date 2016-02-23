@@ -16,10 +16,10 @@ public enum CarProperties {
 	CamaroG("camaro", "medium", "Sprites/fr_camaro_green.png",0.45f, 300,480,100, 105, 75,110,1), // 6
 	CamaroY("camaro", "medium", "Sprites/fr_camaro_yellow.png",0.45f, 300,480,100, 105, 75,110,1), // 7
 	//VelociRaptor
-	VRaptorR("velociRapor", "large", "Sprites/fr_pickup_red.png",0.65f, 350,480,70, 100, 80,110,1),
-	VRaptorB("velociRapor", "large", "Sprites/fr_pickup_blue.png",0.65f, 350,480,70, 100, 80,110,1),
-	VRaptorG("velociRapor", "large", "Sprites/fr_pickup_green.png",0.65f, 350,480,70, 100, 80,110,1),
-	VRaptorY("velociRapor", "large", "Sprites/fr_pickup_yellow.png",0.65f, 350,480,70, 100, 80,110,1);
+	VRaptorR("velociRapor", "large", "Sprites/fr_pickup_red.png",0.65f, 350,480,70, 100, 80,110,1), //8
+	VRaptorB("velociRapor", "large", "Sprites/fr_pickup_blue.png",0.65f, 350,480,70, 100, 80,110,1), //9
+	VRaptorG("velociRapor", "large", "Sprites/fr_pickup_green.png",0.65f, 350,480,70, 100, 80,110,1), //10
+	VRaptorY("velociRapor", "large", "Sprites/fr_pickup_yellow.png",0.65f, 350,480,70, 100, 80,110,1); //11
 	
 	public String name;
 	public String type;

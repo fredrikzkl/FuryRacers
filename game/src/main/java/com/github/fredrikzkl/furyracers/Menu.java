@@ -54,7 +54,9 @@ public class Menu extends BasicGameState {
 
 	public List<String> console;
 	public List<Player> players;
-
+	
+	// --------------//
+	private ParallaxBackground background;
 	// --------------//
 	private Music music;
 	private Sound car_select;
@@ -110,9 +112,11 @@ public class Menu extends BasicGameState {
 		} catch (RuntimeException e) {
 			printConsole("ERROR! Sprite sheet not found!");
 		}
+		
+		background = new ParallaxBackground();
 
 		music = new Music("Sound/menu.ogg");
-		music.loop();
+		//music.loop();
 		music.setVolume((float) 0.4);
 		
 		initSounds();
@@ -120,7 +124,8 @@ public class Menu extends BasicGameState {
 
 
 	public void render(GameContainer container, StateBasedGame game, Graphics g) throws SlickException {
-
+		background.draw(g);
+		background.tick();
 		// TODO
 		ip.drawString(Application.screenSize.width - 300, 0, IP);
 		// ip.drawString(Application.screenSize.width-125,20,version);
@@ -201,6 +206,7 @@ public class Menu extends BasicGameState {
 			}
 			
 			countDown = String.valueOf(secondsToNextGame);
+			//peep.play();
 		} else {
 			allReadyTimestamp = -1;
 			countDown = String.valueOf(counter);
