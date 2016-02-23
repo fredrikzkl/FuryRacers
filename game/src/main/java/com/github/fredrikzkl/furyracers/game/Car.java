@@ -132,22 +132,30 @@ public class Car {
 		float[] colBoxPoints = collisionBox.getPoints();
 		float xPos;
 		float yPos;
+		int pointsNotOffRoad = 0;
 		
 		for(int i = 0; i < colBoxPoints.length; i+=2){
 			xPos = colBoxPoints[i];
 			yPos = colBoxPoints[i+1];
 			
-			if(level.offRoad(xPos, yPos) && !offRoad){
-				offRoad  = true;
-				stats.topSpeed /= 3.5;
-				stats.deAcceleration *= 3;
-			}else if(!level.offRoad(xPos, yPos) && offRoad){
-				offRoad = false;
-				stats.topSpeed *= 3.5;
-				stats.deAcceleration /= 3;
+			if(level.offRoad(xPos, yPos)){
+				if(!offRoad){
+					stats.topSpeed /= 2.5;
+					currentSpeed /= 2;
+					offRoad = true;
+					break;
+				}
+			}else {
+				pointsNotOffRoad++;
 			}
 		}
+		
+		if(offRoad && pointsNotOffRoad == 4){
+			stats.topSpeed *= 2.5;
+			offRoad = false;
+		}
 	}
+	
 	public void checkForCollision(){
 
 		ArrayList<String> directionsToStop;

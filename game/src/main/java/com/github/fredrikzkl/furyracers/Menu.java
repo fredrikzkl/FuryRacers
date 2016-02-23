@@ -8,7 +8,6 @@ import org.newdawn.slick.Color;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
-import org.newdawn.slick.Input;
 import org.newdawn.slick.Music;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.Sound;
@@ -112,8 +111,8 @@ public class Menu extends BasicGameState {
 		drawGameInfo(g);
 		drawBacksideInfo();
 		drawPlayerIcons(container, game, g);
-		g.drawImage(controllerQR, Application.screenSize.width - controllerQR.getWidth(), 0);
 
+		g.drawImage(controllerQR, Application.screenSize.width - controllerQR.getWidth(), 0);
 	}
 
 	private void drawPlayerIcons(GameContainer container, StateBasedGame game, Graphics g) {
@@ -140,7 +139,6 @@ public class Menu extends BasicGameState {
 			g.drawImage(icons.getSubImage(0, 0, 128, 128), (float) (Application.screenSize.width / 3.8 + (i * 160)),
 					Application.screenSize.height / 4);
 		}
-
 	}
 
 	public boolean allPlayersAreReady() {
