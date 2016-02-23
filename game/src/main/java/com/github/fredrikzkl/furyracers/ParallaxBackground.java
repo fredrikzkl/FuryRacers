@@ -26,29 +26,29 @@ public class ParallaxBackground {
 
 		float speed1 = 0.02f;
 		layer1 = new Layer("city1",0,0,speed1);
-		//layer1sub = new Layer("city1",SCREENWIDTH,0,speed1);
-		determineScaling(layer1);
+		layer1sub = new Layer("city1",SCREENWIDTH,0,speed1);
 		
+		determineScaling(layer1);
 		
 		float speed2 = 0.01f;
 		layer2 = new Layer("city2",0,0,speed2);
-		//layer2sub = new Layer("city2",SCREENWIDTH,0,speed2);
+		layer2sub = new Layer("city2",SCREENWIDTH,0,speed2);
 		
 		/*
 		float speed3 = 1f;
 		layer3 = new Layer("hills",0,0,speed3);
-		float gap = SCREENWIDTH - (layer3.getImg().getWidth() * scaleValue);
 		layer3sub = new Layer("hills",SCREENWIDTH,0,speed3);
-		
+		float gap = (layer3.getX()+layer3.getImg().getWidth()) + layer3sub.getX();
+		System.out.println(gap);
 		
 		layers.add(layer3);
 		layers.add(layer3sub);
 		*/
 		layers.add(layer2);
-		//layers.add(layer2sub);
+		layers.add(layer2sub);
 		
 		layers.add(layer1);
-		//layers.add(layer1sub);
+		layers.add(layer1sub);
 		
 	}
 	
@@ -58,7 +58,7 @@ public class ParallaxBackground {
 			scaleValue = temp;
 	}
 
-	public void draw(Graphics g){
+	public void draw(){
 		for(Layer lay:layers){
 			lay.draw(scaleValue);
 		}

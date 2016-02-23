@@ -86,7 +86,7 @@ public class Menu extends BasicGameState {
 		getImages();
 		background = new ParallaxBackground();
 		music = new Music("Sound/menu.ogg");
-		music.loop();
+		//music.loop();
 		music.setVolume((float) 0.4);
 
 		initSounds();
@@ -104,7 +104,7 @@ public class Menu extends BasicGameState {
 	}
 
 	public void render(GameContainer container, StateBasedGame game, Graphics g) throws SlickException {
-		background.draw(g);
+		background.draw();
 		background.tick();
 
 		header.drawString(Application.screenSize.width / 3, 50, "Fury Racers", headerColor);
