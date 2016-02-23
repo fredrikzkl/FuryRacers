@@ -26,13 +26,13 @@ public class ParallaxBackground {
 
 		float speed1 = 0.02f;
 		layer1 = new Layer("city1",0,0,speed1);
-		layer1sub = new Layer("city1",SCREENWIDTH,0,speed1);
+		//layer1sub = new Layer("city1",SCREENWIDTH,0,speed1);
 		determineScaling(layer1);
 		
 		
 		float speed2 = 0.01f;
 		layer2 = new Layer("city2",0,0,speed2);
-		layer2sub = new Layer("city2",SCREENWIDTH,0,speed2);
+		//layer2sub = new Layer("city2",SCREENWIDTH,0,speed2);
 		
 		/*
 		float speed3 = 1f;
@@ -45,10 +45,10 @@ public class ParallaxBackground {
 		layers.add(layer3sub);
 		*/
 		layers.add(layer2);
-		layers.add(layer2sub);
+		//layers.add(layer2sub);
 		
 		layers.add(layer1);
-		layers.add(layer1sub);
+		//layers.add(layer1sub);
 		
 	}
 	

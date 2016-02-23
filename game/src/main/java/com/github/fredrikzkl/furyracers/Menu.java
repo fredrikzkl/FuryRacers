@@ -108,11 +108,11 @@ public class Menu extends BasicGameState {
 		background.tick();
 
 		header.drawString(Application.screenSize.width / 3, 50, "Fury Racers", headerColor);
-
+		
 		drawGameInfo(g);
 		drawBacksideInfo();
 		drawPlayerIcons(container, game, g);
-		g.drawImage(controllerQR, 150, 150);
+		g.drawImage(controllerQR, Application.screenSize.width - controllerQR.getWidth(), 0);
 
 	}
 
@@ -297,7 +297,11 @@ public class Menu extends BasicGameState {
 
 		// countdown
 		header.drawString(Application.screenSize.width - 125, Application.screenSize.height - 75, countDown);
-
+		
+		//IP
+		//ip.drawString(Application.screenSize.width - 300, 0, "suck" + 1);
+		
+		
 		String blinkingText;
 		if (players.isEmpty())
 			blinkingText = "Need at least 1 player to begin!";
@@ -311,6 +315,7 @@ public class Menu extends BasicGameState {
 			regularText.drawString((float) (Application.screenSize.width / 2.8 - blinkingText.length()),
 					Application.screenSize.height / 2, blinkingText);
 		}
+		
 	}
 
 	public void drawBacksideInfo() {

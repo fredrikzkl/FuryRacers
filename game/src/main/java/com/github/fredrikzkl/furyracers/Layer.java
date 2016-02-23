@@ -28,14 +28,28 @@ public class Layer {
 	
 	public void draw(float scalingValue){
 		img.draw(x,y,scalingValue);
+		float imgX = img.getWidth()*scalingValue;
+		float imgY = img.getHeight()*scalingValue;
+		cropLoop(imgX,imgY).draw(0-imgX,0);;
 	}
 	
 	public void outOfFrame(){
+		/*
 		if(getX() < (0 - Application.screenSize.width)){
 			setX(Application.screenSize.width-gap);
 		}
+		*/
+		if(getX() < (0 - Application.screenSize.width)){
+			
+		}
 	}
 	
+	
+	public Image cropLoop(float height, float width){
+		int deltaX = 0-Application.screenSize.width;
+		Image subIma = img.getSubImage(deltaX, (int)height, (int)width, (int)height);
+		return subIma;
+	}
 
 	public Image getImg() {
 		return img;
