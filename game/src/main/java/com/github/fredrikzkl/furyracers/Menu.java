@@ -20,7 +20,6 @@ import com.github.fredrikzkl.furyracers.game.GameCore;
 import com.github.fredrikzkl.furyracers.game.Player;
 import com.github.fredrikzkl.furyracers.network.GameSession;
 
-
 public class Menu extends BasicGameState {
 
 	private GameCore core;
@@ -49,12 +48,12 @@ public class Menu extends BasicGameState {
 	private int counter;
 	private int secondsToNextGame = 5;
 	double allReadyTimestamp = 0;
-	
+
 	QRgenerator QR = new QRgenerator();
 
 	public List<String> console;
 	public List<Player> players;
-	
+
 	// --------------//
 	private ParallaxBackground background;
 	// --------------//
@@ -73,7 +72,7 @@ public class Menu extends BasicGameState {
 
 	public void init(GameContainer container, StateBasedGame game) throws SlickException {
 		QR.genQR(controllerIP);
-		
+
 		Application.setInMenu(true);
 		players = new ArrayList<Player>();
 		console = new ArrayList<String>();
@@ -84,18 +83,17 @@ public class Menu extends BasicGameState {
 		countDown = Integer.toString(counter);
 		duration = last = System.nanoTime();
 
-
 		getImages();
 		background = new ParallaxBackground();
 		music = new Music("Sound/menu.ogg");
 		music.loop();
 		music.setVolume((float) 0.4);
-		
+
 		initSounds();
 	}
-	
+
 	public void update(GameContainer container, StateBasedGame game, int delta) throws SlickException {
-		
+
 		GameSession.setGameState(game.getCurrentStateID());
 		tick++;
 		duration = System.nanoTime() - last;
@@ -105,25 +103,31 @@ public class Menu extends BasicGameState {
 		last = System.nanoTime();
 	}
 
-
 	public void render(GameContainer container, StateBasedGame game, Graphics g) throws SlickException {
 		background.draw(g);
 		background.tick();
 
 		header.drawString(Application.screenSize.width / 3, 50, "Fury Racers", headerColor);
-		
+
 		drawGameInfo(g);
 		drawBacksideInfo();
 		drawPlayerIcons(container, game, g);
 		g.drawImage(controllerQR, 150, 150);
-		
+
 	}
 
 	private void drawPlayerIcons(GameContainer container, StateBasedGame game, Graphics g) {
-		// Cars - tegner ingenting om spiller ikke finnes
-		for (int i = 0; i < players.size(); i++) {
-			g.drawImage(cars.getSubImage(players.get(i).getxSel() * ICONSIZE, players.get(i).getySel() * ICONSIZE, ICONSIZE, ICONSIZE),
-					(float) (Application.screenSize.width / 3.8 + (i * 160)), Application.screenSize.height / 4);
+
+		// Cars - tegner svart om spiller ikke finnes
+		for (int i = 0; i < 4; i++) {
+			if (i < players.size()) {
+				g.drawImage(
+						cars.getSubImage(players.get(i).getxSel() * ICONSIZE, players.get(i).getySel() * ICONSIZE,
+								ICONSIZE, ICONSIZE),
+						(float) (Application.screenSize.width / 3.8 + (i * 160)), Application.screenSize.height / 4);
+			}else{
+				g.drawImage(icons.getSubImage(256, 0, 128, 128),(float) (Application.screenSize.width / 3.8 + (i * 160)), Application.screenSize.height / 4);
+			}
 		}
 
 		// Bordersene
@@ -138,24 +142,24 @@ public class Menu extends BasicGameState {
 		}
 
 	}
-	
-	public boolean allPlayersAreReady(){
-		
+
+	public boolean allPlayersAreReady() {
+
 		if (players.size() > 0) {
-			for (Player player : players) 
-				if (!player.isReady()) 
+			for (Player player : players)
+				if (!player.isReady())
 					return false;
-		}else{
+		} else {
 			return false;
 		}
-		
+
 		return true;
 	}
-	
-	public void readyCheck(StateBasedGame game) throws SlickException{
-		
+
+	public void readyCheck(StateBasedGame game) throws SlickException {
+
 		if (allPlayersAreReady()) {
-			
+
 			if (allReadyTimestamp < 0) {
 				allReadyTimestamp = seconds;
 				printConsole("Everyone is ready, the game will begin shortly!");
@@ -163,18 +167,16 @@ public class Menu extends BasicGameState {
 
 			secondsToNextGame = (int) (allReadyTimestamp + counter - seconds);
 			countDown = String.valueOf(secondsToNextGame);
-			
-			if (secondsToNextGame <= 0){
+
+			if (secondsToNextGame <= 0) {
 				startGame(game);
 			}
-			
-			
-		}else{
+
+		} else {
 			allReadyTimestamp = -1;
 			countDown = String.valueOf(counter);
 		}
 	}
-
 
 	private void startGame(StateBasedGame game) throws SlickException {
 		music.stop();
@@ -199,10 +201,10 @@ public class Menu extends BasicGameState {
 			for (int i = 0; i < players.size(); i++) {
 				if (playerNr == i + 1) {
 					if (players.get(i).isCarChosen()) {
-						if (players.get(i).isReady()){
+						if (players.get(i).isReady()) {
 							players.get(i).setReady(false);
 							deSelect.play();
-						}else{
+						} else {
 							determinePlayerChoice(players.get(i));
 							players.get(i).setReady(true);
 							playerReady.play();
@@ -227,7 +229,7 @@ public class Menu extends BasicGameState {
 							car_select.play();
 
 						}
-						
+
 					}
 				}
 			}
@@ -249,13 +251,12 @@ public class Menu extends BasicGameState {
 			break;
 		}
 	}
-	
-	
-	public void addFonts(){
-		
+
+	public void addFonts() {
+
 		regularFont = new Font("Verdana", Font.BOLD, 20);
 		InputStream inputStream;
-		
+
 		try {
 			inputStream = ResourceLoader.getResourceAsStream("Font/Orbitron-Regular.ttf");
 			Font awtFont1 = Font.createFont(Font.TRUETYPE_FONT, inputStream);
@@ -277,8 +278,8 @@ public class Menu extends BasicGameState {
 			e.printStackTrace();
 		}
 	}
-	
-	public void getImages(){
+
+	public void getImages() {
 		try {
 			icons = new Image("Sprites/menu_sheet.png");
 			cars = new Image("Sprites/carSheet.png");
@@ -286,17 +287,17 @@ public class Menu extends BasicGameState {
 		} catch (RuntimeException e) {
 			printConsole("ERROR! Sprite sheet not found!");
 		} catch (SlickException e) {
-			
+
 			e.printStackTrace();
-			
+
 		}
 	}
-	
-	public void drawGameInfo(Graphics g){
-		
-		//countdown
+
+	public void drawGameInfo(Graphics g) {
+
+		// countdown
 		header.drawString(Application.screenSize.width - 125, Application.screenSize.height - 75, countDown);
-		
+
 		String blinkingText;
 		if (players.isEmpty())
 			blinkingText = "Need at least 1 player to begin!";
@@ -311,19 +312,18 @@ public class Menu extends BasicGameState {
 					Application.screenSize.height / 2, blinkingText);
 		}
 	}
-	
-	public void drawBacksideInfo(){
+
+	public void drawBacksideInfo() {
 		for (int i = console.size(); i > 0; i--) {
 			consoleText.drawString(0, Application.screenSize.height - (consoleSize * (console.size() - i + 1)),
 					console.get(i - 1));// Draws the console
 		}
 	}
 
-
 	private void determinePlayerChoice(Player player) {
 		int car = player.getxSel();
 		int color = player.getySel();
-		player.setSelect(car*player.maxY + color);
+		player.setSelect(car * player.maxY + color);
 	}
 
 	public int getID() {
@@ -342,7 +342,7 @@ public class Menu extends BasicGameState {
 		try {
 			String path = "Sound/";
 			car_select = new Sound(path + "car_select.ogg");
-			select_car = new Sound(path +"select_car.ogg");
+			select_car = new Sound(path + "select_car.ogg");
 			spray = new Sound(path + "spray.ogg");
 			playerJoin = new Sound(path + "playerJoin.ogg");
 			playerReady = new Sound(path + "ready.ogg");
@@ -352,9 +352,7 @@ public class Menu extends BasicGameState {
 			System.out.println("Could not load sound file" + e);
 			e.printStackTrace();
 		}
-		
-		
-		
+
 	}
 
 }
