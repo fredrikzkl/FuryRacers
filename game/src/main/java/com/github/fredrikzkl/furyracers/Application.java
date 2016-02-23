@@ -2,14 +2,12 @@ package com.github.fredrikzkl.furyracers;
 
 import com.github.fredrikzkl.furyracers.game.GameCore;
 import com.github.fredrikzkl.furyracers.network.GameSession;
-
 import org.lwjgl.opengl.Display;
 import org.newdawn.slick.AppGameContainer;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.ScalableGame;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.state.StateBasedGame;
-
 import java.awt.*;
 
 public class Application extends StateBasedGame {

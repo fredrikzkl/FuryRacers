@@ -4,7 +4,6 @@ import java.awt.Font;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
@@ -16,7 +15,6 @@ import org.newdawn.slick.geom.Circle;
 import org.newdawn.slick.geom.Vector2f;
 import org.newdawn.slick.state.BasicGameState;
 import org.newdawn.slick.state.StateBasedGame;
-
 import com.github.fredrikzkl.furyracers.Application;
 import com.github.fredrikzkl.furyracers.network.GameSession;
 
@@ -101,6 +99,18 @@ public class GameCore extends BasicGameState {
 		
 		for(Car car: cars){
 			ttf.drawString(50, 50, car.getTimeElapsed());
+			car.render(g);
+		}
+		
+		
+		g.translate(-camera.getX(), -camera.getY()); //End of camera
+		camera.zoom(g,(float) 1/zoom);
+		//--------------------------------------------------------------------------//
+		
+		for(Car car: cars){
+
+			//ttf.drawString(car.getPosition().x+camera.getX()-25, car.getPosition().y+camera.getY()-30, car.getTimeElapsed());
+
 		}
 		ttf.drawString(Application.screenSize.width-300, 0, IP);//Ip addresene øverst i venstre corner
 	}

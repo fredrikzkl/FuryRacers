@@ -8,14 +8,20 @@ public class Player {
 	
 	private boolean ready = false;;
 	private boolean carChosen = false;
+	
+	
+	//Select variables
+	public int maxX = 3; 
+	public int maxY = 4;
 	private int xSel = 0;
-	private int ySel;
+	private int ySel = 0;
 	private int select = 0;
 	
 	public Player(String id, int playerNr){
 		this.id=id;
 		this.playerNr=playerNr;
-		ySel = playerNr*128;
+		
+		setySel(playerNr -1);
 	}
 
 	public boolean equals(Object o){
@@ -72,16 +78,28 @@ public class Player {
 		return xSel;
 	}
 
-	public void setxSel(int xSel) {
-		this.xSel = xSel;
-	}
-
 	public int getySel() {
 		return ySel;
 	}
+	public void setxSel(int xSel) {
+		if(xSel > maxX-1){
+			this.xSel = 0;
+		}else if(xSel<0){
+			this.xSel = maxX-1;
+		}else{
+			this.xSel = xSel;
+		}
+	}
+
 
 	public void setySel(int ySel) {
-		this.ySel = ySel;
+		if(ySel >= maxY){
+			this.ySel = 0;
+		}else if(ySel<0){
+			this.ySel = maxY-1;
+		}else{
+			this.ySel = ySel;
+		}
 	}
 
 	public boolean isCarChosen() {

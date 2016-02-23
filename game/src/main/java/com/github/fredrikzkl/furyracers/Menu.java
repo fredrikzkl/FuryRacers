@@ -1,14 +1,9 @@
 package com.github.fredrikzkl.furyracers;
 
 import java.awt.Font;
-
 import java.io.InputStream;
-
 import java.util.ArrayList;
 import java.util.List;
-
-
-
 import org.newdawn.slick.Color;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
@@ -21,7 +16,6 @@ import org.newdawn.slick.TrueTypeFont;
 import org.newdawn.slick.state.BasicGameState;
 import org.newdawn.slick.state.StateBasedGame;
 import org.newdawn.slick.util.ResourceLoader;
-
 import com.github.fredrikzkl.furyracers.game.GameCore;
 import com.github.fredrikzkl.furyracers.game.Player;
 import com.github.fredrikzkl.furyracers.network.GameSession;
@@ -53,17 +47,25 @@ public class Menu extends BasicGameState {
 
 	private String countDown;
 	private int counter;
-	private int secondsToNextGame = 3;
-	private boolean allReady = true;
-	double allReadyTimestamp = -1;
+	private int secondsToNextGame = 5;
+	double allReadyTimestamp = 0;
 	
 	QRgenerator QR = new QRgenerator();
 
 	public List<String> console;
 	public List<Player> players;
-
+	
+	// --------------//
+	private ParallaxBackground background;
 	// --------------//
 	private Music music;
+	private Sound car_select;
+	private Sound select_car;
+	private Sound spray;
+	private Sound playerJoin;
+	private Sound playerReady;
+	private Sound deSelect;
+	private Sound peep;
 
 	public Menu(GameCore game) {
 		core = game;
@@ -82,12 +84,14 @@ public class Menu extends BasicGameState {
 		countDown = Integer.toString(counter);
 		duration = last = System.nanoTime();
 
+
 		getImages();
-
+		background = new ParallaxBackground();
 		music = new Music("Sound/menu.ogg");
-		music.setVolume(0.5f);
 		music.loop();
-
+		music.setVolume((float) 0.4);
+		
+		initSounds();
 	}
 	
 	public void update(GameContainer container, StateBasedGame game, int delta) throws SlickException {
@@ -96,13 +100,15 @@ public class Menu extends BasicGameState {
 		tick++;
 		duration = System.nanoTime() - last;
 		seconds += duration / 1_000_000_000.0f;
-		
 		readyCheck(game);
 
 		last = System.nanoTime();
 	}
 
+
 	public void render(GameContainer container, StateBasedGame game, Graphics g) throws SlickException {
+		background.draw(g);
+		background.tick();
 
 		header.drawString(Application.screenSize.width / 3, 50, "Fury Racers", headerColor);
 		
@@ -139,7 +145,6 @@ public class Menu extends BasicGameState {
 			for (Player player : players) 
 				if (!player.isReady()) 
 					return false;
-			
 		}else{
 			return false;
 		}
@@ -150,30 +155,36 @@ public class Menu extends BasicGameState {
 	public void readyCheck(StateBasedGame game) throws SlickException{
 		
 		if (allPlayersAreReady()) {
+			
+			if (allReadyTimestamp < 0) {
+				allReadyTimestamp = seconds;
+				printConsole("Everyone is ready, the game will begin shortly!");
+			}
 
 			secondsToNextGame = (int) (allReadyTimestamp + counter - seconds);
-			if (secondsToNextGame <= 0)
-				startGame(game);
-			
 			countDown = String.valueOf(secondsToNextGame);
+			
+			if (secondsToNextGame <= 0){
+				startGame(game);
+			}
+			
+			
 		}else{
 			allReadyTimestamp = -1;
 			countDown = String.valueOf(counter);
 		}
-
-		if (allReadyTimestamp < 0) {
-			allReadyTimestamp = seconds;
-			printConsole("Everyone is ready, the game will begin shortly!");
-		}
 	}
 
+
 	private void startGame(StateBasedGame game) throws SlickException {
+		music.stop();
 		game.enterState(1);
 		core.gameStart(1, players);
 	}
 
 	public void updatePlayerList(ArrayList<Player> list) {
 		players = list;
+		playerJoin.play();
 	}
 
 	public void printConsole(String text) {
@@ -188,12 +199,17 @@ public class Menu extends BasicGameState {
 			for (int i = 0; i < players.size(); i++) {
 				if (playerNr == i + 1) {
 					if (players.get(i).isCarChosen()) {
-						if (players.get(i).isReady())
+						if (players.get(i).isReady()){
 							players.get(i).setReady(false);
-						else
+							deSelect.play();
+						}else{
+							determinePlayerChoice(players.get(i));
 							players.get(i).setReady(true);
+							playerReady.play();
+						}
 					} else {
 						players.get(i).setCarChosen(true);
+						select_car.play();
 					}
 
 				}
@@ -205,9 +221,13 @@ public class Menu extends BasicGameState {
 					if (!players.get(i).isReady()) {
 						if (players.get(i).isCarChosen()) {
 							players.get(i).setySel(players.get(i).getySel() + 1);
+							spray.play();
 						} else {
 							players.get(i).setxSel(players.get(i).getxSel() + 1);
+							car_select.play();
+
 						}
+						
 					}
 				}
 			}
@@ -218,8 +238,10 @@ public class Menu extends BasicGameState {
 					if (!players.get(i).isReady()) {
 						if (players.get(i).isCarChosen()) {
 							players.get(i).setySel(players.get(i).getySel() - 1);
+							spray.play();
 						} else {
 							players.get(i).setxSel(players.get(i).getxSel() - 1);
+							car_select.play();
 						}
 					}
 				}
@@ -280,7 +302,7 @@ public class Menu extends BasicGameState {
 			blinkingText = "Need at least 1 player to begin!";
 		else
 			blinkingText = "Ready up and the game will begin";
-		if (allReady && !players.isEmpty())
+		if (allPlayersAreReady() && !players.isEmpty())
 			blinkingText = "Game is starting";
 
 		// Blinking text
@@ -297,7 +319,13 @@ public class Menu extends BasicGameState {
 		}
 	}
 
-	
+
+	private void determinePlayerChoice(Player player) {
+		int car = player.getxSel();
+		int color = player.getySel();
+		player.setSelect(car*player.maxY + color);
+	}
+
 	public int getID() {
 		return 0;
 	}
@@ -308,6 +336,25 @@ public class Menu extends BasicGameState {
 
 	public void setVersion(String version) {
 		this.version = version;
+	}
+
+	private void initSounds() {
+		try {
+			String path = "Sound/";
+			car_select = new Sound(path + "car_select.ogg");
+			select_car = new Sound(path +"select_car.ogg");
+			spray = new Sound(path + "spray.ogg");
+			playerJoin = new Sound(path + "playerJoin.ogg");
+			playerReady = new Sound(path + "ready.ogg");
+			deSelect = new Sound(path + "deselect.ogg");
+			peep = new Sound(path + "countdown.ogg");
+		} catch (SlickException e) {
+			System.out.println("Could not load sound file" + e);
+			e.printStackTrace();
+		}
+		
+		
+		
 	}
 
 }
