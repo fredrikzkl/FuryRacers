@@ -98,16 +98,6 @@ public class GameCore extends BasicGameState {
 		relocateCam(g);
 		
 		for(Car car: cars){
-			ttf.drawString(50, 50, car.getTimeElapsed());
-			car.render(g);
-		}
-		
-		
-		g.translate(-camera.getX(), -camera.getY()); //End of camera
-		camera.zoom(g,(float) 1/zoom);
-		//--------------------------------------------------------------------------//
-		
-		for(Car car: cars){
 
 			//ttf.drawString(car.getPosition().x+camera.getX()-25, car.getPosition().y+camera.getY()-30, car.getTimeElapsed());
 
@@ -217,9 +207,6 @@ public class GameCore extends BasicGameState {
 		
 		center = new Circle(0,0,1);
 		randomHighStartValue = 999;
-		
-		
-	
 	}
 	
 	public void setIP(String ip) {

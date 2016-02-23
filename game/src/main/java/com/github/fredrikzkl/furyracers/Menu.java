@@ -115,7 +115,7 @@ public class Menu extends BasicGameState {
 		drawGameInfo(g);
 		drawBacksideInfo();
 		drawPlayerIcons(container, game, g);
-		g.drawImage(controllerQR, 150, 150);
+		g.drawImage(controllerQR, 100, 100);
 		
 	}
 
