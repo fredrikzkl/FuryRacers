@@ -21,7 +21,7 @@ public class Car {
 	public String id;
 	
 	boolean reverseKeyIsDown, throttleKeyIsDown, leftKeyIsDown, rightKeyIsDown, usingKeyboard, finishedRace = false;
-	boolean startClock = true;
+	boolean startClock = false;
 	
 	String side = "error";
 	
@@ -46,7 +46,8 @@ public class Car {
 	private long startTime, nanoSecondsElapsed, secondsElapsed,minutesElapsed, milliSecondsElapsed = 0;
 	private String timeElapsed = "";
 	private float deltaAngleChange, deltaDeAcceleration;
-	private boolean offRoad = false;
+	private boolean offRoad, raceStarted = false;
+	private float topSpeed;
 	
 	
 	public Car(CarProperties stats, String id, int playerNr, float startX, float startY, Level level){
@@ -54,6 +55,8 @@ public class Car {
 		this.id = id;
 		this.playerNr = playerNr;
 		this.level = level;
+		
+		topSpeed = stats.topSpeed;
 		
 		try {
 			sprite  = new Image(stats.imageFile);
@@ -69,6 +72,7 @@ public class Car {
 	
 	public void update(GameContainer container, StateBasedGame game, int deltaTime)throws SlickException{
 		Input input = container.getInput();
+		checkIfRaceStarted();
 		reactToControlls(input, deltaTime);
 		rePositionCar(deltaTime);
 		checkForEdgeOfMap();
@@ -87,6 +91,16 @@ public class Car {
 		
 		position.x += movementVector.x;
 		position.y += movementVector.y;	
+	}
+	
+	public void checkIfRaceStarted(){
+		
+		if(!raceStarted){
+			stats.topSpeed = 0;
+			
+		}else{
+			stats.topSpeed = topSpeed;
+		}
 	}
 	
 	
@@ -182,7 +196,7 @@ public class Car {
 		deAccelerate(collisionSlowdownConstant);
 		
 		for(String directionToStop : directionsToStop){
-			System.out.println(directionToStop);
+			
 			switch(directionToStop){
 				case "positiveX": /*if(movementVector.x > 0)*/ position.x -= movementVector.x; break;
 				case "negativeX": /*if(movementVector.x < 0)*/position.x -= movementVector.x; break;
@@ -243,9 +257,10 @@ public class Car {
 	
 	public void checkRaceTime(){
 		
-		if(currentSpeed > 0 && startClock){
+		if(startClock){
 			startTime = System.nanoTime();
 			startClock = false;
+			raceStarted = true;
 		}
 		
 		if(startTime != 0 && !finishedRace){
@@ -437,4 +452,9 @@ public class Car {
 	public Image getImage(){
 		return sprite;
 	}
+	
+	public void startClock(){
+		startClock = true;
+	}
+	
 }

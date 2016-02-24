@@ -10,7 +10,7 @@ import net.glxn.qrgen.javase.QRCode;
 
 public class QRgenerator {
 	
-	int backColor = 0xCC0000;
+	int backColor = 0xEFEFEF;
 	int frontColor = 0x0;
 	
 	public void genQR(String IPtoController){

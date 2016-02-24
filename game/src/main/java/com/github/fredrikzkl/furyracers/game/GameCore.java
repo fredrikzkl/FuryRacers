@@ -4,6 +4,8 @@ import java.awt.Font;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
+
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
@@ -15,6 +17,7 @@ import org.newdawn.slick.geom.Circle;
 import org.newdawn.slick.geom.Vector2f;
 import org.newdawn.slick.state.BasicGameState;
 import org.newdawn.slick.state.StateBasedGame;
+
 import com.github.fredrikzkl.furyracers.Application;
 import com.github.fredrikzkl.furyracers.network.GameSession;
 
@@ -51,6 +54,12 @@ public class GameCore extends BasicGameState {
 	
 	private boolean keyboardPlayerOne, keyboardPlayerTwo;
 
+	private long startTimeCountdown, nanoSecondsElapsed, currentTimeCountDown, secondsElapsed;
+
+	private boolean raceStarted, countdownStarted;
+
+	private long secondsLeft;
+
 	public void init(GameContainer container, StateBasedGame sbg) throws SlickException {
 		
 		Application.setInMenu(false);
@@ -71,14 +80,14 @@ public class GameCore extends BasicGameState {
 		}
 		
 		camera.setZoom((float)0.3);
-		
 		GameSession.setGameState(getID());
 	}
 
 	public void update(GameContainer container , StateBasedGame game, int deltaTime) throws SlickException {
 		
 		checkForKeyboardInput(container, game);
-		
+		startCountdown();
+		checkCountdown();		
 		for(Car cars: cars){
 			cars.update(container, game, deltaTime);
 		}
@@ -86,6 +95,7 @@ public class GameCore extends BasicGameState {
 		checkDistances();
 		camera.zoomLogic();
 		camera.updateCamCoordinates();
+		
 	}
 
 	public void render(GameContainer container, StateBasedGame sbg, Graphics g)
@@ -93,12 +103,49 @@ public class GameCore extends BasicGameState {
 		
 		relocateCam(g);
 		
-		for(Car car: cars){
-
-			//ttf.drawString(car.getPosition().x+camera.getX()-25, car.getPosition().y+camera.getY()-30, car.getTimeElapsed());
-
-		}
+		drawCarTimes();
+		
+		
 		ttf.drawString(Application.screenSize.width-300, 0, IP);//Ip addresene øverst i venstre corner
+		
+		if(!raceStarted)
+			ttf.drawString(150, 150, "" + secondsLeft);
+	}
+	
+	public void startCountdown(){
+		
+		if(!countdownStarted){
+			startTimeCountdown = System.nanoTime();
+			countdownStarted = true;
+		}
+	}
+	
+	public void drawCarTimes(){
+		for(Car car: cars)
+			ttf.drawString(car.getPosition().x+camera.getX()-25, car.getPosition().y+camera.getY()-30, car.getTimeElapsed());
+		
+	}
+	
+	public void checkCountdown(){
+		
+		if(!raceStarted){
+			currentTimeCountDown = System.nanoTime();
+			nanoSecondsElapsed = currentTimeCountDown - startTimeCountdown;
+			secondsElapsed = TimeUnit.NANOSECONDS.toSeconds(nanoSecondsElapsed);
+			secondsLeft = 3 - secondsElapsed;
+			
+			if(secondsLeft == 0){
+				startRace();
+			}
+		}
+	}
+	
+	public void startRace(){
+		
+		for(Car car : cars)
+			car.startClock();
+		
+		raceStarted = true;
 	}
 	
 	private void checkDistances() {
@@ -187,6 +234,9 @@ public class GameCore extends BasicGameState {
 	public void initVariables(){
 		
 		cars = new ArrayList<Car>();
+		
+		raceStarted = false;
+		countdownStarted = false;
 		
 		keyboardPlayerOne = false;
 		keyboardPlayerOne = false;

@@ -71,9 +71,7 @@ public class Camera {
 		else
 			biggest=deltaX;
 		
-		temp = initialZoom /(biggest);
-		
-		System.out.println(mapHeightPixels);
+		temp = initialZoom /biggest;
 		
 		if(getSize().x - getX() >= mapWidthPixels && zoom>temp && getX()>=0 || 
 		   getSize().y - getY() >= mapHeightPixels && zoom>temp && getY()>=0)

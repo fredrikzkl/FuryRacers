@@ -122,7 +122,7 @@ public class Menu extends BasicGameState {
 
 	public void drawQRcode(Graphics g){
 
-		g.drawImage(controllerQR, Application.screenSize.width - controllerQR.getWidth(), 100);
+		g.drawImage(controllerQR, Application.screenSize.width - controllerQR.getWidth(), 50);
 	}
 	
 	public void drawHeader(){
