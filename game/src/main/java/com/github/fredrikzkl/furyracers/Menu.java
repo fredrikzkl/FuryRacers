@@ -85,7 +85,7 @@ public class Menu extends BasicGameState {
 		getImages();
 		background = new ParallaxBackground();
 		music = new Music("Sound/menu.ogg");
-		//music.loop();
+		music.loop();
 		music.setVolume((float) 0.4);
 
 		initSounds();

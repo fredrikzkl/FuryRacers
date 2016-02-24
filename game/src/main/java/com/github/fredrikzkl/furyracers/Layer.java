@@ -9,7 +9,6 @@ public class Layer {
 	private float x,y;
 	private float speed;
 	
-	private float gap;
 	
 	public Layer(String fileName,int x, int y, float speed){
 		try {
@@ -30,9 +29,9 @@ public class Layer {
 		img.draw(x,y,scalingValue);
 	}
 	
-	public void outOfFrame(){
-		if(getX() < (0 - Application.screenSize.width)){
-			setX(Application.screenSize.width-gap);
+	public void outOfFrame(float scalingValue){
+		if(getX()+img.getWidth()*scalingValue < 0){
+			setX(x + Application.screenSize.width*2);
 		}
 	}
 	
@@ -60,6 +59,7 @@ public class Layer {
 	public float getSpeed() {
 		return speed;
 	}
+
 	
 	
 }
