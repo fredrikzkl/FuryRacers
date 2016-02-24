@@ -7,11 +7,9 @@ import org.newdawn.slick.SlickException;
 import org.newdawn.slick.geom.Vector2f;
 import org.newdawn.slick.tiled.TiledMap;
 
-import com.github.fredrikzkl.furyracers.Application;
-
 public class Level {
 
-	public final String Dpath = "Maps/a";
+	public final String Dpath = "Maps/course";
 	public String path = Dpath;
 
 	public TiledMap map = null;
@@ -38,7 +36,7 @@ public class Level {
 		try {
 			map = new TiledMap(path);
 		} catch (SlickException e) {
-			System.out.println("Error loading map");
+			System.out.println("Error loading map" + e);
 		}
 		//TODO
 		roadLayer = map.getLayerIndex("road");
