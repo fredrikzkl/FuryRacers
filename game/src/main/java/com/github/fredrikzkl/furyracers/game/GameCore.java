@@ -3,9 +3,7 @@ package com.github.fredrikzkl.furyracers.game;
 import java.awt.Font;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
-
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
@@ -58,7 +56,9 @@ public class GameCore extends BasicGameState {
 
 	private boolean raceStarted, countdownStarted;
 
-	private long secondsLeft;
+	private boolean startGoSignal, goSignal;
+
+	private long startGoSignalTime, goSignalTimeElapsed, secondsLeft;
 
 	public void init(GameContainer container, StateBasedGame sbg) throws SlickException {
 		
@@ -71,14 +71,8 @@ public class GameCore extends BasicGameState {
 		
 		level = new Level(levelNr);
 		camera = new Camera(0,0,level);
-		
 		initVariables();
-		
-		this.players = players;
-		for(Player player:players){
-			createPlayer(player.getPlayerNr(),player.getId(), player.getSelect());
-		}
-		
+		createPlayers(players);
 		camera.setZoom((float)0.3);
 		GameSession.setGameState(getID());
 	}
@@ -87,11 +81,8 @@ public class GameCore extends BasicGameState {
 		
 		checkForKeyboardInput(container, game);
 		startCountdown();
-		checkCountdown();		
-		for(Car cars: cars){
-			cars.update(container, game, deltaTime);
-		}
-				
+		checkCountdown();
+		updateCars(container, game, deltaTime);
 		checkDistances();
 		camera.zoomLogic();
 		camera.updateCamCoordinates();
@@ -102,14 +93,18 @@ public class GameCore extends BasicGameState {
 			throws SlickException {
 		
 		relocateCam(g);
-		
 		drawCarTimes();
+		drawCountdown(g);
+		ttf.drawString(Application.screenSize.width-300, 150, IP);//Ip addresene øverst i venstre corner
+	}
+	
+	public void createPlayers(List<Player> players) throws SlickException{
 		
+		this.players = players;
 		
-		ttf.drawString(Application.screenSize.width-300, 0, IP);//Ip addresene øverst i venstre corner
-		
-		if(!raceStarted)
-			ttf.drawString(150, 150, "" + secondsLeft);
+		for(Player player:players){
+			createPlayer(player.getPlayerNr(),player.getId(), player.getSelect());
+		}
 	}
 	
 	public void startCountdown(){
@@ -120,10 +115,36 @@ public class GameCore extends BasicGameState {
 		}
 	}
 	
-	public void drawCarTimes(){
-		for(Car car: cars)
-			ttf.drawString(car.getPosition().x+camera.getX()-25, car.getPosition().y+camera.getY()-30, car.getTimeElapsed());
+	public void drawCountdown(Graphics g){
 		
+		if(!raceStarted){
+			ttf.drawString(150, 150, "" + secondsLeft);
+		}else if(startGoSignal){
+			startGoSignalTime = System.currentTimeMillis();
+			startGoSignal = false;
+			goSignal = true;
+		}
+		
+		if(goSignal){
+			long currentTime = System.currentTimeMillis();
+			goSignalTimeElapsed = currentTime - startGoSignalTime;
+			if(goSignalTimeElapsed < 1500){
+				ttf.drawString(150, 150, "GO!");
+			}else{
+				goSignal = false;
+			}
+		}
+	}
+	
+	public void drawCarTimes(){
+		for(int i = 0; i < cars.size(); i++)
+			ttf.drawString(100, 130 + (30*i), "Player" + cars.get(i).getPlayerNr() + ": " +cars.get(i).getTimeElapsed());
+	}
+	
+	public void updateCars(GameContainer container, StateBasedGame game, int deltaTime) throws SlickException{
+		for(Car cars: cars){
+			cars.update(container, game, deltaTime);
+		}
 	}
 	
 	public void checkCountdown(){
@@ -237,6 +258,8 @@ public class GameCore extends BasicGameState {
 		
 		raceStarted = false;
 		countdownStarted = false;
+		
+		startGoSignal = true;
 		
 		keyboardPlayerOne = false;
 		keyboardPlayerOne = false;

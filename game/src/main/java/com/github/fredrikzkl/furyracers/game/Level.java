@@ -57,7 +57,7 @@ public class Level {
 
 
 	private void determineStartPosition() {
-		for(int x = 0; x<map.getWidth();x++){
+		for(int x = 0; x < map.getWidth();x++){
 			for(int y = 0; y<map.getHeight(); y++){
 				if(map.getTileProperty(map.getTileId(x, y, 1), "startPos", "-1").equals("start")) {
 					startCoordinates = new Vector2f(x*tileWidth,y*tileHeight);
