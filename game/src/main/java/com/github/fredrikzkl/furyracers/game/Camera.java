@@ -8,8 +8,6 @@ import com.github.fredrikzkl.furyracers.Application;
 public class Camera {
 	
 	private float x,y;
-	private Level level;
-	private GameCore game;
 	public float initialZoom = (float) 1; //TODO
 	public float zoom = (float) 1;
 	private Vector2f size;
@@ -17,22 +15,30 @@ public class Camera {
 	float biggest = 0;
 	Vector2f deltaDistances = new Vector2f();
 	Vector2f closestEdge = new Vector2f();
+	float mapHeightPixels, mapWidthPixels;
 	
-	public Camera(float startX, float startY, Level level, GameCore game){
-		this.level = level;
-		this.game = game;
+	int monitorWidth, monitorHeight;
+	
+	public Camera(float startX, float startY, Level level){
+		
 		x = startX;
 		y= startY;
 		
+		monitorHeight = Application.screenSize.height;
+		monitorWidth = Application.screenSize.width;
+		
+		mapHeightPixels = level.getMapHeightPixels();
+		mapWidthPixels = level.getMapWidthPixels();
+		
 		size = new Vector2f();
 		
-		edgeX = (float) (level.map.getWidth()*level.map.getTileWidth() - Application.screenSize.getWidth());
-		edgeY = (float) (level.map.getHeight()*level.map.getTileHeight() - Application.screenSize.getHeight());
+		edgeX = (float) (mapWidthPixels - monitorWidth);
+		edgeY = (float) (mapHeightPixels - monitorHeight);
 	}
 	
 	public void update(float posX, float posY) {
-		size.x = Application.screenSize.width / zoom;
-		size.y = Application.screenSize.height / zoom;
+		size.x = monitorWidth / zoom;
+		size.y = monitorHeight/ zoom;
 		
 		x = -posX;
 		y = -posY;
@@ -43,19 +49,19 @@ public class Camera {
 		if(posY <0)
 			y = 0;
 		
-		if(size.x + posX > level.distanceWidth){
-			x = -(level.distanceWidth - size.x);
+		if(size.x + posX > mapWidthPixels){
+			x = -(mapWidthPixels - size.x);
 		}
 		
-		if(size.y + posY > level.distanceHeight){
-			y = -(level.distanceHeight - size.y);
+		if(size.y + posY > mapHeightPixels){
+			y = -(mapHeightPixels - size.y);
 		}
 	}
 	
 	public void zoomLogic() {
 		
-		float deltaX = (float) (deltaDistances.x/(Application.screenSize.width/1.98)); //Høyere deleverdi gir mindre margin
-		float deltaY = (float) (deltaDistances.y/(Application.screenSize.height/1.92)); 
+		float deltaX = (float) (deltaDistances.x/(monitorWidth/1.98)); //Høyere deleverdi gir mindre margin
+		float deltaY = (float) (deltaDistances.y/(monitorHeight/1.92)); 
 		float temp = zoom;
 		boolean zoomLim = true;
 		
@@ -67,8 +73,10 @@ public class Camera {
 		
 		temp = initialZoom /(biggest);
 		
-		if(getSize().x - getX() >= level.distanceWidth && zoom>temp && getX()>=0 || 
-		   getSize().y - getY() >= level.distanceHeight && zoom>temp && getY()>=0)
+		System.out.println(mapHeightPixels);
+		
+		if(getSize().x - getX() >= mapWidthPixels && zoom>temp && getX()>=0 || 
+		   getSize().y - getY() >= mapHeightPixels && zoom>temp && getY()>=0)
 			zoomLim = false;
 		
 		if(zoomLim){
@@ -82,8 +90,8 @@ public class Camera {
 	
 	public void updateCamCoordinates(){
 		
-		float x = ((deltaDistances.x/2+closestEdge.x)-Application.screenSize.width/2)*zoom;
-		float y = ((deltaDistances.y/2+closestEdge.y)-Application.screenSize.height/2)*zoom;
+		float x = ((deltaDistances.x/2+closestEdge.x)-monitorWidth/2)*zoom;
+		float y = ((deltaDistances.y/2+closestEdge.y)-monitorHeight/2)*zoom;
 		
 		update(x,y);
 	}

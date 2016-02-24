@@ -3,13 +3,10 @@ package com.github.fredrikzkl.furyracers.game;
 import java.sql.Time;
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
-
-import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
 import org.newdawn.slick.Input;
 import org.newdawn.slick.SlickException;
-import org.newdawn.slick.geom.Circle;
 import org.newdawn.slick.geom.Polygon;
 import org.newdawn.slick.geom.Vector2f;
 import org.newdawn.slick.state.StateBasedGame;
@@ -33,18 +30,13 @@ public class Car {
 	float movementDegrees = 0;
 	float radDeg = 0;
 	
-	
-	
 	private Level level;
-	private int tilePosX, tilePosY;
 	private int playerNr;
-	int collisionSlowdownConstant = 4;
-	int offRoadSlowDownConstant = 4;
+	int collisionSlowdownConstant = 4, centerOfRotationYOffset = 26;
 	
 	Polygon collisionBox;
 	float[] collisionBoxPoints;
 	Vector2f position; 
-	float backLeftX, backLeftY, backRightX, backRightY, frontLeftX, frontLeftY, frontRightX, frontRightY;
 	Vector2f movementVector = new Vector2f();
 
 	private int passedChekpoints = 0;
@@ -104,18 +96,18 @@ public class Car {
 		
 		for(int i = 0; i < colBoxPoints.length; i+=2){
 			
-			if(colBoxPoints[i] < 5 || colBoxPoints[i] > level.getDistanceWidth()-5)
+			if(colBoxPoints[i] < 5 || colBoxPoints[i] > level.getMapWidthPixels()-5)
 				position.x -= movementVector.x;
 			
-			if(colBoxPoints[i+1] < 5 || colBoxPoints[i+1] > level.getDistanceHeight()-5)
+			if(colBoxPoints[i+1] < 5 || colBoxPoints[i+1] > level.getMapHeightPixels()-5)
 				position.y -= movementVector.y;
 		}
 	}
 	
 	public void checkForCheckpoint(){
 
-		tilePosX = (int) (position.x/level.getTileWidth());
-		tilePosY = (int) (position.y/level.getTileHeight());
+		int tilePosX = (int) (position.x/level.getTileWidth());
+		int tilePosY = (int) (position.y/level.getTileHeight());
 		
 		tileType = level.getTileType(tilePosX, tilePosY, passedChekpoints);
 		
@@ -217,7 +209,7 @@ public class Car {
 		}
 	}
 	public void render(Graphics g) {
-		sprite.setCenterOfRotation(0, 26);
+		sprite.setCenterOfRotation(0, centerOfRotationYOffset);
 		sprite.draw(position.x, position.y, stats.carSize);
 		sprite.setRotation(movementDegrees);
 		collisionBox = new Polygon();
@@ -231,17 +223,17 @@ public class Car {
 		int carWidth = 15;
 		
 		float centerOfRotationX = position.x;
-		float centerOfRotationY = position.y + 26;
+		float centerOfRotationY = position.y + centerOfRotationYOffset;
 		
-		backLeftX = (float)(centerOfRotationX+ Math.cos(radDeg+Math.PI/2)*carWidth);
-		backLeftY = (float)((centerOfRotationY) + Math.sin(radDeg+Math.PI/2)*carWidth);
-		frontLeftX = (float)(backLeftX + Math.cos(radDeg)*carLength);
-		frontLeftY = (float)(backLeftY + Math.sin(radDeg)*carLength);
+		float backLeftX = (float)(centerOfRotationX+ Math.cos(radDeg+Math.PI/2)*carWidth);
+		float backLeftY = (float)((centerOfRotationY) + Math.sin(radDeg+Math.PI/2)*carWidth);
+		float frontLeftX = (float)(backLeftX + Math.cos(radDeg)*carLength);
+		float frontLeftY = (float)(backLeftY + Math.sin(radDeg)*carLength);
 		
-		backRightX = (float)(centerOfRotationX + Math.cos(radDeg-Math.PI/2)*carWidth);
-		backRightY = (float)((centerOfRotationY) + Math.sin(radDeg-Math.PI/2)*carWidth);
-		frontRightX = (float)(backRightX + Math.cos(radDeg)*carLength);
-		frontRightY = (float)(backRightY + Math.sin(radDeg)*carLength);
+		float backRightX = (float)(centerOfRotationX + Math.cos(radDeg-Math.PI/2)*carWidth);
+		float backRightY = (float)((centerOfRotationY) + Math.sin(radDeg-Math.PI/2)*carWidth);
+		float frontRightX = (float)(backRightX + Math.cos(radDeg)*carLength);
+		float frontRightY = (float)(backRightY + Math.sin(radDeg)*carLength);
 		
 		collisionBox.addPoint(backLeftX, backLeftY);
 		collisionBox.addPoint(frontLeftX, frontLeftY);
@@ -250,6 +242,7 @@ public class Car {
 	}
 	
 	public void checkRaceTime(){
+		
 		if(currentSpeed > 0 && startClock){
 			startTime = System.nanoTime();
 			startClock = false;

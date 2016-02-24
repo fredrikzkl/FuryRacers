@@ -71,49 +71,64 @@ public class Menu extends BasicGameState {
 	}
 
 	public void init(GameContainer container, StateBasedGame game) throws SlickException {
+		
+		GameSession.setGameState(getID());
 		QR.genQR(controllerIP);
-
 		Application.setInMenu(true);
-		players = new ArrayList<Player>();
-		console = new ArrayList<String>();
-		console.add("Welcome to FuryRacers! Version: " + version);
-
+		initVariables();
 		addFonts();
-		counter = secondsToNextGame;
-		countDown = Integer.toString(counter);
-		duration = last = System.nanoTime();
-
 		getImages();
-		background = new ParallaxBackground();
-		music = new Music("Sound/menu.ogg");
-		music.loop();
-		music.setVolume((float) 0.4);
-
 		initSounds();
 	}
 
 	public void update(GameContainer container, StateBasedGame game, int delta) throws SlickException {
-
-		GameSession.setGameState(game.getCurrentStateID());
-		tick++;
-		duration = System.nanoTime() - last;
-		seconds += duration / 1_000_000_000.0f;
+		
+		setTime();
 		readyCheck(game);
-
-		last = System.nanoTime();
 	}
-
+	
 	public void render(GameContainer container, StateBasedGame game, Graphics g) throws SlickException {
+		
 		background.draw(g);
 		background.tick();
-
-		header.drawString(Application.screenSize.width / 3, 50, "Fury Racers", headerColor);
-		
+		drawHeader();
 		drawGameInfo(g);
 		drawBacksideInfo();
 		drawPlayerIcons(container, game, g);
+		drawQRcode(g);
+	}
+	
+	public void initVariables() throws SlickException{
+		players = new ArrayList<Player>();
+		console = new ArrayList<String>();
+		console.add("Welcome to FuryRacers! Version: " + version);
+		
+		counter = secondsToNextGame;
+		countDown = Integer.toString(counter);
+		duration = last = System.nanoTime();
+		
+		background = new ParallaxBackground();
+		music = new Music("Sound/menu.ogg");
+		music.loop();
+		music.setVolume((float) 0.4);
+	}
+	
+	public void setTime(){
+		
+		tick++;
+		duration = System.nanoTime() - last;
+		seconds += duration / 1_000_000_000.0f;
+		last = System.nanoTime();
+	}
 
+	public void drawQRcode(Graphics g){
+		
 		g.drawImage(controllerQR, Application.screenSize.width - controllerQR.getWidth(), 0);
+	}
+	
+	public void drawHeader(){
+		
+		header.drawString(Application.screenSize.width / 3, 50, "Fury Racers", headerColor);
 	}
 
 	private void drawPlayerIcons(GameContainer container, StateBasedGame game, Graphics g) {
@@ -179,8 +194,8 @@ public class Menu extends BasicGameState {
 
 	private void startGame(StateBasedGame game) throws SlickException {
 		music.stop();
-		game.enterState(1);
 		core.gameStart(1, players);
+		game.enterState(1);
 	}
 
 	public void updatePlayerList(ArrayList<Player> list) {
@@ -212,7 +227,6 @@ public class Menu extends BasicGameState {
 						players.get(i).setCarChosen(true);
 						select_car.play();
 					}
-
 				}
 			}
 			break;
@@ -286,9 +300,7 @@ public class Menu extends BasicGameState {
 		} catch (RuntimeException e) {
 			printConsole("ERROR! Sprite sheet not found!");
 		} catch (SlickException e) {
-
 			e.printStackTrace();
-
 		}
 	}
 
@@ -296,10 +308,6 @@ public class Menu extends BasicGameState {
 
 		// countdown
 		header.drawString(Application.screenSize.width - 125, Application.screenSize.height - 75, countDown);
-		
-		//IP
-		//ip.drawString(Application.screenSize.width - 300, 0, "suck" + 1);
-		
 		
 		String blinkingText;
 		if (players.isEmpty())
@@ -330,18 +338,6 @@ public class Menu extends BasicGameState {
 		player.setSelect(car * player.maxY + color);
 	}
 
-	public int getID() {
-		return 0;
-	}
-
-	public void setIP(String ip) {
-		controllerIP = "http://" + ip + "/fury";
-	}
-
-	public void setVersion(String version) {
-		this.version = version;
-	}
-
 	private void initSounds() {
 		try {
 			String path = "Sound/";
@@ -356,7 +352,17 @@ public class Menu extends BasicGameState {
 			System.out.println("Could not load sound file" + e);
 			e.printStackTrace();
 		}
-
 	}
-
+	
+	public void setIP(String ip) {
+		controllerIP = "http://" + ip + "/fury";
+	}
+	
+	public void setVersion(String version) {
+		this.version = version;
+	}
+	
+	public int getID() {
+		return 0;
+	}
 }
