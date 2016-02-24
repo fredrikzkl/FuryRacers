@@ -75,8 +75,6 @@ public class ParallaxBackground {
 		
 		layers.add(layer1);
 		layers.add(layer1sub);
-		 
-		
 	}
 	
 	private void determineScaling(Layer lay) {

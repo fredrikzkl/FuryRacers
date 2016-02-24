@@ -13,22 +13,20 @@ import java.awt.*;
 public class Application extends StateBasedGame {
 	
 	private final static String version = "0.01" + "a";
-	
 	private final static String gameName = "FuryRacers";
-	
 	private final static int menuID = 0;
-	private final static int GameCore = 1;
+	public static final int FPS = 120;
+	
 	private static GameCore game;
 	private static Menu menu;
 	private static GameSession gameSession;
 	public static Dimension screenSize;
-	public static final int HEIGHT = 24;
-	public static final int WIDTH = 32;
-	public static final int VIEW_HEIGHT = HEIGHT * 16; //TODO
-	public static final int VIEW_WIDTH = WIDTH * 16; //TODO
-	public static final int FPS = 120;
-	
 	public static boolean inMenu;
+	
+	public static void main(String[] args) {
+		createGameSession();
+		startGame();
+	}
 
 	public Application(String gameName) {
 		super(gameName);
@@ -39,20 +37,6 @@ public class Application extends StateBasedGame {
 	public void initStatesList(GameContainer container) throws SlickException {
 		this.getState(menuID).init(container, this);
 		this.enterState(menuID);
-	}
-
-	public static GameSession getGameSession() {
-		return gameSession;
-	}
-
-	public static void fatalError(String error) {
-		System.out.println(error);
-		exit();
-	}
-
-	private static void exit() {
-		System.out.println("Unable to recover; exiting...");
-		System.exit(1);
 	}
 
 	private static void createGameSession() {
@@ -72,7 +56,7 @@ public class Application extends StateBasedGame {
 			screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 			Display.setResizable(true);
 			AppGameContainer app = new AppGameContainer(new ScalableGame(new Application(gameName), (int)screenSize.getWidth(), (int)screenSize.getHeight()));
-			app.setDisplayMode((int)screenSize.getWidth(), (int)screenSize.getHeight(), true);
+			app.setDisplayMode((int)screenSize.getWidth(), (int)screenSize.getHeight(), false);
 
 			app.setAlwaysRender(true);
 			app.start();
@@ -81,11 +65,6 @@ public class Application extends StateBasedGame {
 			fatalError("Could not start FuryRacers: " + e.getMessage());
 		}
 	}
-	
-	public static void main(String[] args) {
-		createGameSession();
-		startGame();
-	}
 
 	public static boolean isInMenu() {
 		return inMenu;
@@ -93,5 +72,19 @@ public class Application extends StateBasedGame {
 
 	public static void setInMenu(boolean inMenu) {
 		Application.inMenu = inMenu;
+	}
+	
+	public static GameSession getGameSession() {
+		return gameSession;
+	}
+	
+	public static void fatalError(String error) {
+		System.out.println(error);
+		exit();
+	}
+
+	private static void exit() {
+		System.out.println("Unable to recover; exiting...");
+		System.exit(1);
 	}
 }

@@ -23,8 +23,6 @@ public class Layer {
 		this.speed = speed;
 	}
 	
-	
-	
 	public void draw(float scalingValue){
 		img.draw(x,y,scalingValue);
 	}
