@@ -178,7 +178,7 @@ public class GameCore extends BasicGameState {
 	}
 	
 	public void relocateCam(Graphics g){
-		//camera.zoom(g, camera.getZoom());//Crasher om verdien <=0 	
+		camera.zoom(g, camera.getZoom());//Crasher om verdien <=0 	
 		g.translate(camera.getX(), camera.getY()); //Start of camera
 		
 		level.render(g,camera);

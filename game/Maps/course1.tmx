@@ -1,0 +1,890 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="200" height="150" tilewidth="16" tileheight="16" nextobjectid="3">
+ <tileset firstgid="1" name="terrain" tilewidth="16" tileheight="16" tilecount="288" columns="24">
+  <image source="../Sprites/mapSprites/terrain.png" width="384" height="192"/>
+  <tile id="95">
+   <properties>
+    <property name="collision" value="1"/>
+   </properties>
+  </tile>
+  <tile id="144">
+   <properties>
+    <property name="collision" value="1"/>
+   </properties>
+  </tile>
+  <tile id="145">
+   <properties>
+    <property name="collision" value="1"/>
+   </properties>
+  </tile>
+  <tile id="146">
+   <properties>
+    <property name="collision" value="1"/>
+   </properties>
+  </tile>
+  <tile id="147">
+   <properties>
+    <property name="collision" value="1"/>
+   </properties>
+  </tile>
+  <tile id="148">
+   <properties>
+    <property name="collision" value="1"/>
+   </properties>
+  </tile>
+  <tile id="149">
+   <properties>
+    <property name="collision" value="1"/>
+   </properties>
+  </tile>
+  <tile id="157">
+   <properties>
+    <property name="collision" value="1"/>
+   </properties>
+  </tile>
+  <tile id="158">
+   <properties>
+    <property name="collision" value="1"/>
+   </properties>
+  </tile>
+  <tile id="168">
+   <properties>
+    <property name="collision" value="1"/>
+   </properties>
+  </tile>
+  <tile id="169">
+   <properties>
+    <property name="collision" value="1"/>
+   </properties>
+  </tile>
+  <tile id="170">
+   <properties>
+    <property name="collision" value="1"/>
+   </properties>
+  </tile>
+  <tile id="171">
+   <properties>
+    <property name="collision" value="1"/>
+   </properties>
+  </tile>
+  <tile id="172">
+   <properties>
+    <property name="collision" value="1"/>
+   </properties>
+  </tile>
+  <tile id="173">
+   <properties>
+    <property name="collision" value="1"/>
+   </properties>
+  </tile>
+  <tile id="181">
+   <properties>
+    <property name="collision" value="1"/>
+   </properties>
+  </tile>
+  <tile id="182">
+   <properties>
+    <property name="collision" value="1"/>
+   </properties>
+  </tile>
+  <tile id="192">
+   <properties>
+    <property name="collision" value="1"/>
+   </properties>
+  </tile>
+  <tile id="193">
+   <properties>
+    <property name="collision" value="1"/>
+   </properties>
+  </tile>
+  <tile id="194">
+   <properties>
+    <property name="collision" value="1"/>
+   </properties>
+  </tile>
+  <tile id="195">
+   <properties>
+    <property name="collision" value="1"/>
+   </properties>
+  </tile>
+  <tile id="196">
+   <properties>
+    <property name="collision" value="1"/>
+   </properties>
+  </tile>
+  <tile id="197">
+   <properties>
+    <property name="collision" value="1"/>
+   </properties>
+  </tile>
+  <tile id="216">
+   <properties>
+    <property name="collision" value="1"/>
+   </properties>
+  </tile>
+  <tile id="217">
+   <properties>
+    <property name="collision" value="1"/>
+   </properties>
+  </tile>
+  <tile id="218">
+   <properties>
+    <property name="collision" value="1"/>
+   </properties>
+  </tile>
+  <tile id="219">
+   <properties>
+    <property name="collision" value="1"/>
+   </properties>
+  </tile>
+  <tile id="220">
+   <properties>
+    <property name="collision" value="1"/>
+   </properties>
+  </tile>
+  <tile id="221">
+   <properties>
+    <property name="collision" value="1"/>
+   </properties>
+  </tile>
+  <tile id="232">
+   <properties>
+    <property name="collision" value="1"/>
+   </properties>
+  </tile>
+  <tile id="233">
+   <properties>
+    <property name="collision" value="1"/>
+   </properties>
+  </tile>
+  <tile id="236">
+   <properties>
+    <property name="collision" value="1"/>
+   </properties>
+  </tile>
+  <tile id="237">
+   <properties>
+    <property name="collision" value="1"/>
+   </properties>
+  </tile>
+  <tile id="240">
+   <properties>
+    <property name="collision" value="1"/>
+   </properties>
+  </tile>
+  <tile id="241">
+   <properties>
+    <property name="collision" value="1"/>
+   </properties>
+  </tile>
+  <tile id="242">
+   <properties>
+    <property name="collision" value="1"/>
+   </properties>
+  </tile>
+  <tile id="243">
+   <properties>
+    <property name="collision" value="1"/>
+   </properties>
+  </tile>
+  <tile id="244">
+   <properties>
+    <property name="collision" value="1"/>
+   </properties>
+  </tile>
+  <tile id="245">
+   <properties>
+    <property name="collision" value="1"/>
+   </properties>
+  </tile>
+  <tile id="264">
+   <properties>
+    <property name="collision" value="1"/>
+   </properties>
+  </tile>
+  <tile id="265">
+   <properties>
+    <property name="collision" value="1"/>
+   </properties>
+  </tile>
+  <tile id="266">
+   <properties>
+    <property name="collision" value="1"/>
+   </properties>
+  </tile>
+  <tile id="267">
+   <properties>
+    <property name="collision" value="1"/>
+   </properties>
+  </tile>
+  <tile id="268">
+   <properties>
+    <property name="collision" value="1"/>
+   </properties>
+  </tile>
+  <tile id="269">
+   <properties>
+    <property name="collision" value="1"/>
+   </properties>
+  </tile>
+ </tileset>
+ <tileset firstgid="289" name="road3" tilewidth="16" tileheight="16" tilecount="2750" columns="50">
+  <image source="../Sprites/mapSprites/road3.png" width="800" height="880"/>
+  <tile id="2050">
+   <properties>
+    <property name="goal" value="finish"/>
+   </properties>
+  </tile>
+  <tile id="2055">
+   <properties>
+    <property name="checkpoint" value="1"/>
+   </properties>
+  </tile>
+  <tile id="2056">
+   <properties>
+    <property name="checkpoint" value="1"/>
+   </properties>
+  </tile>
+  <tile id="2058">
+   <properties>
+    <property name="checkpoint" value="2"/>
+   </properties>
+  </tile>
+  <tile id="2059">
+   <properties>
+    <property name="checkpoint" value="2"/>
+   </properties>
+  </tile>
+  <tile id="2061">
+   <properties>
+    <property name="checkpoint" value="3"/>
+   </properties>
+  </tile>
+  <tile id="2062">
+   <properties>
+    <property name="checkpoint" value="3"/>
+   </properties>
+  </tile>
+  <tile id="2100">
+   <properties>
+    <property name="goal" value="finish"/>
+   </properties>
+  </tile>
+  <tile id="2105">
+   <properties>
+    <property name="checkpoint" value="1"/>
+   </properties>
+  </tile>
+  <tile id="2106">
+   <properties>
+    <property name="checkpoint" value="1"/>
+   </properties>
+  </tile>
+  <tile id="2108">
+   <properties>
+    <property name="checkpoint" value="2"/>
+   </properties>
+  </tile>
+  <tile id="2109">
+   <properties>
+    <property name="checkpoint" value="2"/>
+   </properties>
+  </tile>
+  <tile id="2111">
+   <properties>
+    <property name="checkpoint" value="3"/>
+   </properties>
+  </tile>
+  <tile id="2112">
+   <properties>
+    <property name="checkpoint" value="3"/>
+   </properties>
+  </tile>
+  <tile id="2114">
+   <properties>
+    <property name="checkpoint" value="1"/>
+   </properties>
+  </tile>
+  <tile id="2115">
+   <properties>
+    <property name="checkpoint" value="1"/>
+   </properties>
+  </tile>
+  <tile id="2116">
+   <properties>
+    <property name="checkpoint" value="1"/>
+   </properties>
+  </tile>
+  <tile id="2117">
+   <properties>
+    <property name="checkpoint" value="1"/>
+   </properties>
+  </tile>
+  <tile id="2118">
+   <properties>
+    <property name="checkpoint" value="1"/>
+   </properties>
+  </tile>
+  <tile id="2119">
+   <properties>
+    <property name="checkpoint" value="1"/>
+   </properties>
+  </tile>
+  <tile id="2120">
+   <properties>
+    <property name="checkpoint" value="1"/>
+   </properties>
+  </tile>
+  <tile id="2121">
+   <properties>
+    <property name="checkpoint" value="1"/>
+   </properties>
+  </tile>
+  <tile id="2122">
+   <properties>
+    <property name="checkpoint" value="1"/>
+   </properties>
+  </tile>
+  <tile id="2123">
+   <properties>
+    <property name="checkpoint" value="1"/>
+   </properties>
+  </tile>
+  <tile id="2124">
+   <properties>
+    <property name="checkpoint" value="1"/>
+   </properties>
+  </tile>
+  <tile id="2125">
+   <properties>
+    <property name="checkpoint" value="1"/>
+   </properties>
+  </tile>
+  <tile id="2126">
+   <properties>
+    <property name="checkpoint" value="1"/>
+   </properties>
+  </tile>
+  <tile id="2127">
+   <properties>
+    <property name="checkpoint" value="1"/>
+   </properties>
+  </tile>
+  <tile id="2150">
+   <properties>
+    <property name="goal" value="finish"/>
+   </properties>
+  </tile>
+  <tile id="2155">
+   <properties>
+    <property name="checkpoint" value="1"/>
+   </properties>
+  </tile>
+  <tile id="2156">
+   <properties>
+    <property name="checkpoint" value="1"/>
+   </properties>
+  </tile>
+  <tile id="2158">
+   <properties>
+    <property name="checkpoint" value="2"/>
+   </properties>
+  </tile>
+  <tile id="2159">
+   <properties>
+    <property name="checkpoint" value="2"/>
+   </properties>
+  </tile>
+  <tile id="2161">
+   <properties>
+    <property name="checkpoint" value="3"/>
+   </properties>
+  </tile>
+  <tile id="2162">
+   <properties>
+    <property name="checkpoint" value="3"/>
+   </properties>
+  </tile>
+  <tile id="2164">
+   <properties>
+    <property name="checkpoint" value="1"/>
+   </properties>
+  </tile>
+  <tile id="2165">
+   <properties>
+    <property name="checkpoint" value="1"/>
+   </properties>
+  </tile>
+  <tile id="2166">
+   <properties>
+    <property name="checkpoint" value="1"/>
+   </properties>
+  </tile>
+  <tile id="2167">
+   <properties>
+    <property name="checkpoint" value="1"/>
+   </properties>
+  </tile>
+  <tile id="2168">
+   <properties>
+    <property name="checkpoint" value="1"/>
+   </properties>
+  </tile>
+  <tile id="2169">
+   <properties>
+    <property name="checkpoint" value="1"/>
+   </properties>
+  </tile>
+  <tile id="2170">
+   <properties>
+    <property name="checkpoint" value="1"/>
+   </properties>
+  </tile>
+  <tile id="2171">
+   <properties>
+    <property name="checkpoint" value="1"/>
+   </properties>
+  </tile>
+  <tile id="2172">
+   <properties>
+    <property name="checkpoint" value="1"/>
+   </properties>
+  </tile>
+  <tile id="2173">
+   <properties>
+    <property name="checkpoint" value="1"/>
+   </properties>
+  </tile>
+  <tile id="2174">
+   <properties>
+    <property name="checkpoint" value="1"/>
+   </properties>
+  </tile>
+  <tile id="2175">
+   <properties>
+    <property name="checkpoint" value="1"/>
+   </properties>
+  </tile>
+  <tile id="2176">
+   <properties>
+    <property name="checkpoint" value="1"/>
+   </properties>
+  </tile>
+  <tile id="2177">
+   <properties>
+    <property name="checkpoint" value="1"/>
+   </properties>
+  </tile>
+  <tile id="2200">
+   <properties>
+    <property name="goal" value="finish"/>
+   </properties>
+  </tile>
+  <tile id="2205">
+   <properties>
+    <property name="checkpoint" value="1"/>
+   </properties>
+  </tile>
+  <tile id="2206">
+   <properties>
+    <property name="checkpoint" value="1"/>
+   </properties>
+  </tile>
+  <tile id="2208">
+   <properties>
+    <property name="checkpoint" value="2"/>
+   </properties>
+  </tile>
+  <tile id="2209">
+   <properties>
+    <property name="checkpoint" value="2"/>
+   </properties>
+  </tile>
+  <tile id="2211">
+   <properties>
+    <property name="checkpoint" value="3"/>
+   </properties>
+  </tile>
+  <tile id="2212">
+   <properties>
+    <property name="checkpoint" value="3"/>
+   </properties>
+  </tile>
+  <tile id="2250">
+   <properties>
+    <property name="goal" value="finish"/>
+   </properties>
+  </tile>
+  <tile id="2255">
+   <properties>
+    <property name="checkpoint" value="1"/>
+   </properties>
+  </tile>
+  <tile id="2256">
+   <properties>
+    <property name="checkpoint" value="1"/>
+   </properties>
+  </tile>
+  <tile id="2258">
+   <properties>
+    <property name="checkpoint" value="2"/>
+   </properties>
+  </tile>
+  <tile id="2259">
+   <properties>
+    <property name="checkpoint" value="2"/>
+   </properties>
+  </tile>
+  <tile id="2261">
+   <properties>
+    <property name="checkpoint" value="3"/>
+   </properties>
+  </tile>
+  <tile id="2262">
+   <properties>
+    <property name="checkpoint" value="3"/>
+   </properties>
+  </tile>
+  <tile id="2300">
+   <properties>
+    <property name="goal" value="finish"/>
+   </properties>
+  </tile>
+  <tile id="2305">
+   <properties>
+    <property name="checkpoint" value="1"/>
+   </properties>
+  </tile>
+  <tile id="2306">
+   <properties>
+    <property name="checkpoint" value="1"/>
+   </properties>
+  </tile>
+  <tile id="2308">
+   <properties>
+    <property name="checkpoint" value="2"/>
+   </properties>
+  </tile>
+  <tile id="2309">
+   <properties>
+    <property name="checkpoint" value="2"/>
+   </properties>
+  </tile>
+  <tile id="2311">
+   <properties>
+    <property name="checkpoint" value="3"/>
+   </properties>
+  </tile>
+  <tile id="2312">
+   <properties>
+    <property name="checkpoint" value="3"/>
+   </properties>
+  </tile>
+  <tile id="2350">
+   <properties>
+    <property name="goal" value="finish"/>
+   </properties>
+  </tile>
+  <tile id="2355">
+   <properties>
+    <property name="checkpoint" value="1"/>
+   </properties>
+  </tile>
+  <tile id="2356">
+   <properties>
+    <property name="checkpoint" value="1"/>
+   </properties>
+  </tile>
+  <tile id="2358">
+   <properties>
+    <property name="checkpoint" value="2"/>
+   </properties>
+  </tile>
+  <tile id="2359">
+   <properties>
+    <property name="checkpoint" value="2"/>
+   </properties>
+  </tile>
+  <tile id="2361">
+   <properties>
+    <property name="checkpoint" value="3"/>
+   </properties>
+  </tile>
+  <tile id="2362">
+   <properties>
+    <property name="checkpoint" value="3"/>
+   </properties>
+  </tile>
+  <tile id="2400">
+   <properties>
+    <property name="goal" value="finish"/>
+   </properties>
+  </tile>
+  <tile id="2401">
+   <properties>
+    <property name="startPos" value="start"/>
+   </properties>
+  </tile>
+  <tile id="2405">
+   <properties>
+    <property name="checkpoint" value="1"/>
+   </properties>
+  </tile>
+  <tile id="2406">
+   <properties>
+    <property name="checkpoint" value="1"/>
+   </properties>
+  </tile>
+  <tile id="2408">
+   <properties>
+    <property name="checkpoint" value="2"/>
+   </properties>
+  </tile>
+  <tile id="2409">
+   <properties>
+    <property name="checkpoint" value="2"/>
+   </properties>
+  </tile>
+  <tile id="2411">
+   <properties>
+    <property name="checkpoint" value="3"/>
+   </properties>
+  </tile>
+  <tile id="2412">
+   <properties>
+    <property name="checkpoint" value="3"/>
+   </properties>
+  </tile>
+  <tile id="2450">
+   <properties>
+    <property name="goal" value="finish"/>
+   </properties>
+  </tile>
+  <tile id="2455">
+   <properties>
+    <property name="checkpoint" value="1"/>
+   </properties>
+  </tile>
+  <tile id="2456">
+   <properties>
+    <property name="checkpoint" value="1"/>
+   </properties>
+  </tile>
+  <tile id="2458">
+   <properties>
+    <property name="checkpoint" value="2"/>
+   </properties>
+  </tile>
+  <tile id="2459">
+   <properties>
+    <property name="checkpoint" value="2"/>
+   </properties>
+  </tile>
+  <tile id="2461">
+   <properties>
+    <property name="checkpoint" value="3"/>
+   </properties>
+  </tile>
+  <tile id="2462">
+   <properties>
+    <property name="checkpoint" value="3"/>
+   </properties>
+  </tile>
+  <tile id="2500">
+   <properties>
+    <property name="goal" value="finish"/>
+   </properties>
+  </tile>
+  <tile id="2505">
+   <properties>
+    <property name="checkpoint" value="1"/>
+   </properties>
+  </tile>
+  <tile id="2506">
+   <properties>
+    <property name="checkpoint" value="1"/>
+   </properties>
+  </tile>
+  <tile id="2508">
+   <properties>
+    <property name="checkpoint" value="2"/>
+   </properties>
+  </tile>
+  <tile id="2509">
+   <properties>
+    <property name="checkpoint" value="2"/>
+   </properties>
+  </tile>
+  <tile id="2511">
+   <properties>
+    <property name="checkpoint" value="3"/>
+   </properties>
+  </tile>
+  <tile id="2512">
+   <properties>
+    <property name="checkpoint" value="3"/>
+   </properties>
+  </tile>
+  <tile id="2550">
+   <properties>
+    <property name="goal" value="finish"/>
+   </properties>
+  </tile>
+  <tile id="2555">
+   <properties>
+    <property name="checkpoint" value="1"/>
+   </properties>
+  </tile>
+  <tile id="2556">
+   <properties>
+    <property name="checkpoint" value="1"/>
+   </properties>
+  </tile>
+  <tile id="2558">
+   <properties>
+    <property name="checkpoint" value="2"/>
+   </properties>
+  </tile>
+  <tile id="2559">
+   <properties>
+    <property name="checkpoint" value="2"/>
+   </properties>
+  </tile>
+  <tile id="2561">
+   <properties>
+    <property name="checkpoint" value="3"/>
+   </properties>
+  </tile>
+  <tile id="2562">
+   <properties>
+    <property name="checkpoint" value="3"/>
+   </properties>
+  </tile>
+  <tile id="2600">
+   <properties>
+    <property name="goal" value="finish"/>
+   </properties>
+  </tile>
+  <tile id="2605">
+   <properties>
+    <property name="checkpoint" value="1"/>
+   </properties>
+  </tile>
+  <tile id="2606">
+   <properties>
+    <property name="checkpoint" value="1"/>
+   </properties>
+  </tile>
+  <tile id="2608">
+   <properties>
+    <property name="checkpoint" value="2"/>
+   </properties>
+  </tile>
+  <tile id="2609">
+   <properties>
+    <property name="checkpoint" value="2"/>
+   </properties>
+  </tile>
+  <tile id="2611">
+   <properties>
+    <property name="checkpoint" value="3"/>
+   </properties>
+  </tile>
+  <tile id="2612">
+   <properties>
+    <property name="checkpoint" value="3"/>
+   </properties>
+  </tile>
+  <tile id="2650">
+   <properties>
+    <property name="goal" value="finish"/>
+   </properties>
+  </tile>
+  <tile id="2655">
+   <properties>
+    <property name="checkpoint" value="1"/>
+   </properties>
+  </tile>
+  <tile id="2656">
+   <properties>
+    <property name="checkpoint" value="1"/>
+   </properties>
+  </tile>
+  <tile id="2658">
+   <properties>
+    <property name="checkpoint" value="2"/>
+   </properties>
+  </tile>
+  <tile id="2659">
+   <properties>
+    <property name="checkpoint" value="2"/>
+   </properties>
+  </tile>
+  <tile id="2661">
+   <properties>
+    <property name="checkpoint" value="3"/>
+   </properties>
+  </tile>
+  <tile id="2662">
+   <properties>
+    <property name="checkpoint" value="3"/>
+   </properties>
+  </tile>
+  <tile id="2700">
+   <properties>
+    <property name="goal" value="finish"/>
+   </properties>
+  </tile>
+  <tile id="2705">
+   <properties>
+    <property name="checkpoint" value="1"/>
+   </properties>
+  </tile>
+  <tile id="2706">
+   <properties>
+    <property name="checkpoint" value="1"/>
+   </properties>
+  </tile>
+  <tile id="2708">
+   <properties>
+    <property name="checkpoint" value="2"/>
+   </properties>
+  </tile>
+  <tile id="2709">
+   <properties>
+    <property name="checkpoint" value="2"/>
+   </properties>
+  </tile>
+  <tile id="2711">
+   <properties>
+    <property name="checkpoint" value="3"/>
+   </properties>
+  </tile>
+  <tile id="2712">
+   <properties>
+    <property name="checkpoint" value="3"/>
+   </properties>
+  </tile>
+ </tileset>
+ <layer name="background" width="200" height="150">
+  <data encoding="base64" compression="gzip">
+   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
+  </data>
+ </layer>
+ <layer name="road" width="200" height="150">
+  <properties>
+   <property name="startPos" value="fuckme"/>
+  </properties>
+  <data encoding="base64" compression="gzip">
+   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
+  </data>
+ </layer>
+ <layer name="props" width="200" height="150">
+  <properties>
+   <property name="collision" value="1"/>
+  </properties>
+  <data encoding="base64" compression="gzip">
+   H4sIAAAAAAAAC+3XyW0CQRCG0eZi5+CDHQbpjvcUMHhJwTsxeCUF/weQ7DlYAgHdSO9J33GkupSmqxQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAC2bW9Qyv6g9hTQpsPsxpH9AGAFw9oDwIYdLPlG6tJxOkmn6x8HdtooXaVxmlSeBVpznx7SY3qqPAts0rJvq4W39J4+1jkMNKor/98UZ+k8XaTL7Y0FTejfFF35uy/X6Sbdprs6I0I1/Zuivy/P6SW9pun8m1XfZrCLft8U/X35TF/pO81qDQgNWPwX3OAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAtOoH2CjZL8DUAQA=
+  </data>
+ </layer>
+</map>

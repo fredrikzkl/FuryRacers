@@ -85,7 +85,7 @@ public class Menu extends BasicGameState {
 		getImages();
 		background = new ParallaxBackground();
 		music = new Music("Sound/menu.ogg");
-		music.loop();
+		//music.loop();
 		music.setVolume((float) 0.4);
 
 		initSounds();
@@ -279,8 +279,8 @@ public class Menu extends BasicGameState {
 
 	public void getImages() {
 		try {
-			icons = new Image("Sprites/menu_sheet.png");
-			cars = new Image("Sprites/carSheet.png");
+			icons = new Image("Sprites/menu/menu_sheet.png");
+			cars = new Image("Sprites/menu/carSheet.png");
 			controllerQR = new Image("QRcode/controllerQR.JPG");
 		} catch (RuntimeException e) {
 			printConsole("ERROR! Sprite sheet not found!");
