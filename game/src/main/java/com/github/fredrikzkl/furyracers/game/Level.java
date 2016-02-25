@@ -102,7 +102,7 @@ public class Level {
 		}else if(map.getTileProperty(tileIDroad, "checkpoint", "-1").equals("3") && passedCheckpoints == 2) {
 			return "checkpoint3";
 		}else if(map.getTileProperty(tileIDroad, "goal", "-1").equals("finish") && passedCheckpoints == 3) {
-			return "finishLine";
+			return "lap";
 		}
 		return "openRoad";
 	}

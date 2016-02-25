@@ -272,12 +272,8 @@ public class Menu extends BasicGameState {
 		try {
 			inputStream = ResourceLoader.getResourceAsStream("Font/Orbitron-Regular.ttf");
 			Font awtFont1 = Font.createFont(Font.TRUETYPE_FONT, inputStream);
-
-			inputStream = ResourceLoader.getResourceAsStream("Font/Orbitron-Regular.ttf");
-			Font awtFont2 = Font.createFont(Font.TRUETYPE_FONT, inputStream);
-
-			inputStream = ResourceLoader.getResourceAsStream("Font/Orbitron-Regular.ttf");
-			Font awtFont3 = Font.createFont(Font.TRUETYPE_FONT, inputStream);
+			Font awtFont2;
+			Font awtFont3;
 
 			awtFont1 = awtFont1.deriveFont(60f); // set font size
 			awtFont2 = awtFont1.deriveFont(24f);

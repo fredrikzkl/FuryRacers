@@ -32,7 +32,7 @@ public class Car {
 	
 	private Level level;
 	private int playerNr;
-	int collisionSlowdownConstant = 4, centerOfRotationYOffset = 26;
+	int collisionSlowdownConstant = 4, centerOfRotationYOffset = 26, maxLaps = 3;
 	
 	Polygon collisionBox;
 	float[] collisionBoxPoints;
@@ -42,7 +42,7 @@ public class Car {
 	private int passedChekpoints = 0;
 	String tileType = null;
 	long currentTime;
-	private int laps = 0;
+	private int laps;
 	private long startTime, nanoSecondsElapsed, secondsElapsed,minutesElapsed, milliSecondsElapsed = 0;
 	private String timeElapsed = "";
 	private float deltaAngleChange, deltaDeAcceleration;
@@ -55,6 +55,7 @@ public class Car {
 		this.id = id;
 		this.playerNr = playerNr;
 		this.level = level;
+		laps = 0;
 		
 		topSpeed = stats.topSpeed;
 		
@@ -129,8 +130,12 @@ public class Car {
 			case "checkpoint1": passedChekpoints++; break;
 			case "checkpoint2": passedChekpoints++; break;
 			case "checkpoint3": passedChekpoints++; break;
-			case "finishLine": finishedRace = true;
+			case "lap": laps++; passedChekpoints = 0;	
 		}	
+		
+		if(laps == 3){
+			finishedRace = true;
+		}
 	}
 	
 	public void checkForOffRoad(){
@@ -403,18 +408,22 @@ public class Car {
 
 	public void throttleKeyDown() {
 		throttleKeyIsDown = true;
+		reverseKeyUp();
 	}
 
 	public void leftKeyDown() {
 		leftKeyIsDown = true;
+		rightKeyUp();
 	}
 
 	public void rightKeyDown() {
 		rightKeyIsDown = true;
+		leftKeyUp();
 	}
 
 	public void reverseKeyDown() {
 		reverseKeyIsDown = true;
+		throttleKeyUp();
 	}
 
 	public void leftKeyUp() {
@@ -455,6 +464,12 @@ public class Car {
 	
 	public void startClock(){
 		startClock = true;
+	}
+	
+	public int getLaps(){
+		if(laps < maxLaps)
+			return laps+1;
+		return maxLaps;
 	}
 	
 }
