@@ -36,7 +36,9 @@ public class Car {
 	private CarProperties stats;
 	private Level level; 
 	private Polygon collisionBox;
-	private Vector2f position, movementVector;
+	Vector2f position;
+
+	private Vector2f movementVector;
 	private Controlls controlls;
 	
 	public Car(CarProperties stats, String id, int playerNr, float startX, float startY, Level level){
@@ -113,8 +115,6 @@ public class Car {
 			stats.topSpeed = topSpeed;
 		}
 	}
-	
-	
 	
 	public void checkForEdgeOfMap(){
 		
