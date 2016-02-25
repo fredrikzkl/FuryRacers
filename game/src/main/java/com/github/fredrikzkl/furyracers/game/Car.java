@@ -43,7 +43,7 @@ public class Car {
 	String tileType = null;
 	long currentTime;
 	private int laps;
-	private long startTime, nanoSecondsElapsed, secondsElapsed,minutesElapsed, milliSecondsElapsed = 0;
+	private long startTime, nanoSecondsElapsed, secondsElapsed,minutesElapsed, tenthsOfASecondElapsed = 0;
 	private String timeElapsed = "";
 	private float deltaAngleChange, deltaDeAcceleration;
 	private boolean offRoad, raceStarted = false;
@@ -273,9 +273,9 @@ public class Car {
 			nanoSecondsElapsed = currentTime - startTime;
 			minutesElapsed = TimeUnit.NANOSECONDS.toMinutes(nanoSecondsElapsed);
 			secondsElapsed = TimeUnit.NANOSECONDS.toSeconds(nanoSecondsElapsed) - 60*minutesElapsed;
-			milliSecondsElapsed = TimeUnit.NANOSECONDS.toMillis(nanoSecondsElapsed) - TimeUnit.NANOSECONDS.toSeconds(nanoSecondsElapsed)*1000;
+			tenthsOfASecondElapsed = TimeUnit.NANOSECONDS.toMillis(nanoSecondsElapsed)/100 - TimeUnit.NANOSECONDS.toSeconds(nanoSecondsElapsed)*10;
 			
-			timeElapsed = minutesElapsed + ":" + secondsElapsed + ":" + milliSecondsElapsed;
+			timeElapsed = minutesElapsed + ":" + secondsElapsed + ":" + tenthsOfASecondElapsed;
 		}
 	}
 
@@ -470,6 +470,10 @@ public class Car {
 		if(laps < maxLaps)
 			return laps+1;
 		return maxLaps;
+	}
+	
+	public boolean finishedRace(){
+		return finishedRace;
 	}
 	
 }

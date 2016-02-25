@@ -28,6 +28,8 @@ public class GameCore extends BasicGameState {
 	
 	private String IP = "";
 	
+	private final int menuID = 0; 
+	
 	Image p1car = null;
 	SpriteSheet sprite;
 	Circle center;
@@ -69,12 +71,12 @@ public class GameCore extends BasicGameState {
 
 	public void init(GameContainer container, StateBasedGame sbg) throws SlickException {
 		
-		Application.setInMenu(false);
+		
 		System.out.println("IP: " + IP);
 	}
 	
 	public void gameStart(int levelNr, List<Player> players) throws SlickException{
-		
+
 		GameSession.setGameState(getID());
 		Application.setInMenu(false);
 		level = new Level(levelNr);
@@ -107,6 +109,7 @@ public class GameCore extends BasicGameState {
 		drawCountdown(g);
 		ttf.drawString(screenWidth-300, 150, IP);//Ip addresene øverst i venstre corner
 	}
+	
 	
 	public void createPlayers(List<Player> players) throws SlickException{
 		
@@ -170,20 +173,37 @@ public class GameCore extends BasicGameState {
 		
 		for(int i = 0; i < cars.size(); i++){
 			
-			float yOffset = 30;
-			float startY = screenHeight/10 + (yOffset*i);
+			float yOffSet = 20;
+			float yNextPlayerOffSet = yOffSet*4;
+			float startY = screenHeight/10 + (yNextPlayerOffSet*i);
 			float startX = screenWidth/40;
 			
 			ttf.drawString(startX, startY, "Player" + cars.get(i).getPlayerNr()+":");
-			ttf.drawString(startX, startY + yOffset,"Lap "  + cars.get(i).getLaps() + "/3");
-			ttf.drawString(startX, startY + yOffset*2, ""+cars.get(i).getTimeElapsed());
+			ttf.drawString(startX, startY + yOffSet,"Lap "  + cars.get(i).getLaps() + "/3");
+			ttf.drawString(startX, startY + yOffSet*2, ""+cars.get(i).getTimeElapsed());
 		}
 	}
 	
 	public void updateCars(GameContainer container, StateBasedGame game, int deltaTime) throws SlickException{
-		for(Car cars: cars){
-			cars.update(container, game, deltaTime);
+		
+		int carsFinished = 0;
+		
+		for(Car car: cars){
+			car.update(container, game, deltaTime);
+			if(car.finishedRace())
+				carsFinished++;
 		}
+		
+		if(carsFinished == cars.size()){
+			returnToMenu(container , game);
+		}
+	}
+	
+	public void returnToMenu(GameContainer container, StateBasedGame game) throws SlickException{
+		Application.closeConnection();
+		Application.createGameSession();
+		game.getState(menuID).init(container, game);
+		game.enterState(menuID);
 	}
 	
 	public void checkCountdown(){
@@ -248,7 +268,7 @@ public class GameCore extends BasicGameState {
 	
 	public void checkForKeyboardInput(GameContainer container, StateBasedGame game) throws SlickException{
 		Input input = container.getInput();
-		if(input.isKeyDown(Input.KEY_A) && !keyboardPlayerOne){
+		/*if(input.isKeyDown(Input.KEY_A) && !keyboardPlayerOne){
 			int amountOfPlayers = cars.size();
 			createPlayer(amountOfPlayers+1,"keyboardPlayer",1);
 			cars.get(amountOfPlayers).activateKeyboardInput();
@@ -260,11 +280,10 @@ public class GameCore extends BasicGameState {
 			createPlayer(amountOfPlayers+1,"keyboardPlayerTwo",1);
 			cars.get(amountOfPlayers).activateKeyboardInput();
 			keyboardPlayerTwo = true;
-		}
+		}*/
 		
-	    if(input.isKeyPressed(Input.KEY_N)){
-	    	game.getState(1).init(container, game);
-	    	game.enterState(1);
+	    if(input.isKeyPressed(Input.KEY_R)){
+	    	returnToMenu(container, game);
 	    }
 	    
 	}

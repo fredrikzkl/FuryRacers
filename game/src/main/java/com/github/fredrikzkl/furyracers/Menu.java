@@ -45,8 +45,8 @@ public class Menu extends BasicGameState {
 
 	private String countDown;
 	private int counter;
-	private int secondsToNextGame = 5;
-	double allReadyTimestamp = 0;
+	private int secondsToNextGame;
+	double allReadyTimestamp;
 
 	QRgenerator QR = new QRgenerator();
 
@@ -71,7 +71,7 @@ public class Menu extends BasicGameState {
 
 	public void init(GameContainer container, StateBasedGame game) throws SlickException {
 		
-		GameSession.setGameState(getID());
+		
 		QR.genQR(controllerIP);
 		Application.setInMenu(true);
 		initVariables();
@@ -81,7 +81,7 @@ public class Menu extends BasicGameState {
 	}
 
 	public void update(GameContainer container, StateBasedGame game, int delta) throws SlickException {
-		
+		GameSession.setGameState(getID());
 		setTime();
 		readyCheck(game);
 	}
@@ -102,6 +102,8 @@ public class Menu extends BasicGameState {
 		console = new ArrayList<String>();
 		console.add("Welcome to FuryRacers! Version: " + version);
 		
+		allReadyTimestamp = 0;
+		secondsToNextGame = 5;
 		counter = secondsToNextGame;
 		countDown = Integer.toString(counter);
 		duration = last = System.nanoTime();
