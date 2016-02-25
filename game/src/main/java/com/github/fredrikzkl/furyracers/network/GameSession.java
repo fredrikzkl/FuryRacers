@@ -169,7 +169,7 @@ public class GameSession {
 						for (Car car : game.cars) {
 							if (from.equals(car.id)) {
 								car.buttonUp(data);
-								car.disableKeyboardInput();
+								//car.disableKeyboardInput();
 							}
 						}
 

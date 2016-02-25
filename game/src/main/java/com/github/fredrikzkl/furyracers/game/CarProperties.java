@@ -1,8 +1,5 @@
 package com.github.fredrikzkl.furyracers.game;
 
-import org.newdawn.slick.Image;
-import org.newdawn.slick.SlickException;
-
 public enum CarProperties {
 	
 	//Mustang
