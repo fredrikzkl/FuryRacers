@@ -195,7 +195,7 @@ public class GameCore extends BasicGameState {
 		}
 		
 		if(carsFinished == cars.size()){
-			returnToMenu(container , game);
+			//returnToMenu(container , game);
 		}
 	}
 	
