@@ -7,10 +7,11 @@ public class Controlls {
 	private float deltaAngleChange, deltaDeAcceleration;
 	private CarProperties stats;
 	private Car car;
-	boolean reverseKeyIsDown, throttleKeyIsDown, leftKeyIsDown, rightKeyIsDown, usingKeyboard =  false;
+	boolean reverseKeyIsDown, throttleKeyIsDown, 
+			leftKeyIsDown, rightKeyIsDown, 
+			usingKeyboard =  false;
 	
-	float currentSpeed = 0;
-	float movementDegrees = 0;
+	float currentSpeed, movementDegrees = 0;
 	
 	public Controlls(Car car, CarProperties stats){
 		

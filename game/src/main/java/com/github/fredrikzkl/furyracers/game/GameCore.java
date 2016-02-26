@@ -1,12 +1,10 @@
 package com.github.fredrikzkl.furyracers.game;
 
-import java.applet.Applet;
 import java.awt.Font;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
-
 import org.newdawn.slick.Color;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
@@ -21,7 +19,6 @@ import org.newdawn.slick.geom.Vector2f;
 import org.newdawn.slick.state.BasicGameState;
 import org.newdawn.slick.state.StateBasedGame;
 import org.newdawn.slick.util.ResourceLoader;
-
 import com.github.fredrikzkl.furyracers.Application;
 import com.github.fredrikzkl.furyracers.network.GameSession;
 
@@ -33,26 +30,17 @@ public class GameCore extends BasicGameState {
 	
 	Image p1car = null;
 	SpriteSheet sprite;
-	Circle center;
-	
-	Image redMustang;
-	Image blueMustang;
-	Image greenMustang;
-	Image yellowMustang;
 
 	public static Camera camera;
 	public Level level = null;
 
-	public float initalZoom = (float) 1; //TODO
-	public float zoom = (float) 1;
+	public float initalZoom, zoom = 1;
 	
 	Font font;
 	TrueTypeFont ttf;
 	
 	public List<Car> cars;
 	public List<Player> players;
-	
-	public float randomHighStartValue;
 
 	private int cameraMargin = 250, screenWidth, screenHeight;
 	
@@ -60,11 +48,11 @@ public class GameCore extends BasicGameState {
 	
 	private boolean keyboardPlayerOne, keyboardPlayerTwo;
 
-	private long startTimeCountdown, nanoSecondsElapsed, currentTimeCountDown, secondsElapsed;
+	private long startTimeCountdown, nanoSecondsElapsed, 
+				 currentTimeCountDown, secondsElapsed;
 
-	private boolean raceStarted, countdownStarted;
-
-	private boolean startGoSignal, goSignal;
+	private boolean raceStarted, countdownStarted,
+					startGoSignal, goSignal;
 
 	private long startGoSignalTime, goSignalTimeElapsed, secondsLeft;
 
@@ -90,7 +78,6 @@ public class GameCore extends BasicGameState {
 		camera.setZoom((float)0.3);
 		
 		addFonts();
-		
 	}
 
 	public void update(GameContainer container , StateBasedGame game, int deltaTime) throws SlickException {
@@ -343,9 +330,6 @@ public class GameCore extends BasicGameState {
 		
 		font = new Font("Verdana", Font.BOLD, 20);
 		ttf = new TrueTypeFont(font, true);
-		
-		center = new Circle(0,0,1);
-		randomHighStartValue = 999;
 		
 		screenWidth = Application.screenSize.width;
 		screenHeight = Application.screenSize.height;
