@@ -140,8 +140,10 @@ public class Car implements Comparable<Car>,Runnable {
 		
 		if(laps == 1){
 			finishedRace = true;
+			stats.deAcceleration = 250;
 			controlls.throttleKeyUp();
-			stats.deAcceleration = 300;
+			controlls.leftKeyUp();
+			controlls.rightKeyUp();
 			setTime((int) (minutesElapsed+ secondsElapsed + tenthsOfASecondElapsed));
 		}
 	}
@@ -383,9 +385,5 @@ public class Car implements Comparable<Car>,Runnable {
 		return Integer.compare(this.getTime(), o.getTime());
 	}
 	
-
-	
-
-
 	
 }
