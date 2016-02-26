@@ -71,8 +71,8 @@ public class Level {
 		
 		int startTileToRenderX = endTileToRenderX - 100;
 		int startTileToRenderY = endTileToRenderY - 100;
-		map.render(0,0, (int)(camera.getX()/map.getTileWidth()), (int)(camera.getY()/map.getTileHeight()), 
-				  (int) camera.getSize().x,(int) camera.getSize().y);
+		/*map.render(0,0, (int)(camera.getX()/map.getTileWidth()), (int)(camera.getY()/map.getTileHeight()), 
+				  (int) camera.getSize().x,(int) camera.getSize().y);*/
 	}
 	
 	public int getTileWidth() {

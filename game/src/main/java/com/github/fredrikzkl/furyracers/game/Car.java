@@ -382,7 +382,7 @@ public class Car implements Comparable<Car>,Runnable {
 	
 	@Override
 	public int compareTo(Car o) {
-		return Integer.compare(this.getTime(), o.getTime());
+		return -(Integer.compare(this.getTime(), o.getTime()));
 	}
 	
 	

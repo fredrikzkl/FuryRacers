@@ -29,8 +29,6 @@ public class GameCore extends BasicGameState {
 	
 	private final int menuID = 0; 
 	
-	Image p1car = null;
-	SpriteSheet sprite;
 
 	public static Camera camera;
 	public Level level = null;
@@ -39,7 +37,7 @@ public class GameCore extends BasicGameState {
 	
 	Font font;
 	TrueTypeFont ttf;
-	Image mapPic;
+	Image subMapPic, mapPic;
 	
 	public List<Car> cars;
 	public List<Player> players;
@@ -68,6 +66,7 @@ public class GameCore extends BasicGameState {
 	private float headerSize,textSize;
 	private int textTimer = 0;
 	int scoreBoardLength;
+	
 
 	private TrueTypeFont countDownFont;
 
@@ -109,7 +108,7 @@ public class GameCore extends BasicGameState {
 		relocateCam(g);
 		drawCarTimes();
 		drawCountdown(g);
-		ttf.drawString(screenWidth-300, 150, IP);//Ip addresene øverst i venstre corner
+		ttf.drawString(screenWidth-300, 10, IP);//Ip addresene øverst i venstre corner
 		
 		if(raceFinished)
 		drawScoreBoard();
@@ -226,8 +225,9 @@ public class GameCore extends BasicGameState {
 			printHighScores(marginX);
 		}
 		
+		
+		
 	}
-
 	
 	private void printHighScores(float marginX) {
 		float headerPosX = (marginX*6.4f);
@@ -294,7 +294,6 @@ public class GameCore extends BasicGameState {
 	}
 	
 	public void checkCountdown(){
-		
 		if(!raceStarted){
 			currentTimeCountDown = System.nanoTime();
 			nanoSecondsElapsed = currentTimeCountDown - startTimeCountdown;
@@ -389,10 +388,11 @@ public class GameCore extends BasicGameState {
 		camera.zoom(g, camera.getZoom());//Crasher om verdien <=0 	
 		g.translate(camera.getX(), camera.getY()); //Start of camera
 		
-		g.drawImage(mapPic, 0, 0);
+		g.drawImage(subMapPic, 0, 0);
 		for(Car car: cars){
 			car.render(g);
 		}
+		g.drawImage(mapPic,0,0);
 		
 		g.translate(-camera.getX(), -camera.getY()); //End of camera
 		camera.zoom(g, 1/camera.getZoom());
@@ -410,7 +410,8 @@ public class GameCore extends BasicGameState {
 		keyboardPlayerOne = false;
 		
 		try {
-			mapPic = new Image("Maps/mapPic.png");
+			subMapPic = new Image("Maps/course1sub.png");
+			mapPic = new Image("Maps/course1.png");
 		} catch (SlickException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
