@@ -1,0 +1,13 @@
+ {
+     "name": "FuryRacers",
+     "players": 4,
+     "description": "FuryRacers is a two-dimensional sports game that simulates intense killer rally. Kill others and win the race...",
+     "launch-options": {
+         "all": [
+             "java",
+             "-Djava.library.path=games/FuryRacers/lib",
+             "-jar",
+             "games/Fury/bin/Fury.jar"
+         ]
+     }
+ }

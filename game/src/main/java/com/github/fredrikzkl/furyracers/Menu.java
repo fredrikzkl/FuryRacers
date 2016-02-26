@@ -352,7 +352,7 @@ public class Menu extends BasicGameState {
 	}
 	
 	public void setIP(String ip) {
-		controllerIP = "http://" + ip + "/fury";
+		controllerIP = "http://" + ip + "/furyracers";
 	}
 	
 	public void setVersion(String version) {
