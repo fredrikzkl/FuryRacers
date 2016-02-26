@@ -11,13 +11,13 @@ import org.newdawn.slick.geom.Vector2f;
 import org.newdawn.slick.state.StateBasedGame;
 import org.newdawn.slick.GameContainer;
 
-public class Car {
+public class Car implements Comparable<Car> {
 	
 	int playerNr;
 
 	private int laps, collisionSlowdownConstant = 4,  
 			centerOfRotationYOffset = 26,
-			maxLaps = 3, passedChekpoints;
+			maxLaps = 3, passedChekpoints,time;
 	
 	private long startTime, nanoSecondsElapsed, 
 	secondsElapsed,minutesElapsed, tenthsOfASecondElapsed,
@@ -56,6 +56,7 @@ public class Car {
 	}
 	
 	private void initVariables(){
+		time = 0;
 		paused = true;
 		passedChekpoints = 0;
 		laps = 0;
@@ -84,16 +85,14 @@ public class Car {
 		
 		Input input = container.getInput();
 		currentSpeed = controlls.getCurrentSpeed();
-		checkIfRaceStarted();
-		if(!paused){
-			controlls.reactToControlls(input, deltaTime);
-			rePositionCar(deltaTime);
-			checkForEdgeOfMap();
-			checkForCheckpoint();
-			checkForCollision();
-			checkForOffRoad();
-			checkRaceTime();
-		}
+		controlls.reactToControlls(input, deltaTime,paused);
+		rePositionCar(deltaTime);
+		checkForEdgeOfMap();
+		checkForCheckpoint();
+		checkForCollision();
+		checkForOffRoad();
+		checkRaceTime();
+		
 	}
 	
 	public void rePositionCar(int deltaTime){
@@ -108,19 +107,6 @@ public class Car {
 		position.y += movementVector.y;	
 	}
 	
-	public void checkIfRaceStarted(){
-		if(raceStarted){
-			paused = false;
-		}
-		/*
-		if(!raceStarted){
-			stats.topSpeed = 0;
-			
-		}else{
-			stats.topSpeed = topSpeed;
-		}
-		*/
-	}
 	
 	public void checkForEdgeOfMap(){
 		
@@ -150,8 +136,11 @@ public class Car {
 			case "lap": laps++; passedChekpoints = 0;	
 		}	
 		
-		if(laps == 3){
+		if(laps == 1){
 			finishedRace = true;
+			controlls.throttleKeyUp();
+			stats.deAcceleration = 300;
+			setTime((int) (minutesElapsed+ secondsElapsed + tenthsOfASecondElapsed));
 		}
 	}
 	
@@ -288,6 +277,7 @@ public class Car {
 			startTime = System.nanoTime();
 			startClock = false;
 			raceStarted = true;
+			paused = false;
 		}
 		
 		if(startTime != 0 && !finishedRace){
@@ -351,5 +341,26 @@ public class Car {
 	public Vector2f getPosition() {
 		return position;
 	}
+	
+	
+
+	public int getTime() {
+		return time;
+	}
+
+	public void setTime(int time) {
+		this.time = time;
+	}
+	
+	
+	@Override
+	public int compareTo(Car o) {
+		return Integer.compare(this.getTime(), o.getTime());
+	}
+	
+
+	
+
+
 	
 }

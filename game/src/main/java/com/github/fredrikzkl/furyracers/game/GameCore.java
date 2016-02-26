@@ -1,12 +1,11 @@
 package com.github.fredrikzkl.furyracers.game;
 
-import java.applet.Applet;
 import java.awt.Font;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
-
 import org.newdawn.slick.Color;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
@@ -21,7 +20,6 @@ import org.newdawn.slick.geom.Vector2f;
 import org.newdawn.slick.state.BasicGameState;
 import org.newdawn.slick.state.StateBasedGame;
 import org.newdawn.slick.util.ResourceLoader;
-
 import com.github.fredrikzkl.furyracers.Application;
 import com.github.fredrikzkl.furyracers.network.GameSession;
 
@@ -33,26 +31,17 @@ public class GameCore extends BasicGameState {
 	
 	Image p1car = null;
 	SpriteSheet sprite;
-	Circle center;
-	
-	Image redMustang;
-	Image blueMustang;
-	Image greenMustang;
-	Image yellowMustang;
 
 	public static Camera camera;
 	public Level level = null;
 
-	public float initalZoom = (float) 1; //TODO
-	public float zoom = (float) 1;
+	public float initalZoom, zoom = 1;
 	
 	Font font;
 	TrueTypeFont ttf;
 	
 	public List<Car> cars;
 	public List<Player> players;
-	
-	public float randomHighStartValue;
 
 	private int cameraMargin = 250, screenWidth, screenHeight;
 	
@@ -60,13 +49,23 @@ public class GameCore extends BasicGameState {
 	
 	private boolean keyboardPlayerOne, keyboardPlayerTwo;
 
-	private long startTimeCountdown, nanoSecondsElapsed, currentTimeCountDown, secondsElapsed;
+	private long startTimeCountdown, nanoSecondsElapsed, 
+				 currentTimeCountDown, secondsElapsed;
 
-	private boolean raceStarted, countdownStarted;
-
-	private boolean startGoSignal, goSignal;
+	private boolean raceStarted, countdownStarted,
+					startGoSignal, goSignal;
 
 	private long startGoSignalTime, goSignalTimeElapsed, secondsLeft;
+	
+	
+	private boolean raceFinished = false;
+	private Image results, highscores;
+	float resultPosX, resultPosY, highScorePosX, highScorePosY;
+	private Color headerColor = new Color(221, 0, 0);
+	private TrueTypeFont scoreBoardHeader;
+	private TrueTypeFont scoreBoardText;
+	private float headerSize,textSize;
+	private int textTimer = 0;
 
 	private TrueTypeFont countDownFont;
 
@@ -88,7 +87,6 @@ public class GameCore extends BasicGameState {
 		camera.setZoom((float)0.3);
 		
 		addFonts();
-		
 	}
 
 	public void update(GameContainer container , StateBasedGame game, int deltaTime) throws SlickException {
@@ -110,6 +108,9 @@ public class GameCore extends BasicGameState {
 		drawCarTimes();
 		drawCountdown(g);
 		ttf.drawString(screenWidth-300, 150, IP);//Ip addresene øverst i venstre corner
+		
+		if(raceFinished)
+		drawScoreBoard();
 	}
 	
 	
@@ -197,10 +198,68 @@ public class GameCore extends BasicGameState {
 		}
 		
 		if(carsFinished == cars.size()){
+			raceFinished = true;
 			//returnToMenu(container , game);
 		}
 	}
 	
+	private void drawScoreBoard() {
+		float speed = 5;
+		float maxX = Application.screenSize.width;
+		float midWay = maxX/2;
+		float marginX = midWay/5;
+		float scalingValue = (marginX*3)/results.getWidth();
+		
+		results.draw(resultPosX-results.getWidth(),resultPosY,scalingValue);
+		highscores.draw(highScorePosX+highscores.getWidth(),highScorePosY,scalingValue);
+		
+		if(resultPosX<marginX*3.5){
+			resultPosX += speed;
+		}else{
+			printScores(marginX);
+		}
+		if(highScorePosX>(midWay-(marginX*1.3))){
+			highScorePosX -= speed;
+		}
+		
+	}
+
+	
+	int length;
+	private void printScores(float marginX) {
+		float headerPosX = (marginX*1.4f);
+		float headerPosY = resultPosY*1.4f;
+		
+		scoreBoardHeader.drawString(headerPosX, headerPosY, "Results:",headerColor);
+		length = (int) headerSize;
+		ArrayList<Car> sortedCars = (ArrayList<Car>) cars;
+		Collections.sort(sortedCars);
+
+		
+		for(int i = sortedCars.size()-1; i >= 0 ;i--){
+			scoreBoardText.drawString(headerPosX, headerPosY+length, 
+					"Player " + sortedCars.get(i).getPlayerNr() + ": " +
+					sortedCars.get(i).getTimeElapsed() + " Score: " + "+" +i+1);
+			length+=textSize;
+		}
+		
+		scoreBoardHeader.drawString(headerPosX, headerPosY+headerSize+length, "Total Score:",headerColor);
+		length += headerSize*2;
+		
+		ArrayList<Player> sortedPlayers = (ArrayList<Player>) players;
+		Collections.sort(sortedPlayers);
+		
+		for(int i = 0; i<sortedPlayers.size();i++){
+			scoreBoardText.drawString(headerPosX, headerPosY+length, 
+					sortedPlayers.get(i).getId() + ": " + sortedPlayers.get(i).getScore());
+			length+=textSize;
+
+		}
+		
+		
+		textTimer++;
+	}
+
 	private void initSounds() {
 		try {
 			String path = "Sound/";
@@ -342,11 +401,40 @@ public class GameCore extends BasicGameState {
 		font = new Font("Verdana", Font.BOLD, 20);
 		ttf = new TrueTypeFont(font, true);
 		
-		center = new Circle(0,0,1);
-		randomHighStartValue = 999;
-		
 		screenWidth = Application.screenSize.width;
 		screenHeight = Application.screenSize.height;
+		
+		headerSize = 30f;
+		textSize = 24f;
+		InputStream inputStream;
+		try {
+			inputStream = ResourceLoader.getResourceAsStream("Font/Orbitron-Regular.ttf");
+			Font awtFont1 = Font.createFont(Font.TRUETYPE_FONT, inputStream);
+			Font awtFont2;
+
+			awtFont1 = awtFont1.deriveFont(headerSize); // set font size
+			awtFont2 = awtFont1.deriveFont(textSize);
+			
+			scoreBoardHeader = new TrueTypeFont(awtFont1, true);
+			scoreBoardText = new TrueTypeFont(awtFont2, true);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		String path = "/Sprites/UI/";
+		try {
+			 results = new Image(path + "border.png");
+			 highscores = new Image(path + "border.png");
+		} catch (SlickException e) {
+			e.printStackTrace();
+		}
+		
+		resultPosX = 0-(results.getWidth() * 2);
+		highScorePosX = (float) (Application.screenSize.width + (results.getWidth() / 1.5));
+		resultPosY =  Application.screenSize.height/10;
+		highScorePosY = Application.screenSize.height/10;
+		
 	}
 	
 	public void setIP(String ip) {
