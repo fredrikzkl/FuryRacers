@@ -1,6 +1,6 @@
 package com.github.fredrikzkl.furyracers.game;
 
-public class Player {
+public class Player implements Comparable<Player>{
 	private String id;
 	private String username;
 	private int playerNr;
@@ -108,6 +108,13 @@ public class Player {
 
 	public void setCarChosen(boolean carChosen) {
 		this.carChosen = carChosen;
+	}
+	
+	
+
+	@Override
+	public int compareTo(Player o) {
+		return Integer.compare(this.getScore(), o.getScore());
 	}
 	
 	

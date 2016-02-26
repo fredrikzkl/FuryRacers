@@ -3,6 +3,7 @@ package com.github.fredrikzkl.furyracers.game;
 import java.awt.Font;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import org.newdawn.slick.Color;
@@ -56,14 +57,23 @@ public class GameCore extends BasicGameState {
 					startGoSignal, goSignal;
 
 	private long startGoSignalTime, goSignalTimeElapsed, secondsLeft;
+	
+	
+	private boolean raceFinished = false;
+	private Image results, highscores;
+	float resultPosX, resultPosY, highScorePosX, highScorePosY;
+	private Color headerColor = new Color(221, 0, 0);
+	private TrueTypeFont scoreBoardHeader;
+	private TrueTypeFont scoreBoardText;
+	private float headerSize,textSize;
+	private int textTimer = 0;
+	int scoreBoardLength;
 
 	private TrueTypeFont countDownFont;
 
 	private static Sound drivingSound;
 
 	public void init(GameContainer container, StateBasedGame sbg) throws SlickException {
-		
-		
 		System.out.println("IP: " + IP);
 	}
 	
@@ -100,6 +110,9 @@ public class GameCore extends BasicGameState {
 		drawCarTimes();
 		drawCountdown(g);
 		ttf.drawString(screenWidth-300, 150, IP);//Ip addresene øverst i venstre corner
+		
+		if(raceFinished)
+		drawScoreBoard();
 	}
 	
 	
@@ -187,10 +200,77 @@ public class GameCore extends BasicGameState {
 		}
 		
 		if(carsFinished == cars.size()){
+			raceFinished = true;
 			//returnToMenu(container , game);
 		}
 	}
 	
+	private void drawScoreBoard() {
+		float speed = 1;
+		float maxX = Application.screenSize.width;
+		float midWay = maxX/2;
+		float marginX = midWay/5;
+		float scalingValue = (marginX*3)/results.getWidth();
+		
+		results.draw(resultPosX-results.getWidth(),resultPosY,scalingValue);
+		highscores.draw(highScorePosX+highscores.getWidth(),highScorePosY,scalingValue);
+		
+		if(resultPosX<marginX*3.5){
+			resultPosX += speed;
+		}else{
+			printScores(marginX);
+		}
+		if(highScorePosX>(midWay-(marginX*1.3))){
+			highScorePosX -= speed;
+		}else{
+			printHighScores(marginX);
+		}
+		
+	}
+
+	
+	private void printHighScores(float marginX) {
+		float headerPosX = (marginX*6.4f);
+		float headerPosY = resultPosY*1.4f;
+		
+		scoreBoardHeader.drawString(headerPosX, headerPosY, "High Scores:",headerColor);
+		
+	}
+
+	private void printScores(float marginX) {
+		float headerPosX = (marginX*1.4f);
+		float headerPosY = resultPosY*1.4f;
+		
+		scoreBoardHeader.drawString(headerPosX, headerPosY, "Results:",headerColor);
+		scoreBoardLength = (int) headerSize;
+		ArrayList<Car> sortedCars = (ArrayList<Car>) cars;
+		Collections.sort(sortedCars);
+
+		
+		for(int i = sortedCars.size()-1; i >= 0 ;i--){
+			scoreBoardText.drawString(headerPosX, headerPosY+scoreBoardLength, 
+					"Player " + sortedCars.get(i).getPlayerNr() + ": " +
+					sortedCars.get(i).getTimeElapsed() + " Score: " + "+" +(i+1));
+			scoreBoardLength+=textSize;
+		}
+		
+		scoreBoardHeader.drawString(headerPosX, headerPosY+headerSize+scoreBoardLength, "Total Score:",headerColor);
+		scoreBoardLength += headerSize*2;
+		
+		ArrayList<Player> sortedPlayers = (ArrayList<Player>) players;
+		Collections.sort(sortedPlayers);
+		
+		for(int i = 0; i<sortedPlayers.size();i++){
+			scoreBoardText.drawString(headerPosX, headerPosY+scoreBoardLength, 
+					sortedPlayers.get(i).getId() + ": " + sortedPlayers.get(i).getScore());
+			scoreBoardLength+=textSize;
+
+		}
+		
+		
+		textTimer++;
+	}
+
 	private void initSounds() {
 		try {
 			String path = "Sound/";
@@ -341,6 +421,38 @@ public class GameCore extends BasicGameState {
 		
 		screenWidth = Application.screenSize.width;
 		screenHeight = Application.screenSize.height;
+		
+		headerSize = 30f;
+		textSize = 24f;
+		InputStream inputStream;
+		try {
+			inputStream = ResourceLoader.getResourceAsStream("Font/Orbitron-Regular.ttf");
+			Font awtFont1 = Font.createFont(Font.TRUETYPE_FONT, inputStream);
+			Font awtFont2;
+
+			awtFont1 = awtFont1.deriveFont(headerSize); // set font size
+			awtFont2 = awtFont1.deriveFont(textSize);
+			
+			scoreBoardHeader = new TrueTypeFont(awtFont1, true);
+			scoreBoardText = new TrueTypeFont(awtFont2, true);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		String path = "/Sprites/UI/";
+		try {
+			 results = new Image(path + "border.png");
+			 highscores = new Image(path + "border.png");
+		} catch (SlickException e) {
+			e.printStackTrace();
+		}
+		
+		resultPosX = 0-(results.getWidth() * 2);
+		highScorePosX = (float) (Application.screenSize.width + (results.getWidth() / 1.3));
+		resultPosY =  Application.screenSize.height/10;
+		highScorePosY = Application.screenSize.height/10;
+		
 	}
 	
 	public void setIP(String ip) {

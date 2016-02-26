@@ -11,19 +11,22 @@ import org.newdawn.slick.geom.Vector2f;
 import org.newdawn.slick.state.StateBasedGame;
 import org.newdawn.slick.GameContainer;
 
-public class Car implements Runnable {
+
+public class Car implements Comparable<Car>,Runnable {
+
 	
 	int playerNr;
 
 	private int laps, collisionSlowdownConstant = 4,  
 			centerOfRotationYOffset = 26,
-			maxLaps = 3, passedChekpoints;
+			maxLaps = 3, passedChekpoints,time;
 	
 	private long startTime, nanoSecondsElapsed, 
 	secondsElapsed,minutesElapsed, tenthsOfASecondElapsed,
 	currentTime = 0;
 	
 	private boolean offRoad, raceStarted, finishedRace, startClock;
+	private boolean paused;
 	
 	private float topSpeed, currentSpeed, radDeg;
 	
@@ -42,7 +45,6 @@ public class Car implements Runnable {
 	private Controlls controlls;
 	
 	public Car(CarProperties stats, String id, int playerNr, float startX, float startY, Level level){
-		
 		this.stats = stats;
 		this.id = id;
 		this.playerNr = playerNr;
@@ -56,7 +58,8 @@ public class Car implements Runnable {
 	}
 	
 	private void initVariables(){
-		
+		time = 0;
+		paused = true;
 		passedChekpoints = 0;
 		laps = 0;
 		offRoad = false;
@@ -84,14 +87,14 @@ public class Car implements Runnable {
 		
 		Input input = container.getInput();
 		currentSpeed = controlls.getCurrentSpeed();
-		checkIfRaceStarted();
-		controlls.reactToControlls(input, deltaTime);
+		controlls.reactToControlls(input, deltaTime,paused);
 		rePositionCar(deltaTime);
 		checkForEdgeOfMap();
 		checkForCheckpoint();
 		checkForCollision();
 		checkForOffRoad();
 		checkRaceTime();
+		
 	}
 	
 	public void rePositionCar(int deltaTime){
@@ -106,15 +109,6 @@ public class Car implements Runnable {
 		position.y += movementVector.y;	
 	}
 	
-	public void checkIfRaceStarted(){
-		
-		if(!raceStarted){
-			stats.topSpeed = 0;
-			
-		}else{
-			stats.topSpeed = topSpeed;
-		}
-	}
 	
 	public void checkForEdgeOfMap(){
 		
@@ -144,8 +138,13 @@ public class Car implements Runnable {
 			case "lap": laps++; passedChekpoints = 0;	
 		}	
 		
-		if(laps == 3){
+		if(laps == 1){
 			finishedRace = true;
+			stats.deAcceleration = 250;
+			controlls.throttleKeyUp();
+			controlls.leftKeyUp();
+			controlls.rightKeyUp();
+			setTime((int) (minutesElapsed+ secondsElapsed + tenthsOfASecondElapsed));
 		}
 	}
 	
@@ -336,6 +335,7 @@ public class Car implements Runnable {
 			startTime = System.nanoTime();
 			startClock = false;
 			raceStarted = true;
+			paused = false;
 		}
 		
 		if(startTime != 0 && !finishedRace){
@@ -405,8 +405,7 @@ public class Car implements Runnable {
 		try{
 			Input input = container.getInput();
 			currentSpeed = controlls.getCurrentSpeed();
-			checkIfRaceStarted();
-			controlls.reactToControlls(input, deltaTime);
+			controlls.reactToControlls(input, deltaTime, paused);
 			rePositionCar(deltaTime);
 			checkForEdgeOfMap();
 			checkForCheckpoint();
@@ -423,5 +422,22 @@ public class Car implements Runnable {
 		// TODO Auto-generated method stub
 		
 	}
+	
+	
+
+	public int getTime() {
+		return time;
+	}
+
+	public void setTime(int time) {
+		this.time = time;
+	}
+	
+	
+	@Override
+	public int compareTo(Car o) {
+		return Integer.compare(this.getTime(), o.getTime());
+	}
+	
 	
 }
