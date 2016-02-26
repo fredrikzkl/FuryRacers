@@ -176,9 +176,6 @@ public void reactToControlls(Input input, int deltaTime) {
 		usingKeyboard = true;
 	}
 	
-	public float getMovementDegrees(){
-		return movementDegrees;
-	}
 	
 	public float getCurrentSpeed(){
 		return currentSpeed;
@@ -186,6 +183,18 @@ public void reactToControlls(Input input, int deltaTime) {
 	
 	public float getDeltaDeAcceleration(){
 		return deltaDeAcceleration;
+	}
+	
+	public float getDeltaAngleChange(){
+		return deltaAngleChange;
+	}
+	
+	public float getMovementDegrees(){
+		return movementDegrees;
+	}
+	
+	public void setMovementDegrees(float movementDegrees){
+		this.movementDegrees = movementDegrees;
 	}
 	
 

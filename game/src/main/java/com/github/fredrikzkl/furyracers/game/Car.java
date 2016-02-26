@@ -214,13 +214,67 @@ public class Car implements Runnable {
 		for(String directionToStop : directionsToStop){
 			
 			switch(directionToStop){
-				case "positiveX": /*if(movementVector.x > 0)*/ position.x -= movementVector.x; break;
-				case "negativeX": /*if(movementVector.x < 0)*/position.x -= movementVector.x; break;
-				case "positiveY": /*if(movementVector.y > 0)*/position.y -= movementVector.y; break;
-				case "negativeY": /*if(movementVector.y < 0)*/position.y -= movementVector.y;break;
+				case "positiveX": position.x -= movementVector.x; stopTurningInPositiveXdirection();break;
+				case "negativeX": position.x -= movementVector.x; stopTurningInNegativeXdirection(); break;
+				case "positiveY": position.y -= movementVector.y; stopTurningInPositiveYdirection();break;
+				case "negativeY": position.y -= movementVector.y; stopTurningInNegativeYdirection();break;
 			}
 		}
 	}
+	
+	private void stopTurningInPositiveXdirection(){
+		
+		float deltaAngleChange = controlls.getDeltaAngleChange();
+		float movementDegrees = controlls.getMovementDegrees();
+		
+		if(movementVector.y > 0)
+			movementDegrees += deltaAngleChange;
+		else
+			movementDegrees -= deltaAngleChange;
+		
+		controlls.setMovementDegrees(movementDegrees);
+	}
+	
+	private void stopTurningInNegativeXdirection(){
+		
+		float deltaAngleChange = controlls.getDeltaAngleChange();
+		float movementDegrees = controlls.getMovementDegrees();
+		
+		if(movementVector.y < 0)
+			movementDegrees += deltaAngleChange;
+		else
+			movementDegrees -= deltaAngleChange;
+		
+		controlls.setMovementDegrees(movementDegrees);
+	}
+	
+	private void stopTurningInPositiveYdirection(){
+		
+		float deltaAngleChange = controlls.getDeltaAngleChange();
+		float movementDegrees = controlls.getMovementDegrees();
+		
+		if(movementVector.x > 0)
+			movementDegrees -= deltaAngleChange;
+		else
+			movementDegrees += deltaAngleChange;
+		
+		controlls.setMovementDegrees(movementDegrees);
+	}
+	
+	private void stopTurningInNegativeYdirection(){
+		
+		float deltaAngleChange = controlls.getDeltaAngleChange();
+		float movementDegrees = controlls.getMovementDegrees();
+		
+		if(movementVector.x < 0)
+			movementDegrees -= deltaAngleChange;
+		else
+			movementDegrees += deltaAngleChange;
+		
+		controlls.setMovementDegrees(movementDegrees);
+	}
+	
+	
 	
 	public void deAccelerate(int slowdownConstant){
 		
