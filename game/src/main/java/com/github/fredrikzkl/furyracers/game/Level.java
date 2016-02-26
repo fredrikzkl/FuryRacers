@@ -65,9 +65,14 @@ public class Level {
 	}
 
 	public void render(Graphics g, Camera camera) {
-		map.render(0,0, 0, 0, 
-				(int)(camera.getSize().x-camera.getX())/map.getTileWidth()+1,
-				(int)(camera.getSize().y-camera.getY())/map.getTileHeight()+1);
+		
+		int endTileToRenderY = (int)(camera.getSize().y-camera.getY())/map.getTileHeight()+1;
+		int endTileToRenderX = (int)(camera.getSize().x-camera.getX())/map.getTileWidth()+1; 
+		
+		int startTileToRenderX = endTileToRenderX - 100;
+		int startTileToRenderY = endTileToRenderY - 100;
+		map.render(0,0, (int)(camera.getX()/map.getTileWidth()), (int)(camera.getY()/map.getTileHeight()), 
+				  (int) camera.getSize().x,(int) camera.getSize().y);
 	}
 	
 	public int getTileWidth() {

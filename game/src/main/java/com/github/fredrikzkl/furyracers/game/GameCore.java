@@ -39,6 +39,7 @@ public class GameCore extends BasicGameState {
 	
 	Font font;
 	TrueTypeFont ttf;
+	Image mapPic;
 	
 	public List<Car> cars;
 	public List<Player> players;
@@ -204,7 +205,7 @@ public class GameCore extends BasicGameState {
 	}
 	
 	private void drawScoreBoard() {
-		float speed = 5;
+		float speed = 1;
 		float maxX = Application.screenSize.width;
 		float midWay = maxX/2;
 		float marginX = midWay/5;
@@ -239,7 +240,7 @@ public class GameCore extends BasicGameState {
 		for(int i = sortedCars.size()-1; i >= 0 ;i--){
 			scoreBoardText.drawString(headerPosX, headerPosY+length, 
 					"Player " + sortedCars.get(i).getPlayerNr() + ": " +
-					sortedCars.get(i).getTimeElapsed() + " Score: " + "+" +i+1);
+					sortedCars.get(i).getTimeElapsed() + " Score: " + "+" +(i+1));
 			length+=textSize;
 		}
 		
@@ -378,7 +379,7 @@ public class GameCore extends BasicGameState {
 		camera.zoom(g, camera.getZoom());//Crasher om verdien <=0 	
 		g.translate(camera.getX(), camera.getY()); //Start of camera
 		
-		level.render(g,camera);
+		g.drawImage(mapPic, 0, 0);
 		for(Car car: cars){
 			car.render(g);
 		}
@@ -397,6 +398,13 @@ public class GameCore extends BasicGameState {
 		
 		keyboardPlayerOne = false;
 		keyboardPlayerOne = false;
+		
+		try {
+			mapPic = new Image("Maps/mapPic.png");
+		} catch (SlickException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 		font = new Font("Verdana", Font.BOLD, 20);
 		ttf = new TrueTypeFont(font, true);
@@ -438,7 +446,7 @@ public class GameCore extends BasicGameState {
 	}
 	
 	public void setIP(String ip) {
-		IP = ip + "/fury";
+		IP = ip + "/furyracers";
 	}
 
 	public int getID() {

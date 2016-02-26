@@ -121,12 +121,18 @@ public class Controlls {
 			rightKeyUp();
 		}
 	}
+	
+	public void changeCurrentSpeed(float changeConstant){
+		currentSpeed *= changeConstant;
+	}
+	
+	public void changeTopSpeed(float changeConstant){
+		stats.topSpeed *= changeConstant;
+	}
 
 	public void throttleKeyDown() {
 		throttleKeyIsDown = true;
 		reverseKeyUp();
-		GameCore.getDrivingSound();
-		GameCore.getDrivingSound().loop();
 	}
 
 	public void leftKeyDown() {
@@ -158,8 +164,7 @@ public class Controlls {
 
 	public void throttleKeyUp() {
 		throttleKeyIsDown = false;
-		GameCore.getDrivingSound();
-		GameCore.getDrivingSound().stop();
+		
 	}
 
 	public void disableKeyboardInput() {

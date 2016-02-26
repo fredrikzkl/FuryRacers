@@ -11,7 +11,9 @@ import org.newdawn.slick.geom.Vector2f;
 import org.newdawn.slick.state.StateBasedGame;
 import org.newdawn.slick.GameContainer;
 
-public class Car implements Comparable<Car> {
+
+public class Car implements Comparable<Car>,Runnable {
+
 	
 	int playerNr;
 
@@ -157,8 +159,8 @@ public class Car implements Comparable<Car> {
 			
 			if(level.offRoad(xPos, yPos)){
 				if(!offRoad){
-					stats.topSpeed /= 2.5;
-					currentSpeed /= 2;
+					controlls.changeTopSpeed(0.5f);
+					controlls.changeCurrentSpeed(0.5f);
 					offRoad = true;
 					break;
 				}
@@ -168,7 +170,7 @@ public class Car implements Comparable<Car> {
 		}
 		
 		if(offRoad && pointsNotOffRoad == 4){
-			stats.topSpeed *= 2.5;
+			controlls.changeTopSpeed(2);
 			offRoad = false;
 		}
 	}
@@ -340,6 +342,29 @@ public class Car implements Comparable<Car> {
 	
 	public Vector2f getPosition() {
 		return position;
+	}
+
+	public void run(GameContainer container, StateBasedGame game, int deltaTime)throws SlickException{
+		
+		try{
+			Input input = container.getInput();
+			currentSpeed = controlls.getCurrentSpeed();
+			controlls.reactToControlls(input, deltaTime, paused);
+			rePositionCar(deltaTime);
+			checkForEdgeOfMap();
+			checkForCheckpoint();
+			checkForCollision();
+			checkForOffRoad();
+			checkRaceTime();
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+	}
+
+	@Override
+	public void run() {
+		// TODO Auto-generated method stub
+		
 	}
 	
 	
