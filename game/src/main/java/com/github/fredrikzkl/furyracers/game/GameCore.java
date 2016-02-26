@@ -73,8 +73,6 @@ public class GameCore extends BasicGameState {
 	private static Sound drivingSound;
 
 	public void init(GameContainer container, StateBasedGame sbg) throws SlickException {
-		
-		
 		System.out.println("IP: " + IP);
 	}
 	

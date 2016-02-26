@@ -24,6 +24,7 @@ public class Car {
 	currentTime = 0;
 	
 	private boolean offRoad, raceStarted, finishedRace, startClock;
+	private boolean paused;
 	
 	private float topSpeed, currentSpeed, radDeg;
 	
@@ -42,7 +43,6 @@ public class Car {
 	private Controlls controlls;
 	
 	public Car(CarProperties stats, String id, int playerNr, float startX, float startY, Level level){
-		
 		this.stats = stats;
 		this.id = id;
 		this.playerNr = playerNr;
@@ -56,7 +56,7 @@ public class Car {
 	}
 	
 	private void initVariables(){
-		
+		paused = true;
 		passedChekpoints = 0;
 		laps = 0;
 		offRoad = false;
@@ -85,13 +85,15 @@ public class Car {
 		Input input = container.getInput();
 		currentSpeed = controlls.getCurrentSpeed();
 		checkIfRaceStarted();
-		controlls.reactToControlls(input, deltaTime);
-		rePositionCar(deltaTime);
-		checkForEdgeOfMap();
-		checkForCheckpoint();
-		checkForCollision();
-		checkForOffRoad();
-		checkRaceTime();
+		if(!paused){
+			controlls.reactToControlls(input, deltaTime);
+			rePositionCar(deltaTime);
+			checkForEdgeOfMap();
+			checkForCheckpoint();
+			checkForCollision();
+			checkForOffRoad();
+			checkRaceTime();
+		}
 	}
 	
 	public void rePositionCar(int deltaTime){
@@ -107,13 +109,17 @@ public class Car {
 	}
 	
 	public void checkIfRaceStarted(){
-		
+		if(raceStarted){
+			paused = false;
+		}
+		/*
 		if(!raceStarted){
 			stats.topSpeed = 0;
 			
 		}else{
 			stats.topSpeed = topSpeed;
 		}
+		*/
 	}
 	
 	public void checkForEdgeOfMap(){
