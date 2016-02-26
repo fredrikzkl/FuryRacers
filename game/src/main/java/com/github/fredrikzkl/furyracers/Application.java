@@ -2,13 +2,18 @@ package com.github.fredrikzkl.furyracers;
 
 import com.github.fredrikzkl.furyracers.game.GameCore;
 import com.github.fredrikzkl.furyracers.network.GameSession;
+
 import org.lwjgl.opengl.Display;
 import org.newdawn.slick.AppGameContainer;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.ScalableGame;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.state.StateBasedGame;
+
 import java.awt.*;
+import java.io.IOException;
+
+import javax.websocket.EncodeException;
 
 public class Application extends StateBasedGame {
 	
@@ -24,6 +29,7 @@ public class Application extends StateBasedGame {
 	public static boolean inMenu;
 	
 	public static void main(String[] args) {
+		createStates();
 		createGameSession();
 		startGame();
 	}
@@ -34,21 +40,35 @@ public class Application extends StateBasedGame {
 		this.addState(game);
 	}
 	
+	public static void closeConnection(){
+		
+		try {
+			gameSession.closeConnection();
+		} catch (IOException | EncodeException e) {
+			System.out.println("Failed disconnect "); 
+			e.printStackTrace();
+		}
+	}
+	
 	public void initStatesList(GameContainer container) throws SlickException {
 		this.getState(menuID).init(container, this);
 		this.enterState(menuID);
 	}
 
-	private static void createGameSession() {
+	public static void createGameSession() {
 		try {
-			game = new GameCore();
-			menu = new Menu(game);
-			menu.setVersion(version);
 			gameSession = new GameSession(game,menu);
 			gameSession.connect();
 		} catch (Exception e) {
 			fatalError("Could not start websocket server: " + e.getMessage());
 		}
+	}
+	
+	private static void createStates(){
+		
+		game = new GameCore();
+		menu = new Menu(game);
+		menu.setVersion(version);
 	}
 	
 	private static void startGame() {

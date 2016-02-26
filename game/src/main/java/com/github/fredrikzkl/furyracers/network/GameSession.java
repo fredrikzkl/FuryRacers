@@ -141,7 +141,7 @@ public class GameSession {
 					if (players.get(i).getId().equals(from)) {
 						if (getGameState() == 0) {
 							menu.buttonDown(data, players.get(i).getPlayerNr());
-						} else {
+						}else{
 							for (Car car : game.cars) {
 								if (from.equals(car.id)) {
 									car.buttonDown(data);
@@ -194,6 +194,9 @@ public class GameSession {
 		}
 	}
 
+	public void closeConnection() throws IOException, EncodeException{
+		sendToBackend("disconnect", "");
+	}
 	private boolean checkIfPlayerExist(String from) throws IOException, EncodeException, SlickException {
 		boolean notExist = true;
 		for (Player player : players) {
