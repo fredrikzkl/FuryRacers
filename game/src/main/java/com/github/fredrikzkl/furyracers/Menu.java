@@ -110,7 +110,7 @@ public class Menu extends BasicGameState {
 		
 		background = new ParallaxBackground();
 		music = new Music("Sound/menu.ogg");
-		//music.loop();
+		music.loop();
 		music.setVolume((float) 0.4);
 	}
 	
@@ -124,7 +124,7 @@ public class Menu extends BasicGameState {
 
 	public void drawQRcode(Graphics g){
 
-		g.drawImage(controllerQR, Application.screenSize.width - controllerQR.getWidth(), 50);
+		g.drawImage(controllerQR, Application.screenSize.width - controllerQR.getWidth()-50, 50);
 	}
 	
 	public void drawHeader(){

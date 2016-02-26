@@ -91,7 +91,7 @@ public class Car implements Comparable<Car>,Runnable {
 		rePositionCar(deltaTime);
 		checkForEdgeOfMap();
 		checkForCheckpoint();
-		checkForCollision();
+		//checkForCollision();
 		checkForOffRoad();
 		checkRaceTime();
 		
@@ -177,7 +177,8 @@ public class Car implements Comparable<Car>,Runnable {
 		}
 	}
 	
-	public void checkForCollision(){
+	public void 
+lision(){
 
 		ArrayList<String> directionsToStop;
 		float[] colBoxPoints = collisionBox.getPoints();
@@ -409,7 +410,7 @@ public class Car implements Comparable<Car>,Runnable {
 			rePositionCar(deltaTime);
 			checkForEdgeOfMap();
 			checkForCheckpoint();
-			checkForCollision();
+			//checkForCollision();
 			checkForOffRoad();
 			checkRaceTime();
 		}catch(Exception e){
