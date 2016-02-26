@@ -1,6 +1,5 @@
 package com.github.fredrikzkl.furyracers.game;
 
-import java.sql.Time;
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 import org.newdawn.slick.Graphics;
@@ -13,51 +12,64 @@ import org.newdawn.slick.state.StateBasedGame;
 import org.newdawn.slick.GameContainer;
 
 public class Car {
-	public String name;
-	public String type;
-	public Image sprite;
+	
+	int playerNr;
 
-	public CarProperties stats;
+	private int laps, collisionSlowdownConstant = 4,  
+			centerOfRotationYOffset = 26,
+			maxLaps = 3, passedChekpoints;
+	
+	private long startTime, nanoSecondsElapsed, 
+	secondsElapsed,minutesElapsed, tenthsOfASecondElapsed,
+	currentTime = 0;
+	
+	private boolean offRoad, raceStarted, finishedRace, startClock;
+	
+	private float topSpeed, currentSpeed, radDeg;
+	
+	float[] collisionBoxPoints;
+	
+	private String tileType, timeElapsed;
 	public String id;
 	
-	boolean reverseKeyIsDown, throttleKeyIsDown, leftKeyIsDown, rightKeyIsDown, usingKeyboard, finishedRace = false;
-	boolean startClock = false;
-	
-	String side = "error";
-	
-	public Time duration;
-	float currentSpeed = 0;
-	float movementDegrees = 0;
-	float radDeg = 0;
-	
-	private Level level;
-	private int playerNr;
-	int collisionSlowdownConstant = 4, centerOfRotationYOffset = 26, maxLaps = 3;
-	
-	Polygon collisionBox;
-	float[] collisionBoxPoints;
-	Vector2f position; 
-	Vector2f movementVector = new Vector2f();
+	private Image sprite;
+	private CarProperties stats;
+	private Level level; 
+	private Polygon collisionBox;
+	Vector2f position;
 
-	private int passedChekpoints = 0;
-	String tileType = null;
-	long currentTime;
-	private int laps;
-	private long startTime, nanoSecondsElapsed, secondsElapsed,minutesElapsed, tenthsOfASecondElapsed = 0;
-	private String timeElapsed = "";
-	private float deltaAngleChange, deltaDeAcceleration;
-	private boolean offRoad, raceStarted = false;
-	private float topSpeed;
-	
+	private Vector2f movementVector;
+	private Controlls controlls;
 	
 	public Car(CarProperties stats, String id, int playerNr, float startX, float startY, Level level){
+		
 		this.stats = stats;
 		this.id = id;
 		this.playerNr = playerNr;
 		this.level = level;
-		laps = 0;
+		position = new Vector2f(startX,startY);
+		controlls = new Controlls(this, stats);
 		
+		initVariables();
+		getCarSprite();
+		
+	}
+	
+	private void initVariables(){
+		
+		passedChekpoints = 0;
+		laps = 0;
+		offRoad = false;
+		raceStarted = false; 
+		finishedRace = false; 
+		startClock = false;
 		topSpeed = stats.topSpeed;
+		collisionBoxPoints  = new float[4];
+		collisionBox = new Polygon(collisionBoxPoints);
+		movementVector = new Vector2f();
+	}
+	
+	private void getCarSprite(){
 		
 		try {
 			sprite  = new Image(stats.imageFile);
@@ -65,16 +77,15 @@ public class Car {
 			System.out.println("Could not find image file " + stats.imageFile);
 			e.printStackTrace();
 		}
-		
-		position = new Vector2f(startX,startY);
-		collisionBoxPoints  = new float[4];
-		collisionBox = new Polygon(collisionBoxPoints);
 	}
 	
+	
 	public void update(GameContainer container, StateBasedGame game, int deltaTime)throws SlickException{
+		
 		Input input = container.getInput();
+		currentSpeed = controlls.getCurrentSpeed();
 		checkIfRaceStarted();
-		reactToControlls(input, deltaTime);
+		controlls.reactToControlls(input, deltaTime);
 		rePositionCar(deltaTime);
 		checkForEdgeOfMap();
 		checkForCheckpoint();
@@ -85,7 +96,8 @@ public class Car {
 	
 	public void rePositionCar(int deltaTime){
 		
-		radDeg = (float) Math.toRadians(movementDegrees);
+		radDeg = (float) Math.toRadians(controlls.getMovementDegrees());
+		float currentSpeed = controlls.getCurrentSpeed();
 		
 		movementVector.x = (float) Math.cos(radDeg)*currentSpeed*deltaTime/1000;
 		movementVector.y = (float) Math.sin(radDeg)*currentSpeed*deltaTime/1000;
@@ -103,7 +115,6 @@ public class Car {
 			stats.topSpeed = topSpeed;
 		}
 	}
-	
 	
 	public void checkForEdgeOfMap(){
 		
@@ -213,6 +224,8 @@ public class Car {
 	
 	public void deAccelerate(int slowdownConstant){
 		
+		float deltaDeAcceleration = controlls.getDeltaDeAcceleration();
+		
 		if(currentSpeed < -stats.deAcceleration) {
 			
 			currentSpeed += deltaDeAcceleration*slowdownConstant;
@@ -227,10 +240,13 @@ public class Car {
 			currentSpeed = 0;
 		}
 	}
+	
 	public void render(Graphics g) {
+		
+		float carRotation = controlls.getMovementDegrees(); 
 		sprite.setCenterOfRotation(0, centerOfRotationYOffset);
 		sprite.draw(position.x, position.y, stats.carSize);
-		sprite.setRotation(movementDegrees);
+		sprite.setRotation(carRotation);
 		collisionBox = new Polygon();
 		collisionBox.setClosed(true);
 		generateCollisionBoxPoints();
@@ -278,177 +294,27 @@ public class Car {
 			timeElapsed = minutesElapsed + ":" + secondsElapsed + ":" + tenthsOfASecondElapsed;
 		}
 	}
-
-	public Vector2f getPosition() {
-		return position;
-	}
 	
 	public void buttonDown(String data){
-		disableKeyboardInput();
+		controlls.disableKeyboardInput();
         switch(data){
-        	case "0": reverseKeyDown();break;
-        	case "1": throttleKeyDown();break;
-        	case "2": rightKeyDown();break;
-        	case "3": leftKeyDown();
+        	case "0": controlls.reverseKeyDown();break;
+        	case "1": controlls.throttleKeyDown();break;
+        	case "2": controlls.rightKeyDown();break;
+        	case "3": controlls.leftKeyDown();
         }
 	}
 	
 	public void buttonUp(String data){
 		switch(data){
-			case "0": reverseKeyUp();break;
-			case "1": throttleKeyUp();break;
-			case "2": rightKeyUp();break;
-			case "3": leftKeyUp();
+			case "0": controlls.reverseKeyUp();break;
+			case "1": controlls.throttleKeyUp();break;
+			case "2": controlls.rightKeyUp();break;
+			case "3": controlls.leftKeyUp();
 		}
 	}
 	
-	public void reactToControlls(Input input, int deltaTime) {
-		
-		if(usingKeyboard){
-			reactToKeyboard(input);
-		}
-
-		deltaDeAcceleration = stats.deAcceleration*deltaTime/1000;
-		if(throttleKeyIsDown && currentSpeed < stats.topSpeed) {
-			
-				currentSpeed += stats.acceleration*deltaTime/1000;
-		}else if(reverseKeyIsDown && currentSpeed > -stats.reverseTopSpeed) {
 	
-				currentSpeed -= stats.reverseAcceleration*deltaTime/1000;
-		}else if(currentSpeed < -stats.deAcceleration) {
-				
-			currentSpeed += deltaDeAcceleration;
-		}else if(currentSpeed > -stats.deAcceleration && currentSpeed < 0){
-			
-			currentSpeed = 0;
-		}else if(currentSpeed > stats.deAcceleration) {
-				
-			currentSpeed -= deltaDeAcceleration;
-		}else if(currentSpeed > 0 && currentSpeed < stats.deAcceleration){
-			
-			currentSpeed = 0;
-		}else{
-			deltaDeAcceleration = 0;
-		}
-		
-		if(currentSpeed != 0){
-			deltaAngleChange = 0;
-			if(leftKeyIsDown){
-				deltaAngleChange = stats.handling*deltaTime/1000;
-				movementDegrees -= deltaAngleChange;
-			}else if(rightKeyIsDown){
-				deltaAngleChange = stats.handling*deltaTime/1000;
-				movementDegrees += deltaAngleChange;
-			}
-		}
-	}
-	
-	public void reactToKeyboard(Input input){
-		
-		if(playerNr == 1){
-			reactToArrowKeys(input);
-		}else if(playerNr == 2){
-			reactToWasdKeys(input);
-		}
-	}
-
-	public void reactToArrowKeys(Input input){
-		
-		if(input.isKeyDown(Input.KEY_UP)) {
-            throttleKeyDown();
-	    }else {
-	    	throttleKeyUp();
-	    }
-
-		if(input.isKeyDown(Input.KEY_DOWN)){
-			reverseKeyDown();
-		}else{
-			reverseKeyUp();
-		}
-
-		if(input.isKeyDown(Input.KEY_LEFT)){
-			leftKeyDown();
-		}else{
-			leftKeyUp();
-		}
-
-		if(input.isKeyDown(Input.KEY_RIGHT)){
-			rightKeyDown();
-		}else{
-			rightKeyUp();
-		}
-	}
-	
-	public void reactToWasdKeys(Input input){
-		
-		if(input.isKeyDown(Input.KEY_W)) {
-            throttleKeyDown();
-	    }else {
-	    	throttleKeyUp();
-	    }
-
-		if(input.isKeyDown(Input.KEY_S)){
-			reverseKeyDown();
-		}else{
-			reverseKeyUp();
-		}
-
-		if(input.isKeyDown(Input.KEY_A)){
-			leftKeyDown();
-		}else{
-			leftKeyUp();
-		}
-
-		if(input.isKeyDown(Input.KEY_D)){
-			rightKeyDown();
-		}else{
-			rightKeyUp();
-		}
-	}
-
-	public void throttleKeyDown() {
-		throttleKeyIsDown = true;
-		reverseKeyUp();
-	}
-
-	public void leftKeyDown() {
-		leftKeyIsDown = true;
-		rightKeyUp();
-	}
-
-	public void rightKeyDown() {
-		rightKeyIsDown = true;
-		leftKeyUp();
-	}
-
-	public void reverseKeyDown() {
-		reverseKeyIsDown = true;
-		throttleKeyUp();
-	}
-
-	public void leftKeyUp() {
-		leftKeyIsDown = false;
-	}
-
-	public void rightKeyUp() {
-		rightKeyIsDown = false;
-	}
-
-	public void reverseKeyUp() {
-		reverseKeyIsDown = false;
-	}
-
-	public void throttleKeyUp() {
-		throttleKeyIsDown = false;
-	}
-
-	public void disableKeyboardInput(){
-		usingKeyboard = false;
-	}
-
-	public void activateKeyboardInput(){
-		usingKeyboard = true;
-	}
 	
 	public String getTimeElapsed(){
 		return timeElapsed;
@@ -474,6 +340,10 @@ public class Car {
 	
 	public boolean finishedRace(){
 		return finishedRace;
+	}
+	
+	public Vector2f getPosition() {
+		return position;
 	}
 	
 }

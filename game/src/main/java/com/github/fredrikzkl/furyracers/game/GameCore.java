@@ -13,6 +13,7 @@ import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
 import org.newdawn.slick.Input;
 import org.newdawn.slick.SlickException;
+import org.newdawn.slick.Sound;
 import org.newdawn.slick.SpriteSheet;
 import org.newdawn.slick.TrueTypeFont;
 import org.newdawn.slick.geom.Circle;
@@ -69,6 +70,8 @@ public class GameCore extends BasicGameState {
 
 	private TrueTypeFont countDownFont;
 
+	private static Sound drivingSound;
+
 	public void init(GameContainer container, StateBasedGame sbg) throws SlickException {
 		
 		
@@ -77,6 +80,7 @@ public class GameCore extends BasicGameState {
 	
 	public void gameStart(int levelNr, List<Player> players) throws SlickException{
 
+		initSounds();
 		GameSession.setGameState(getID());
 		Application.setInMenu(false);
 		level = new Level(levelNr);
@@ -197,6 +201,21 @@ public class GameCore extends BasicGameState {
 		if(carsFinished == cars.size()){
 			//returnToMenu(container , game);
 		}
+	}
+	
+	private void initSounds() {
+		try {
+			String path = "Sound/";
+			drivingSound = new Sound(path + "driving.wav");
+			
+		} catch (SlickException e) {
+			System.out.println("Could not load sound file" + e);
+			e.printStackTrace();
+		}
+	}
+	
+	public static Sound getDrivingSound(){
+		return drivingSound;
 	}
 	
 	public void returnToMenu(GameContainer container, StateBasedGame game) throws SlickException{
