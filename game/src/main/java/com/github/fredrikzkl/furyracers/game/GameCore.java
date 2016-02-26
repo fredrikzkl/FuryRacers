@@ -67,6 +67,7 @@ public class GameCore extends BasicGameState {
 	private TrueTypeFont scoreBoardText;
 	private float headerSize,textSize;
 	private int textTimer = 0;
+	int scoreBoardLength;
 
 	private TrueTypeFont countDownFont;
 
@@ -221,39 +222,48 @@ public class GameCore extends BasicGameState {
 		}
 		if(highScorePosX>(midWay-(marginX*1.3))){
 			highScorePosX -= speed;
+		}else{
+			printHighScores(marginX);
 		}
 		
 	}
 
 	
-	int length;
+	private void printHighScores(float marginX) {
+		float headerPosX = (marginX*6.4f);
+		float headerPosY = resultPosY*1.4f;
+		
+		scoreBoardHeader.drawString(headerPosX, headerPosY, "High Scores:",headerColor);
+		
+	}
+
 	private void printScores(float marginX) {
 		float headerPosX = (marginX*1.4f);
 		float headerPosY = resultPosY*1.4f;
 		
 		scoreBoardHeader.drawString(headerPosX, headerPosY, "Results:",headerColor);
-		length = (int) headerSize;
+		scoreBoardLength = (int) headerSize;
 		ArrayList<Car> sortedCars = (ArrayList<Car>) cars;
 		Collections.sort(sortedCars);
 
 		
 		for(int i = sortedCars.size()-1; i >= 0 ;i--){
-			scoreBoardText.drawString(headerPosX, headerPosY+length, 
+			scoreBoardText.drawString(headerPosX, headerPosY+scoreBoardLength, 
 					"Player " + sortedCars.get(i).getPlayerNr() + ": " +
 					sortedCars.get(i).getTimeElapsed() + " Score: " + "+" +(i+1));
-			length+=textSize;
+			scoreBoardLength+=textSize;
 		}
 		
-		scoreBoardHeader.drawString(headerPosX, headerPosY+headerSize+length, "Total Score:",headerColor);
-		length += headerSize*2;
+		scoreBoardHeader.drawString(headerPosX, headerPosY+headerSize+scoreBoardLength, "Total Score:",headerColor);
+		scoreBoardLength += headerSize*2;
 		
 		ArrayList<Player> sortedPlayers = (ArrayList<Player>) players;
 		Collections.sort(sortedPlayers);
 		
 		for(int i = 0; i<sortedPlayers.size();i++){
-			scoreBoardText.drawString(headerPosX, headerPosY+length, 
+			scoreBoardText.drawString(headerPosX, headerPosY+scoreBoardLength, 
 					sortedPlayers.get(i).getId() + ": " + sortedPlayers.get(i).getScore());
-			length+=textSize;
+			scoreBoardLength+=textSize;
 
 		}
 		
@@ -439,7 +449,7 @@ public class GameCore extends BasicGameState {
 		}
 		
 		resultPosX = 0-(results.getWidth() * 2);
-		highScorePosX = (float) (Application.screenSize.width + (results.getWidth() / 1.5));
+		highScorePosX = (float) (Application.screenSize.width + (results.getWidth() / 1.3));
 		resultPosY =  Application.screenSize.height/10;
 		highScorePosY = Application.screenSize.height/10;
 		
