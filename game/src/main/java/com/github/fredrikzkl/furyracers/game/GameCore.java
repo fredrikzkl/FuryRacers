@@ -70,6 +70,11 @@ public class GameCore extends BasicGameState {
 
 	private TrueTypeFont countDownFont;
 
+	private boolean toMenuTimerSet,returnToMenu = false;
+	private long toMenuRealTimer;
+	private String toMenuTimer = "";
+	private int timeToMenu = 15;
+
 	private static Sound drivingSound;
 
 	public void init(GameContainer container, StateBasedGame sbg) throws SlickException {
@@ -112,6 +117,8 @@ public class GameCore extends BasicGameState {
 		
 		if(raceFinished)
 		drawScoreBoard();
+		if(returnToMenu)
+			returnToMenu(container, sbg);
 	}
 	
 	
@@ -214,63 +221,20 @@ public class GameCore extends BasicGameState {
 		results.draw(resultPosX-results.getWidth(),resultPosY,scalingValue);
 		highscores.draw(highScorePosX+highscores.getWidth(),highScorePosY,scalingValue);
 		
-		if(resultPosX<marginX*3.5){
+		if(resultPosX<marginX*3.5 || highScorePosX>(midWay-(marginX*1.3))){
 			resultPosX += speed;
-		}else{
-			printScores(marginX);
-		}
-		if(highScorePosX>(midWay-(marginX*1.3))){
 			highScorePosX -= speed;
 		}else{
-			printHighScores(marginX);
+			printScores(resultPosX - results.getWidth());
+			printHighScores(highScorePosX +  results.getWidth());
+			printTimer(maxX);
 		}
-		
+			
 		
 		
 	}
 	
-	private void printHighScores(float marginX) {
-		float headerPosX = (marginX*6.4f);
-		float headerPosY = resultPosY*1.4f;
-		
-		scoreBoardHeader.drawString(headerPosX, headerPosY, "High Scores:",headerColor);
-		
-	}
-
-	private void printScores(float marginX) {
-		float headerPosX = (marginX*1.4f);
-		float headerPosY = resultPosY*1.4f;
-		
-		scoreBoardHeader.drawString(headerPosX, headerPosY, "Results:",headerColor);
-		scoreBoardLength = (int) headerSize;
-		ArrayList<Car> sortedCars = (ArrayList<Car>) cars;
-		Collections.sort(sortedCars);
-
-		
-		for(int i = sortedCars.size()-1; i >= 0 ;i--){
-			scoreBoardText.drawString(headerPosX, headerPosY+scoreBoardLength, 
-					"Player " + sortedCars.get(i).getPlayerNr() + ": " +
-					sortedCars.get(i).getTimeElapsed() + " Score: " + "+" +(i+1));
-			scoreBoardLength+=textSize;
-		}
-		
-		scoreBoardHeader.drawString(headerPosX, headerPosY+headerSize+scoreBoardLength, "Total Score:",headerColor);
-		scoreBoardLength += headerSize*2;
-		
-		ArrayList<Player> sortedPlayers = (ArrayList<Player>) players;
-		Collections.sort(sortedPlayers);
-		
-		for(int i = 0; i<sortedPlayers.size();i++){
-			scoreBoardText.drawString(headerPosX, headerPosY+scoreBoardLength, 
-					sortedPlayers.get(i).getId() + ": " + sortedPlayers.get(i).getScore());
-			scoreBoardLength+=textSize;
-
-		}
-		
-		
-		textTimer++;
-	}
-
+	
 	private void initSounds() {
 		try {
 			String path = "Sound/";
