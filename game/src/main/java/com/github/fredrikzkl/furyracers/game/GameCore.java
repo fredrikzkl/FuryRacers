@@ -18,12 +18,14 @@ import org.newdawn.slick.TrueTypeFont;
 import org.newdawn.slick.geom.Circle;
 import org.newdawn.slick.geom.Vector2f;
 import org.newdawn.slick.state.BasicGameState;
+import org.newdawn.slick.state.GameState;
 import org.newdawn.slick.state.StateBasedGame;
+import org.newdawn.slick.state.transition.Transition;
 import org.newdawn.slick.util.ResourceLoader;
 import com.github.fredrikzkl.furyracers.Application;
 import com.github.fredrikzkl.furyracers.network.GameSession;
 
-public class GameCore extends BasicGameState {
+public class GameCore extends BasicGameState{
 
 	private String IP = "";
 
@@ -53,7 +55,7 @@ public class GameCore extends BasicGameState {
 
 	private long startGoSignalTime, goSignalTimeElapsed, secondsLeft;
 
-	private boolean raceFinished = false;
+	private boolean raceFinished;
 	private TrueTypeFont countDownFont;
 
 	private ScoreBoard scoreboard;
@@ -101,8 +103,9 @@ public class GameCore extends BasicGameState {
 
 		if (raceFinished)
 			scoreboard.drawScoreBoard();
-		if (scoreboard.isReturnToMenuTimerDone())
+		if (scoreboard.isReturnToMenuTimerDone()){
 			returnToMenu(container, sbg);
+		}
 
 	}
 
@@ -209,6 +212,7 @@ public class GameCore extends BasicGameState {
 	public void returnToMenu(GameContainer container, StateBasedGame game) throws SlickException {
 		Application.closeConnection();
 		Application.createGameSession();
+		
 		game.getState(menuID).init(container, game);
 		game.enterState(menuID);
 	}
@@ -314,8 +318,8 @@ public class GameCore extends BasicGameState {
 		camera.zoom(g, 1 / camera.getZoom());
 	}
 
-	public void initVariables() {
-
+	public void initVariables() {	
+		raceFinished = false;
 		cars = new ArrayList<Car>();
 
 		raceStarted = false;
@@ -353,7 +357,11 @@ public class GameCore extends BasicGameState {
 	}
 
 	public float getZoom() {
+
 		return zoom;
 	}
+
+
+
 
 }
