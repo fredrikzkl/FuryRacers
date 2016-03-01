@@ -64,6 +64,9 @@ public class Menu extends BasicGameState {
 	private Sound playerReady;
 	private Sound deSelect;
 	private Sound peep;
+	private Sound getReady;
+	
+	private boolean getReadySaid;
 
 	public Menu(GameCore game) {
 		core = game;
@@ -110,8 +113,9 @@ public class Menu extends BasicGameState {
 		
 		background = new ParallaxBackground();
 		music = new Music("Sound/menu.ogg");
-		//music.loop();
+		music.loop();
 		music.setVolume((float) 0.4);
+		getReadySaid = false;
 	}
 	
 	public void setTime(){
@@ -178,6 +182,10 @@ public class Menu extends BasicGameState {
 			if (allReadyTimestamp < 0) {
 				allReadyTimestamp = seconds;
 				printConsole("Everyone is ready, the game will begin shortly!");
+				if(!getReadySaid){
+					getReady.play();
+					getReadySaid = true;
+				}
 			}
 
 			secondsToNextGame = (int) (allReadyTimestamp + counter - seconds);
@@ -188,6 +196,7 @@ public class Menu extends BasicGameState {
 			}
 
 		} else {
+			getReadySaid = false;
 			allReadyTimestamp = -1;
 			countDown = String.valueOf(counter);
 		}
@@ -345,6 +354,7 @@ public class Menu extends BasicGameState {
 			playerReady = new Sound(path + "ready.ogg");
 			deSelect = new Sound(path + "deselect.ogg");
 			peep = new Sound(path + "countdown.ogg");
+			getReady = new Sound(path + "/announcer/getReady.ogg");
 		} catch (SlickException e) {
 			System.out.println("Could not load sound file" + e);
 			e.printStackTrace();

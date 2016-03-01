@@ -25,7 +25,7 @@ import org.newdawn.slick.util.ResourceLoader;
 import com.github.fredrikzkl.furyracers.Application;
 import com.github.fredrikzkl.furyracers.network.GameSession;
 
-public class GameCore extends BasicGameState{
+public class GameCore extends BasicGameState {
 
 	private String IP = "";
 
@@ -33,6 +33,7 @@ public class GameCore extends BasicGameState{
 
 	public static Camera camera;
 	public Level level = null;
+	private ScoreBoard scoreboard;
 
 	public float initalZoom, zoom = 1;
 
@@ -43,7 +44,7 @@ public class GameCore extends BasicGameState{
 	public List<Car> cars;
 	public List<Player> players;
 
-	private int cameraMargin = 250, screenWidth, screenHeight;
+	private int screenWidth, screenHeight;
 
 	float biggest = 0;
 
@@ -54,13 +55,11 @@ public class GameCore extends BasicGameState{
 	private boolean raceStarted, countdownStarted, startGoSignal, goSignal;
 
 	private long startGoSignalTime, goSignalTimeElapsed, secondsLeft;
-
 	private boolean raceFinished;
 	private TrueTypeFont countDownFont;
-
-	private ScoreBoard scoreboard;
-
-	private static Sound drivingSound;
+	public Sound three, two, one, go; 
+	private boolean threePlayed,twoPlayed,onePlayed, goPlayed;
+	public static boolean  finalRoundSaid, crowdFinishedPlayed;
 
 	public void init(GameContainer container, StateBasedGame sbg) throws SlickException {
 		System.out.println("IP: " + IP);
@@ -76,7 +75,7 @@ public class GameCore extends BasicGameState{
 		initVariables();
 		createPlayers(players);
 		camera.setZoom((float) 0.3);
-		
+
 		scoreboard = new ScoreBoard(cars, players);
 		addFonts();
 	}
@@ -91,6 +90,8 @@ public class GameCore extends BasicGameState{
 		camera.zoomLogic();
 		camera.updateCamCoordinates();
 
+		// System.out.println("TIMERX: " + level.getTimerCoordinates().x + "
+		// timer Y : " + level.getTimerCoordinates().y);
 	}
 
 	public void render(GameContainer container, StateBasedGame sbg, Graphics g) throws SlickException {
@@ -103,7 +104,7 @@ public class GameCore extends BasicGameState{
 
 		if (raceFinished)
 			scoreboard.drawScoreBoard();
-		if (scoreboard.isReturnToMenuTimerDone()){
+		if (scoreboard.isReturnToMenuTimerDone()) {
 			returnToMenu(container, sbg);
 		}
 
@@ -145,10 +146,26 @@ public class GameCore extends BasicGameState{
 	}
 
 	public void drawCountdown(Graphics g) {
-
+		
 		Color countdownColor = new Color(221, 0, 0);
 
 		if (!raceStarted) {
+			if(secondsLeft>2){
+				if(!threePlayed){
+					three.play();
+					threePlayed = true;
+				}
+			}else if(secondsLeft>1){
+				if(!twoPlayed){
+					two.play();
+					twoPlayed= true;
+				}
+			}else if(secondsLeft>0){
+				if(!onePlayed){
+					one.play();
+					onePlayed = true;
+				}
+			}
 			countDownFont.drawString(screenWidth / 2, screenHeight / 2 - 150, "" + secondsLeft, countdownColor);
 		} else if (startGoSignal) {
 			startGoSignalTime = System.currentTimeMillis();
@@ -161,6 +178,10 @@ public class GameCore extends BasicGameState{
 			goSignalTimeElapsed = currentTime - startGoSignalTime;
 			if (goSignalTimeElapsed < 1500) {
 				countDownFont.drawString(screenWidth / 2 - 50, screenHeight / 2 - 150, "RACE!", countdownColor);
+				if (!goPlayed){
+					go.play();
+					goPlayed = true;
+				}
 			} else {
 				goSignal = false;
 			}
@@ -168,6 +189,10 @@ public class GameCore extends BasicGameState{
 	}
 
 	public void drawCarTimes() {
+
+		if (level.getTimerCoordinates().x != 0 && level.getTimerCoordinates().y != 0) {
+			ttf.drawString(level.getTimerCoordinates().x, level.getTimerCoordinates().y, "00:00:00");
+		}
 
 		for (int i = 0; i < cars.size(); i++) {
 
@@ -180,6 +205,7 @@ public class GameCore extends BasicGameState{
 			ttf.drawString(startX, startY + yOffSet, "Lap " + cars.get(i).getLaps() + "/3");
 			ttf.drawString(startX, startY + yOffSet * 2, "" + cars.get(i).getTimeElapsed());
 		}
+
 	}
 
 	public void updateCars(GameContainer container, StateBasedGame game, int deltaTime) throws SlickException {
@@ -200,19 +226,20 @@ public class GameCore extends BasicGameState{
 
 	private void initSounds() {
 		try {
-			String path = "Sound/";
-			drivingSound = new Sound(path + "driving.wav");
-
+			three = new Sound("/Sound/announcer/three.ogg");
+			two = new Sound("/Sound/announcer/two.ogg");
+			one = new Sound("/Sound/announcer/one.ogg");
+			go = new Sound("/Sound/announcer/race!.ogg");
 		} catch (SlickException e) {
-			System.out.println("Could not load sound file" + e);
-			e.printStackTrace();
+			System.out.println("ERROR: Could not load announcer files!" + e);
 		}
+
 	}
 
 	public void returnToMenu(GameContainer container, StateBasedGame game) throws SlickException {
 		Application.closeConnection();
 		Application.createGameSession();
-		
+
 		game.getState(menuID).init(container, game);
 		game.enterState(menuID);
 	}
@@ -318,7 +345,8 @@ public class GameCore extends BasicGameState{
 		camera.zoom(g, 1 / camera.getZoom());
 	}
 
-	public void initVariables() {	
+	public void initVariables() {
+		threePlayed = twoPlayed = onePlayed = goPlayed = finalRoundSaid = crowdFinishedPlayed = false;
 		raceFinished = false;
 		cars = new ArrayList<Car>();
 
@@ -344,8 +372,6 @@ public class GameCore extends BasicGameState{
 		screenWidth = Application.screenSize.width;
 		screenHeight = Application.screenSize.height;
 
-		
-
 	}
 
 	public void setIP(String ip) {
@@ -361,7 +387,11 @@ public class GameCore extends BasicGameState{
 		return zoom;
 	}
 
-
-
-
+	public boolean isFinalRoundSaid() {
+		return finalRoundSaid;
+	}
+	public void setFinalRoundSaid(boolean finalRoundSaid) {
+		this.finalRoundSaid = finalRoundSaid;
+	}
+	
 }
