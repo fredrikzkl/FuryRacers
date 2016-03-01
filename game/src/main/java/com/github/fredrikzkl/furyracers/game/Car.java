@@ -2,6 +2,10 @@ package com.github.fredrikzkl.furyracers.game;
 
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
+
+import javax.naming.directory.DirContext;
+
+import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
 import org.newdawn.slick.Input;
@@ -43,6 +47,16 @@ public class Car implements Comparable<Car>,Runnable {
 
 	private Vector2f movementVector;
 	private Controlls controlls;
+
+	private int carLength;
+
+	private int carWidth;
+
+	private float centerOfRotationX;
+
+	private float centerOfRotationY;
+
+	private ArrayList<String> stoppingDirections = new ArrayList<String>();
 	
 	public Car(CarProperties stats, String id, int playerNr, float startX, float startY, Level level){
 		this.stats = stats;
@@ -54,10 +68,10 @@ public class Car implements Comparable<Car>,Runnable {
 		
 		initVariables();
 		getCarSprite();
-		
 	}
 	
 	private void initVariables(){
+		System.out.println("yes");
 		time = 0;
 		paused = true;
 		passedChekpoints = 0;
@@ -91,7 +105,7 @@ public class Car implements Comparable<Car>,Runnable {
 		rePositionCar(deltaTime);
 		checkForEdgeOfMap();
 		checkForCheckpoint();
-		//checkForCollision();
+		checkForCollision();
 		checkForOffRoad();
 		checkRaceTime();
 		
@@ -155,7 +169,11 @@ public class Car implements Comparable<Car>,Runnable {
 		float yPos;
 		int pointsNotOffRoad = 0;
 		
-		for(int i = 0; i < colBoxPoints.length; i+=2){
+		int amountOfPoints = colBoxPoints.length;
+		
+		for(int i = 0; i < amountOfPoints; i+=2){
+			
+			
 			xPos = colBoxPoints[i];
 			yPos = colBoxPoints[i+1];
 			
@@ -171,20 +189,22 @@ public class Car implements Comparable<Car>,Runnable {
 			}
 		}
 		
-		if(offRoad && pointsNotOffRoad == 4){
+		if(offRoad && pointsNotOffRoad == amountOfPoints/2){
 			controlls.changeTopSpeed(2);
 			offRoad = false;
 		}
 	}
 	
-	public void 
-lision(){
+	public void checkForCollision(){
 
 		ArrayList<String> directionsToStop;
+		ArrayList<String> stopTurningDirections;
+		
 		float[] colBoxPoints = collisionBox.getPoints();
 		float xPos;
 		float yPos;
 		int stoppedDirections = 0;
+		Vector2f turningVector = getTurningDirectionVector();
 		
 		for(int i = 0; i < colBoxPoints.length; i+=2){
 			
@@ -193,11 +213,57 @@ lision(){
 			
 			if(level.collision(xPos, yPos) && stoppedDirections !=2){
 				directionsToStop = level.whichDirectionToStop(xPos, yPos, movementVector.x, movementVector.y);
+				stopTurningDirections = level.whichDirectionToStop(xPos, yPos,turningVector.y, turningVector.y);
 				stopCarDirection(directionsToStop);
+				resetCarRotation(stopTurningDirections);
 				if(directionsToStop.size() == 2)
 					break;
 				stoppedDirections++;
 			}
+		}
+	}
+	
+	private Vector2f getTurningDirectionVector(){
+		
+		String turningDirection = controlls.getTurningDirection();
+		float deltaAngleChange = controlls.getDeltaAngleChange();
+		float movementDegrees = controlls.getMovementDegrees();
+		float angleBeforeCollision;
+		Vector2f turningVector = new Vector2f();
+		
+		if(turningDirection == "positive"){
+			angleBeforeCollision = movementDegrees - deltaAngleChange;
+			double toRad = Math.toRadians(angleBeforeCollision);
+			turningVector.x = (float) Math.cos(toRad-Math.PI/2);
+			turningVector.x = (float) Math.sin(toRad-Math.PI/2);
+			
+			return turningVector;
+		}
+		
+		if(turningDirection == "negative"){
+			angleBeforeCollision = movementDegrees + deltaAngleChange;
+			double toRad = Math.toRadians(angleBeforeCollision);
+			turningVector.x = (float) Math.cos(toRad+Math.PI/2);
+			turningVector.x = (float) Math.sin(toRad+Math.PI/2);
+			
+			return turningVector;
+		}
+		
+		return turningVector;
+	}
+	
+	private void resetCarRotation(ArrayList<String> stopTurningDirections){
+		
+		for(String directionToStop : stopTurningDirections){
+			
+			switch(directionToStop){
+				case "positiveX": stopTurningInPositiveXdirection();break;
+				case "negativeX": stopTurningInNegativeXdirection(); break;
+				case "positiveY": stopTurningInPositiveYdirection();break;
+				case "negativeY": stopTurningInNegativeYdirection();break;
+			}
+			
+		
 		}
 	}
 	
@@ -209,17 +275,20 @@ lision(){
 			movementDegrees -= deltaAngleChange*1.1;
 		}*/
 		
-		deAccelerate(collisionSlowdownConstant);
+		//deAccelerate(collisionSlowdownConstant);
 		
 		for(String directionToStop : directionsToStop){
 			
 			switch(directionToStop){
-				case "positiveX": position.x -= movementVector.x; stopTurningInPositiveXdirection();break;
-				case "negativeX": position.x -= movementVector.x; stopTurningInNegativeXdirection(); break;
-				case "positiveY": position.y -= movementVector.y; stopTurningInPositiveYdirection();break;
-				case "negativeY": position.y -= movementVector.y; stopTurningInNegativeYdirection();break;
+				case "positiveX": position.x -= movementVector.x; break;
+				case "negativeX": position.x -= movementVector.x; break;
+				case "positiveY": position.y -= movementVector.y; break;
+				case "negativeY": position.y -= movementVector.y; break;
 			}
+			
+		
 		}
+		stoppingDirections  = directionsToStop;
 	}
 	
 	private void stopTurningInPositiveXdirection(){
@@ -227,10 +296,12 @@ lision(){
 		float deltaAngleChange = controlls.getDeltaAngleChange();
 		float movementDegrees = controlls.getMovementDegrees();
 		
-		if(movementVector.y > 0)
-			movementDegrees += deltaAngleChange;
-		else
-			movementDegrees -= deltaAngleChange;
+	
+			if(movementVector.y > 0)
+				movementDegrees += deltaAngleChange;
+			else
+				movementDegrees -= deltaAngleChange;
+		
 		
 		controlls.setMovementDegrees(movementDegrees);
 	}
@@ -267,15 +338,12 @@ lision(){
 		float movementDegrees = controlls.getMovementDegrees();
 		
 		if(movementVector.x < 0)
-			movementDegrees -= deltaAngleChange;
+			movementDegrees -= deltaAngleChange*1.001;
 		else
 			movementDegrees += deltaAngleChange;
 		
 		controlls.setMovementDegrees(movementDegrees);
 	}
-	
-	
-	
 	public void deAccelerate(int slowdownConstant){
 		
 		float deltaDeAcceleration = controlls.getDeltaDeAcceleration();
@@ -304,32 +372,96 @@ lision(){
 		collisionBox = new Polygon();
 		collisionBox.setClosed(true);
 		generateCollisionBoxPoints();
+		g.setColor(Color.green);
+		g.draw(collisionBox);
+	}
+	
+	public ArrayList<String> getDirectionsToStop(){
+		
+		return stoppingDirections;
 	}
 	
 	public void generateCollisionBoxPoints(){
 		
-		int carLength = 52;
-		int carWidth = 15;
+		carLength = 52;
+		carWidth = 30;
 		
-		float centerOfRotationX = position.x;
-		float centerOfRotationY = position.y + centerOfRotationYOffset;
+		centerOfRotationX = position.x;
+		centerOfRotationY = position.y + centerOfRotationYOffset;
+
+		float backRightX = (float)(centerOfRotationX + Math.cos(radDeg-Math.PI/2)*carWidth/2),
+			  backRightY = (float)(centerOfRotationY + Math.sin(radDeg-Math.PI/2)*carWidth/2);
 		
-		float backLeftX = (float)(centerOfRotationX+ Math.cos(radDeg+Math.PI/2)*carWidth);
-		float backLeftY = (float)((centerOfRotationY) + Math.sin(radDeg+Math.PI/2)*carWidth);
-		float frontLeftX = (float)(backLeftX + Math.cos(radDeg)*carLength);
-		float frontLeftY = (float)(backLeftY + Math.sin(radDeg)*carLength);
+		float backLeftX = (float)(centerOfRotationX+ Math.cos(radDeg+Math.PI/2)*carWidth/2),
+			  backLeftY = (float)(centerOfRotationY + Math.sin(radDeg+Math.PI/2)*carWidth/2);
 		
-		float backRightX = (float)(centerOfRotationX + Math.cos(radDeg-Math.PI/2)*carWidth);
-		float backRightY = (float)((centerOfRotationY) + Math.sin(radDeg-Math.PI/2)*carWidth);
-		float frontRightX = (float)(backRightX + Math.cos(radDeg)*carLength);
-		float frontRightY = (float)(backRightY + Math.sin(radDeg)*carLength);
+		colBoxPointsLeftOfCar(5);
+		colBoxPointsTopOfCar(backLeftX, backLeftY, 3);
 		
-		collisionBox.addPoint(backLeftX, backLeftY);
-		collisionBox.addPoint(frontLeftX, frontLeftY);
-		collisionBox.addPoint(frontRightX, frontRightY);
-		collisionBox.addPoint(backRightX, backRightY);
+		colBoxPointsRightOfCar(backRightX, backRightY, 5);
+		colBoxPointsBackOfCar(3);
 	}
 	
+	public void colBoxPointsLeftOfCar(int amountOfPoints){
+		
+		float backLeftX = (float)(centerOfRotationX + Math.cos(radDeg+Math.PI/2)*carWidth/2),
+			  backLeftY = (float)(centerOfRotationY + Math.sin(radDeg+Math.PI/2)*carWidth/2);
+		
+		float newPointX, newPointY; 
+		
+		for(int i = 0; i < amountOfPoints; i++){
+			
+			newPointX = (float) (backLeftX +  Math.cos(radDeg)*carLength*i/(amountOfPoints-1));
+			newPointY = (float) (backLeftY +  Math.sin(radDeg)*carLength*i/(amountOfPoints-1));
+			
+			collisionBox.addPoint(newPointX, newPointY);
+		}
+	}
+	
+	public void colBoxPointsTopOfCar(float startPointX, float startPointY, int amountOfPoints){
+		
+		float frontLeftX = (float)(startPointX + Math.cos(radDeg)*carLength),
+			  frontLeftY = (float)(startPointY + Math.sin(radDeg)*carLength);
+		
+		for(int i = 1; i < amountOfPoints; i++){
+			
+			float newPointX = (float) (frontLeftX +  Math.cos(radDeg-Math.PI/2)*carWidth*i/(amountOfPoints-1)),
+				  newPointY = (float) (frontLeftY +  Math.sin(radDeg-Math.PI/2)*carWidth*i/(amountOfPoints-1));
+			
+			collisionBox.addPoint(newPointX, newPointY);
+		}
+	}
+	
+	public void colBoxPointsRightOfCar(float startPointX, float startPointY, int amountOfPoints){
+		
+		float frontRightX = (float)(startPointX + Math.cos(radDeg)*carLength);
+		float frontRightY = (float)(startPointY + Math.sin(radDeg)*carLength);
+		
+		float newPointX, newPointY; 
+		
+		for(int i = 1; i > amountOfPoints; i--){
+			
+			newPointX = (float) (frontRightX +  Math.cos(radDeg+Math.PI)*carLength*i/(amountOfPoints-1));
+			newPointY = (float) (frontRightY +  Math.sin(radDeg+Math.PI)*carLength*i/(amountOfPoints-1));
+			
+			collisionBox.addPoint(newPointX, newPointY);
+		}
+	}
+	
+	public void colBoxPointsBackOfCar(int amountOfPoints){
+		
+		float backRightX = (float)(centerOfRotationX + Math.cos(radDeg-Math.PI/2)*carWidth/2),
+			  backRightY = (float)(centerOfRotationY + Math.sin(radDeg-Math.PI/2)*carWidth/2);
+		
+		for(int i = 0; i < amountOfPoints; i++){
+			
+			float newPointX = (float) (backRightX +  Math.cos(radDeg+Math.PI/2)*carWidth*i/(amountOfPoints-1)),
+				  newPointY = (float) (backRightY +  Math.sin(radDeg+Math.PI/2)*carWidth*i/(amountOfPoints-1));
+			
+			collisionBox.addPoint(newPointX, newPointY);
+		}
+	}
+
 	public void checkRaceTime(){
 		
 		if(startClock){
@@ -437,7 +569,7 @@ lision(){
 	
 	@Override
 	public int compareTo(Car o) {
-		return Integer.compare(this.getTime(), o.getTime());
+		return -(Integer.compare(this.getTime(), o.getTime()));
 	}
 	
 	

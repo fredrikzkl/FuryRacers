@@ -16,6 +16,19 @@ public class Controlls {
 		this.stats = stats;
 		this.car = car;
 	}
+	
+	public String getTurningDirection(){
+		
+		if(leftKeyIsDown){
+			return "positive";
+		}
+		
+		if(rightKeyIsDown){
+			return "negative";
+		}
+		
+		return "neutral";
+	}
 
 	public void reactToControlls(Input input, int deltaTime, boolean paused) {
 		if (!paused) {

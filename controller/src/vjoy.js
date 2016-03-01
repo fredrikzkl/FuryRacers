@@ -19,10 +19,17 @@
     this.input = this.game.input;
     this.imageGroup = [];
 
-    this.imageGroup.push(this.game.add.sprite(0, 0, 'vjoy_cap'));
-    this.imageGroup.push(this.game.add.sprite(0, 0, 'vjoy_body'));
-    this.imageGroup.push(this.game.add.sprite(0, 0, 'vjoy_body'));
-    this.imageGroup.push(this.game.add.sprite(0, 0, 'vjoy_base'));
+    //this.imageGroup.push(this.game.add.sprite(0, 0, 'vjoy_cap'));
+    //this.imageGroup.push(this.game.add.sprite(0, 0, 'vjoy_body'));
+    
+    var base = this.game.add.sprite(0, 0, 'vjoy_body');
+    base.scale.setTo(0.7, 0.8);
+    var top = this.game.add.sprite(0, 0, 'vjoy_base');
+    top.scale.setTo(0.8,0.9);
+
+
+    this.imageGroup.push(base);
+    this.imageGroup.push(top);
 
     this.imageGroup.forEach(function (e) {
       e.anchor.set(0.5);
@@ -35,7 +42,7 @@
   Phaser.Plugin.VJoy.prototype.constructor = Phaser.Plugin.VJoy;
 
   Phaser.Plugin.VJoy.prototype.settings = {
-    maxDistanceInPixels: 200,
+    maxDistanceInPixels: 50,
     singleDirection: false
   };
 
@@ -55,9 +62,12 @@
   Phaser.Plugin.VJoy.prototype.inputEnable = function (x1, y1, x2, y2) {
     x1 = x1 || 0;
     y1 = y1 || 0;
-    x2 = x2 || this.game.width;
+    x2 = x2 || this.game.Width;
     y2 = y2 || this.game.height;
-    this.zone = new Phaser.Rectangle(0, 0, this.game.world.centerX, y2);
+    var midScreenX = this.game.world.centerX;
+    var midScreenY = this.game.world.centerY;
+
+    this.zone = new Phaser.Rectangle(midScreenX*1.5,0,midScreenX*0.5 , midScreenY*2);
     this.input.onDown.add(createCompass, this);
   };
 
@@ -75,7 +85,7 @@
   var createCompass = function createCompass(pointer) {
 
     //
-      if (this.pointer || !this.isInTheZone(pointer)) {
+      if (this.pointer || this.isInTheZone(pointer)) {
         return;
       }
 
@@ -89,8 +99,6 @@
           e.cameraOffset.x = pointer.x;
           e.cameraOffset.y = pointer.y;
         }, this);
-         
-
 
       this.preUpdate = setDirection.bind(this);
 
@@ -126,7 +134,7 @@
   };
 
   var setDirection = function () {
-    if (!this.isInTheZone(this.pointer)) {
+    if (this.isInTheZone(this.pointer)) {
       return;
     }
 

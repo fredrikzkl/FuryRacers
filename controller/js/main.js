@@ -35,7 +35,7 @@
 
     game.load.image('vjoy_base', 'assets/base.png');
     game.load.image('vjoy_body', 'assets/body.png');
-    game.load.image('vjoy_cap', 'assets/cap.png');
+    //game.load.image('vjoy_cap', 'assets/cap.png');
     game.load.spritesheet('redButtons', 'assets/redButtons.png', 150, 149);
     //game.load.audio('directionChange', 'assets/squit.ogg');
 
@@ -49,9 +49,6 @@
       game.scale.fullScreenScaleMode = Phaser.ScaleManager.EXACT_FIT;
       game.scale.startFullScreen(false);
       game.scale.refresh();
-
-
-
       game.vjoy = game.plugins.add(Phaser.Plugin.VJoy);
       game.vjoy.inputEnable();
 

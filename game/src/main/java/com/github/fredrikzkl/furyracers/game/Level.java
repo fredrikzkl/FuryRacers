@@ -71,8 +71,8 @@ public class Level {
 		
 		int startTileToRenderX = endTileToRenderX - 100;
 		int startTileToRenderY = endTileToRenderY - 100;
-		map.render(0,0, (int)(camera.getX()/map.getTileWidth()), (int)(camera.getY()/map.getTileHeight()), 
-				  (int) camera.getSize().x,(int) camera.getSize().y);
+		/*map.render(0,0, (int)(camera.getX()/map.getTileWidth()), (int)(camera.getY()/map.getTileHeight()), 
+				  (int) camera.getSize().x,(int) camera.getSize().y);*/
 	}
 	
 	public int getTileWidth() {
@@ -125,6 +125,178 @@ public class Level {
 	
 	public ArrayList<String> whichDirectionToStop(float xCarPos, float yCarPos, float xVector, float yVector){
 	
+		ArrayList<String> stopCarMovement = new ArrayList<String>();
+		
+		int tileX = (int)(xCarPos/tileWidth), tileY = (int)(yCarPos/tileHeight);
+		
+		boolean leftTileIsObstacle = isCollisionObstacle(tileX-1, tileY), 
+				rightTileIsObstacle = isCollisionObstacle(tileX+1, tileY),
+				topTileIsObstacle = isCollisionObstacle(tileX, tileY-1), 
+				bottomTileIsObstacle = isCollisionObstacle(tileX, tileY+1);
+		
+		boolean carMovingLeft = (xVector < 0), carMovingRight = (xVector > 0), 
+				carMovingUp = (yVector < 0), carMovingDown = (yVector > 0);
+		
+		int tileStartX = tileX * tileWidth, tileStartY = tileY * tileHeight;
+		int tileEndX = (tileX+1)*tileWidth - 1, tileEndY = (tileY+1)*tileHeight - 1;
+		
+		float slope = yVector/xVector;
+		float constant = yCarPos - slope*xCarPos; // c = y - ax
+		
+		intersectionPointsOfLine(slope, constant, tileStartX, tileStartY, tileEndX, tileEndY);
+		checkIntersectionsWithTile(tileStartX, tileStartY, tileEndX, tileEndY);
+
+		if(isRightTileLineCrossed && carMovingLeft){
+			if(rightTileIsObstacle) {
+				if(carMovingUp){
+					if(bottomTileIsObstacle){ 
+						stopCarMovement.add("negativeY");
+						stopCarMovement.add("negativeX");
+						return stopCarMovement;
+					}else{
+						stopCarMovement.add("negativeY");
+						return stopCarMovement;
+					}
+				}else if(carMovingDown){
+					if(topTileIsObstacle){ 
+						stopCarMovement.add("positiveY");
+						stopCarMovement.add("negativeX");
+						return stopCarMovement;
+					}else{
+						stopCarMovement.add("positiveY");
+						return stopCarMovement;
+					}
+				}
+			}else{
+				stopCarMovement.add("negativeX");
+				return stopCarMovement;
+			}
+		}
+		
+		if(isLeftTileLineCrossed && carMovingRight){
+			if(leftTileIsObstacle) {
+				if(carMovingUp){
+					if(bottomTileIsObstacle){
+						stopCarMovement.add("negativeY");
+						stopCarMovement.add("positiveX");
+						return stopCarMovement;
+					}else{
+						stopCarMovement.add("negativeY");
+						return stopCarMovement;
+					}
+				}else if(carMovingDown){
+					if(topTileIsObstacle){
+						stopCarMovement.add("positiveY");
+						stopCarMovement.add("positiveX");
+						return stopCarMovement;
+					}
+				}
+			}else{
+				stopCarMovement.add("positiveX");
+				return stopCarMovement;
+			}
+		}
+		
+		if(isBottomTileLineCrossed && carMovingUp){
+			if(bottomTileIsObstacle){
+				if(carMovingLeft){
+					if(rightTileIsObstacle){
+						stopCarMovement.add("negativeY");
+						stopCarMovement.add("negativeX");
+						return stopCarMovement;
+					}else{
+						stopCarMovement.add("negativeX");
+						return stopCarMovement;
+					}
+				}else if(carMovingRight){
+					if(topTileIsObstacle){
+						stopCarMovement.add("negativeY");
+						stopCarMovement.add("positiveX");
+						return stopCarMovement;
+					}
+				}
+			}else{
+				stopCarMovement.add("negativeY");
+				return stopCarMovement;
+			}
+		}
+		
+		if(isTopTileLineCrossed && carMovingDown){
+			if(topTileIsObstacle) {
+				if(carMovingRight){
+					if(rightTileIsObstacle){
+						stopCarMovement.add("positiveY");
+						stopCarMovement.add("negativeX");
+						return stopCarMovement;
+					}else{
+						stopCarMovement.add("negativeX");
+						return stopCarMovement;
+					}
+				}else if(carMovingLeft){
+					if(topTileIsObstacle){
+						stopCarMovement.add("positiveY");
+						stopCarMovement.add("negativeX");
+						return stopCarMovement;
+					}
+				}
+			}else{
+				stopCarMovement.add("positiveY");
+				return stopCarMovement;
+			}
+		}
+		
+		return stopCarMovement;
+	}
+	
+	/*public ArrayList<String> whichDirectionToStopLine(float backX, float backY, float frontX, float frontY){
+		
+		ArrayList<String> stopCarMovement = new ArrayList<String>();
+		
+		float xVector = frontX - backX, 
+			  yVector = frontY - backY;
+		
+		int tileBackX = (int)(backX/tileWidth), 
+			tileBackY = (int)(backY/tileHeight),
+			tileFrontX = (int)(backX/tileWidth), 
+			tileFrontY = (int)(backY/tileHeight);
+		
+		int highestXtilePos = decideHighest(tileBackX, tileFrontX),
+			lowestXtilePos = decideLowest(tileBackX, tileFrontX),
+			highestYtilePos = decideHighest(tileBackY, tileFrontY),
+			lowestYtilePos = decideLowest(tileBackY, tileFrontY);
+		
+		boolean carMovingLeft = (xVector < 0), carMovingRight = (xVector > 0), 
+				carMovingUp = (yVector < 0), carMovingDown = (yVector > 0);
+		
+		int tileStartHighestX = startXposTile(highestXtilePos), 
+			tileStartHighestY = startYposTile(highestYtilePos);
+		
+		int tileEndLowestX = endXposTile(lowestXtilePos),
+			tileEndLowestY = endYposTile(lowestYtilePos);
+		
+		int xLinesToCheck = highestXtilePos - lowestXtilePos;
+		
+		int[] xLines = new int[xLinesToCheck];
+		
+		for(int i = 0; i < xLinesToCheck; i++){
+			
+			xLines[i] = tileEndLowestX + tileWidth*i; 
+		}
+		
+		float slope = yVector/xVector;
+		float constant = backY - slope*backX; // c = y - ax
+		
+		if(intersectsColBox(slope, constant, xLines){
+			directionToStop()
+		}
+		
+		
+		
+		checkIntersectionsWithTile(tileStartX, tileStartY, tileEndX, tileEndY);
+	}
+	
+	/*public ArrayList<String> directionToStop(float xCarPos, float yCarPos, float xVector, float yVector){
+		
 		ArrayList<String> stopCarMovement = new ArrayList<String>();
 		
 		int tileX = (int)(xCarPos/tileWidth), tileY = (int)(yCarPos/tileHeight);
@@ -248,6 +420,52 @@ public class Level {
 		return stopCarMovement;
 	}
 	
+	public int startXposTile(int tileX){
+		int startXpos = tileX * tileWidth;
+		
+		return startXpos;
+	}
+	
+	public int startYposTile(int tileY){
+		
+		int startYpos = tileY * tileHeight;
+		
+		return startYpos;
+
+	}
+	
+	public int endXposTile(int tileX){
+		
+		int tileEndX = (tileX+1)*tileWidth - 1;
+		
+		return tileEndX;
+	}
+	
+	public int endYposTile(int tileY){
+		
+		int tileEndY = (tileY+1)*tileHeight - 1;
+		
+		return tileEndY;
+	}
+	
+	public int decideHighest(int backTile, int frontTile){
+		
+		if(backTile < frontTile){
+			return frontTile;
+		}
+		
+		return backTile;
+	}
+	
+	public int decideLowest(int backTile, int frontTile){
+		
+		if(backTile < frontTile){
+			return backTile;
+		}
+		
+		return frontTile;
+	}*/
+	
 	public void intersectionPointsOfLine(float slope, float constant, int tileStartX, int tileStartY, int tileEndX, int tileEndY){
 		yOfTileEndX = slope*tileEndX + constant; // y = ax + c
 		yOfTileStartX = slope*tileStartX + constant;
@@ -255,6 +473,21 @@ public class Level {
 		xOfTileEndY = (tileEndY - constant)/slope; // x = (y-c)/a
 		xOfTileStartY = (tileStartY - constant)/slope;
 	}
+	
+	
+	/*public boolean intersectsColBox(float slope, float constant, int[] xLines, int xVector, int yVector){
+		
+		for(int i = 0; i < xLines.length;i++){
+			
+			float yIntrsct = slope*xLines[i] + constant; // y = ax + c
+			if(collision(yIntrsct, xLines[i])){
+				stopDirection(yIntrsct, xLines[i]);
+				ret
+			}
+		}
+		
+		return false;
+	}*/
 	
 	public void checkIntersectionsWithTile(int tileStartX, int tileStartY,int tileEndX, int tileEndY){
 		
