@@ -22,7 +22,6 @@ public class Car implements Comparable<Car>,Runnable {
 	int playerNr;
 
 	private int laps, collisionSlowdownConstant = 4,  
-			centerOfRotationYOffset = 26,
 			maxLaps = 3, passedChekpoints,time;
 	
 	private long startTime, nanoSecondsElapsed, 
@@ -32,7 +31,7 @@ public class Car implements Comparable<Car>,Runnable {
 	private boolean offRoad, raceStarted, finishedRace, startClock;
 	private boolean paused;
 	
-	private float topSpeed, currentSpeed, radDeg;
+	private float topSpeed, currentSpeed, radDeg, centerOfRotationYOffset;
 	
 	float[] collisionBoxPoints;
 	
@@ -48,9 +47,9 @@ public class Car implements Comparable<Car>,Runnable {
 	private Vector2f movementVector;
 	private Controlls controlls;
 
-	private int carLength;
+	private float carLength;
 
-	private int carWidth;
+	private float carWidth;
 
 	private float centerOfRotationX;
 
@@ -99,6 +98,7 @@ public class Car implements Comparable<Car>,Runnable {
 		collisionBoxPoints  = new float[4];
 		collisionBox = new Polygon(collisionBoxPoints);
 		movementVector = new Vector2f();
+		centerOfRotationYOffset = 64*stats.carSize;
 	}
 	
 	private void getCarSprite(){
@@ -397,6 +397,7 @@ public class Car implements Comparable<Car>,Runnable {
 		
 		controlls.setMovementDegrees(movementDegrees);
 	}
+	
 	public void deAccelerate(int slowdownConstant){
 		
 		float deltaDeAcceleration = controlls.getDeltaDeAcceleration();
@@ -425,8 +426,6 @@ public class Car implements Comparable<Car>,Runnable {
 		collisionBox = new Polygon();
 		collisionBox.setClosed(true);
 		generateCollisionBoxPoints();
-		g.setColor(Color.green);
-		g.draw(collisionBox);
 	}
 	
 	public ArrayList<String> getDirectionsToStop(){
@@ -436,8 +435,8 @@ public class Car implements Comparable<Car>,Runnable {
 	
 	public void generateCollisionBoxPoints(){
 		
-		carLength = 52;
-		carWidth = 30;
+		carLength = 128*stats.carSize;
+		carWidth = 64*stats.carSize;
 		
 		centerOfRotationX = position.x;
 		centerOfRotationY = position.y + centerOfRotationYOffset;
@@ -602,14 +601,6 @@ public class Car implements Comparable<Car>,Runnable {
 			e.printStackTrace();
 		}
 	}
-
-	@Override
-	public void run() {
-		// TODO Auto-generated method stub
-		
-	}
-	
-	
 
 	public int getTime() {
 		return time;
