@@ -202,7 +202,7 @@ public class GameCore extends BasicGameState {
 			float startY = screenHeight / 10 + (yNextPlayerOffSet * i);
 			float startX = screenWidth / 40;
 
-			ttf.drawString(startX, startY, "Player" + cars.get(i).getPlayerNr() + ":");
+			ttf.drawString(startX, startY, "Player" + cars.get(i).getPlayerNr() + ": " + players.get(i).getUsername());
 			ttf.drawString(startX, startY + yOffSet, "Lap " + cars.get(i).getLaps() + "/3");
 			ttf.drawString(startX, startY + yOffSet * 2, "" + cars.get(i).getTimeElapsed());
 		}

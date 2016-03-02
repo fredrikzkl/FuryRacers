@@ -31,7 +31,7 @@ public class Car implements Comparable<Car> {
 	float[] collisionBoxPoints;
 
 	private String tileType, timeElapsed;
-	public String id;
+	public String id, username = "";
 
 	private Image sprite;
 	private CarProperties stats;
@@ -73,7 +73,6 @@ public class Car implements Comparable<Car> {
 		initSounds();
 
 	}
-
 
 	private void initVariables() {
 		time = 0;
@@ -196,9 +195,9 @@ public class Car implements Comparable<Car> {
 		float xPos;
 		float yPos;
 		int pointsNotOffRoad = 0;
-		int amountOfPoints = colBoxPoints.length;
+		int amountOfPointsXY = colBoxPoints.length;
 		
-		for(int i = 0; i < amountOfPoints; i+=2){
+		for(int i = 0; i < amountOfPointsXY; i+=2){
 			
 			xPos = colBoxPoints[i];
 			yPos = colBoxPoints[i + 1];
@@ -215,7 +214,7 @@ public class Car implements Comparable<Car> {
 			}
 		}
 		
-		if(offRoad && pointsNotOffRoad == amountOfPoints/2){
+		if(offRoad && pointsNotOffRoad == amountOfPointsXY/2){
 			controlls.changeTopSpeed(2);
 			offRoad = false;
 		}
@@ -622,5 +621,13 @@ public class Car implements Comparable<Car> {
 		}else{
 			topSpeedSound.stop();
 		}
+	}
+	
+	public void setUsername(String username){
+		this.username = username;
+	}
+	
+	public String getUsername(){
+		return username;
 	}
 }

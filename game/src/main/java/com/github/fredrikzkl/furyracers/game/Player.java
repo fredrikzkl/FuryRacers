@@ -24,14 +24,13 @@ public class Player implements Comparable<Player>{
 		setySel(playerNr -1);
 	}
 
-	public boolean equals(Object o){
-		return ((Player) o).getId().equals(getId());
+	public boolean equals(Player o){
+		return o.getId().equals(getId());
 	}
 	
 	public int hashCode(){
 		return getId().hashCode();
 	}
-	
 	
 	public String getUsername() {
 		return username;

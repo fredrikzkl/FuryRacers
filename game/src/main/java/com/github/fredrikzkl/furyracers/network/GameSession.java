@@ -71,21 +71,30 @@ public class GameSession {
 		String action = jsonObj.getString("action");
 
 		switch (action) {
+		
+		case "set username":{
+			
+			action = "get username";
+			
+		}
 		case "get username": {
 			JsonArray client = jsonObj.getJsonArray("data");
 
 			String id = client.get(0).toString();
 			String username = client.get(1).toString();
-
-			for(Player player: players){
-				if(player.equals(id)){
-					player.setUsername(username);
+			System.out.println(id);
+			
+			System.out.println("from" + players.get(0).getId());
+			
+			for(int i = 0; i < players.size(); i++){
+				if(players.get(i).getId().equals(id)){
+					System.out.println(username);
+					players.get(i).setUsername(username);
 				}
 			}
-			
 			break;
 		}
-
+		
 		case "added client": {
 			System.out.println("New player connecting...");
 			menu.printConsole("New player connecting...");
@@ -97,13 +106,15 @@ public class GameSession {
 		case "dropped client": {
 			String id = jsonObj.getString("data");
 			int spot = 0;
+			String username = id;
 			for (Player player : players) {
 				if (player.getId().equals(id)) {
 					spot = player.getPlayerNr();
+					username = player.getUsername();
 				}
 			}
-			players.remove(spot);
-			System.out.println("Player " + id + " dropped! Player slot " + spot + " removed");
+			players.remove(spot-1);
+			System.out.println("Player " + username + " dropped! Player slot " + spot + " removed");
 			break;
 		}
 
@@ -116,6 +127,8 @@ public class GameSession {
 
 				break;
 			}
+			
+			System.out.println("GAAAAY");
 
 			sendToBackend("get username", id);
 
@@ -182,8 +195,8 @@ public class GameSession {
 			menu.setIP(ip);
 
 		}
-		}
 	}
+}
 
 	public void closeConnection() throws IOException, EncodeException{
 		sendToBackend("disconnect", "");
