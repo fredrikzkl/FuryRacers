@@ -1,20 +1,14 @@
 package com.github.fredrikzkl.furyracers.game;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.newdawn.slick.Graphics;
-import org.newdawn.slick.Music;
-import org.newdawn.slick.SlickException;
-import org.newdawn.slick.Sound;
 import org.newdawn.slick.geom.Vector2f;
-import org.newdawn.slick.tiled.TiledMap;
 
 public class Level {
 	private CourseHandler course;
-	public final String Dpath = "Maps/course";
-	public String path = Dpath;
-
-	public TiledMap map = null;
+	
 
 	int tileWidth, tileHeight;
 	int mapWidthTiles, mapHeightTiles;
@@ -31,31 +25,21 @@ public class Level {
 
 	
 	//--------------------------------//
-	public Music music;
+	
 	
 
 	public Level(int id) {
 		course = new CourseHandler(id);
-		path = Dpath + id + ".tmx";
-		System.out.println("Course loaded:" + path.substring(5));
 
-		try {
-			map = new TiledMap(path);
-		} catch (SlickException e) {
-			System.out.println("Error loading map" + e);
-		}
-
-
-		// TODO
-		roadLayer = map.getLayerIndex("road");
-		propsLayer = map.getLayerIndex("props");
-		backgroundLayer = map.getLayerIndex("background");
-		tileWidth = map.getTileWidth();
-		tileHeight = map.getTileHeight();
-		mapWidthTiles = map.getWidth();
-		mapHeightTiles = map.getHeight();
-		mapHeightPixels = map.getTileHeight() * map.getHeight();
-		mapWidthPixels = map.getTileWidth() * map.getWidth();
+		roadLayer = course.data.getLayerIndex("road");
+		propsLayer = course.data.getLayerIndex("props");
+		backgroundLayer = course.data.getLayerIndex("background");
+		tileWidth = course.data.getTileWidth();
+		tileHeight = course.data.getTileHeight();
+		mapWidthTiles = course.data.getWidth();
+		mapHeightTiles = course.data.getHeight();
+		mapHeightPixels = course.data.getTileHeight() * course.data.getHeight();
+		mapWidthPixels = course.data.getTileWidth() * course.data.getWidth();
 		// ---------------------------
 
 		musicControl();
@@ -63,29 +47,19 @@ public class Level {
 	}
 
 	private void musicControl() {
-		
-		try {
-			music = new Music("/Sound/level1soundtrack.ogg");
-			
-		} catch (SlickException e) {
-			music = null;
-			System.out.println("Could not load musicfile for the level!" + e);
-		}
-		if (music != null) {
-			music.loop();
-			music.setVolume((float) 0.4);
-		}
+			course.soundTrack.loop();
+			course.soundTrack.setVolume((float) 0.4);
 		
 	}
 
 	private void determineStartPosition() {
-		for (int x = 0; x < map.getWidth(); x++) {
-			for (int y = 0; y < map.getHeight(); y++) {
-				if (map.getTileProperty(map.getTileId(x, y, 1), "startPos", "-1").equals("start")) {
+		for (int x = 0; x < course.data.getWidth(); x++) {
+			for (int y = 0; y < course.data.getHeight(); y++) {
+				if (course.data.getTileProperty(course.data.getTileId(x, y, 1), "startPos", "-1").equals("start")) {
 					startCoordinates = new Vector2f(x * tileWidth, y * tileHeight);
 				}
 
-				if (map.getTileProperty(map.getTileId(x, y, 4), "timePos", "-1").equals("timer")) {
+				if (course.data.getTileProperty(course.data.getTileId(x, y, 4), "timePos", "-1").equals("timer")) {
 					timerCoordinates = new Vector2f(x * tileWidth, y * tileHeight);
 					System.out.println("X:" + timerCoordinates.x + " Y:" + timerCoordinates.y);
 
@@ -99,8 +73,8 @@ public class Level {
 
 	public void render(Graphics g, Camera camera) {
 
-		int endTileToRenderY = (int) (camera.getSize().y - camera.getY()) / map.getTileHeight() + 1;
-		int endTileToRenderX = (int) (camera.getSize().x - camera.getX()) / map.getTileWidth() + 1;
+		int endTileToRenderY = (int) (camera.getSize().y - camera.getY()) / course.data.getTileHeight() + 1;
+		int endTileToRenderX = (int) (camera.getSize().x - camera.getX()) / course.data.getTileWidth() + 1;
 
 		int startTileToRenderX = endTileToRenderX - 100;
 		int startTileToRenderY = endTileToRenderY - 100;
@@ -109,6 +83,14 @@ public class Level {
 		 * (int)(camera.getY()/map.getTileHeight()), (int)
 		 * camera.getSize().x,(int) camera.getSize().y);
 		 */
+	}
+	
+	public void drawCars(Graphics g, List<Car> cars) {
+		g.drawImage(course.subLayer, 0,0);
+		for (Car car : cars) {
+			car.render(g);
+		}
+		g.drawImage(course.topLayer, 0,0);
 	}
 
 	public int getTileWidth() {
@@ -123,7 +105,7 @@ public class Level {
 
 		int tileX = (int) (xPos / tileWidth), tileY = (int) (yPos / tileHeight),
 
-				tileIDroad = map.getTileId(tileX, tileY, roadLayer);
+				tileIDroad = course.data.getTileId(tileX, tileY, roadLayer);
 
 		if (tileIDroad != 0) {
 			return false;
@@ -133,15 +115,15 @@ public class Level {
 	}
 
 	public String getTileType(int xTile, int yTile, int passedCheckpoints) {
-		int tileIDroad = map.getTileId(xTile, yTile, roadLayer);
+		int tileIDroad = course.data.getTileId(xTile, yTile, roadLayer);
 
-		if (map.getTileProperty(tileIDroad, "checkpoint", "-1").equals("1") && passedCheckpoints == 0) {
+		if (course.data.getTileProperty(tileIDroad, "checkpoint", "-1").equals("1") && passedCheckpoints == 0) {
 			return "checkpoint1";
-		} else if (map.getTileProperty(tileIDroad, "checkpoint", "-1").equals("2") && passedCheckpoints == 1) {
+		} else if (course.data.getTileProperty(tileIDroad, "checkpoint", "-1").equals("2") && passedCheckpoints == 1) {
 			return "checkpoint2";
-		} else if (map.getTileProperty(tileIDroad, "checkpoint", "-1").equals("3") && passedCheckpoints == 2) {
+		} else if (course.data.getTileProperty(tileIDroad, "checkpoint", "-1").equals("3") && passedCheckpoints == 2) {
 			return "checkpoint3";
-		} else if (map.getTileProperty(tileIDroad, "goal", "-1").equals("finish") && passedCheckpoints == 3) {
+		} else if (course.data.getTileProperty(tileIDroad, "goal", "-1").equals("finish") && passedCheckpoints == 3) {
 			return "lap";
 		}
 		return "openRoad";
@@ -150,9 +132,9 @@ public class Level {
 	public boolean collision(float xPos, float yPos) {
 
 		int tileX = (int) (xPos / tileWidth), tileY = (int) (yPos / tileHeight),
-				tileIDprops = map.getTileId(tileX, tileY, propsLayer);
+				tileIDprops = course.data.getTileId(tileX, tileY, propsLayer);
 
-		boolean isColliding = map.getTileProperty(tileIDprops, "collision", "-1").equals("1");
+		boolean isColliding = course.data.getTileProperty(tileIDprops, "collision", "-1").equals("1");
 
 		return isColliding;
 	}
@@ -301,8 +283,8 @@ public class Level {
 
 	public boolean isCollisionObstacle(int tileX, int tileY) {
 
-		int tileId = map.getTileId(tileX, tileY, propsLayer);
-		return map.getTileProperty(tileId, "collision", "-1").equals("1");
+		int tileId = course.data.getTileId(tileX, tileY, propsLayer);
+		return course.data.getTileProperty(tileId, "collision", "-1").equals("1");
 	}
 
 	public boolean isTileLineCrossed(float tileStart, float tileEnd, float carCrossedAt) {
@@ -340,5 +322,7 @@ public class Level {
 	public void setTimerCoordinates(Vector2f timerCoordinates) {
 		this.timerCoordinates = timerCoordinates;
 	}
+
+
 
 }

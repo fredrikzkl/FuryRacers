@@ -39,7 +39,6 @@ public class GameCore extends BasicGameState {
 
 	Font font;
 	TrueTypeFont ttf;
-	Image subMapPic, mapPic;
 
 	public List<Car> cars;
 	public List<Player> players;
@@ -334,12 +333,8 @@ public class GameCore extends BasicGameState {
 	public void relocateCam(Graphics g) {
 		camera.zoom(g, camera.getZoom());// Crasher om verdien <=0
 		g.translate(camera.getX(), camera.getY()); // Start of camera
-
-		g.drawImage(subMapPic, 0, 0);
-		for (Car car : cars) {
-			car.render(g);
-		}
-		g.drawImage(mapPic, 0, 0);
+		
+		level.drawCars(g,cars);
 
 		g.translate(-camera.getX(), -camera.getY()); // End of camera
 		camera.zoom(g, 1 / camera.getZoom());
@@ -357,14 +352,6 @@ public class GameCore extends BasicGameState {
 
 		keyboardPlayerOne = false;
 		keyboardPlayerOne = false;
-
-		try {
-			subMapPic = new Image("Maps/course1sub.png");
-			mapPic = new Image("Maps/course1.png");
-		} catch (SlickException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 
 		font = new Font("Verdana", Font.BOLD, 20);
 		ttf = new TrueTypeFont(font, true);
