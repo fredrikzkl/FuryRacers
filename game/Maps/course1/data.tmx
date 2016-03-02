@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <map version="1.0" orientation="orthogonal" renderorder="right-down" width="200" height="150" tilewidth="16" tileheight="16" nextobjectid="3">
  <tileset firstgid="1" name="terrain" tilewidth="16" tileheight="16" tilecount="288" columns="24">
-  <image source="../Sprites/mapSprites/terrain.png" width="384" height="192"/>
+  <image source="../../../../../../../../FuryRacers/game/Sprites/mapSprites/terrain.png" width="384" height="192"/>
   <tile id="95">
    <properties>
     <property name="collision" value="1"/>
@@ -229,7 +229,7 @@
   </tile>
  </tileset>
  <tileset firstgid="289" name="road3" tilewidth="16" tileheight="16" tilecount="2750" columns="50">
-  <image source="../Sprites/mapSprites/road3.png" width="800" height="880"/>
+  <image source="../../../../../../../../FuryRacers/game/Sprites/mapSprites/road3.png" width="800" height="880"/>
   <tile id="2050">
    <properties>
     <property name="goal" value="finish"/>

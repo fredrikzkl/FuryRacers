@@ -2,14 +2,14 @@ package com.github.fredrikzkl.furyracers.game;
 
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
-
 import javax.naming.directory.DirContext;
-
 import org.newdawn.slick.Color;
+import javax.naming.ldap.Control;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
 import org.newdawn.slick.Input;
 import org.newdawn.slick.SlickException;
+import org.newdawn.slick.Sound;
 import org.newdawn.slick.geom.Polygon;
 import org.newdawn.slick.geom.Vector2f;
 import org.newdawn.slick.state.StateBasedGame;
@@ -58,6 +58,18 @@ public class Car implements Comparable<Car>,Runnable {
 
 	private ArrayList<String> stoppingDirections = new ArrayList<String>();
 	
+	//-----------------------------//
+	private Sound finalRound;
+	private Sound crowdFinish;
+	private Sound still;
+	private Sound acceleratingSound;
+	private Sound topSpeedSound;
+	private Sound deAcceleratingSound;
+
+	
+	
+	private boolean deAccelerating;
+	
 	public Car(CarProperties stats, String id, int playerNr, float startX, float startY, Level level){
 		this.stats = stats;
 		this.id = id;
@@ -68,6 +80,9 @@ public class Car implements Comparable<Car>,Runnable {
 		
 		initVariables();
 		getCarSprite();
+
+		initSounds();
+		
 	}
 	
 	private void initVariables(){
@@ -109,8 +124,36 @@ public class Car implements Comparable<Car>,Runnable {
 		checkForOffRoad();
 		checkRaceTime();
 		
+		//sounds();
 	}
 	
+	private void sounds() {
+		if(currentSpeed < 10){
+			topSpeedSound.stop();
+			deAcceleratingSound.stop();
+			acceleratingSound.stop();
+			if(!still.playing())
+			still.play();
+			
+		}else{
+			if(currentSpeed > (stats.topSpeed*0.80)){
+				if(!topSpeedSound.playing() && !acceleratingSound.playing())
+				topSpeedSound.play();
+				if(deAccelerating || !controlls.throttleKeyIsDown)
+				topSpeedSound.stop();
+			}else{
+				if(controlls.throttleKeyIsDown && !deAccelerating){
+					if(!acceleratingSound.playing() && !topSpeedSound.playing() && !deAcceleratingSound.playing())
+					acceleratingSound.play();
+				}else{
+					if(!deAcceleratingSound.playing() && !topSpeedSound.playing() && !acceleratingSound.playing())
+					deAcceleratingSound.play();
+				}
+			}
+		}
+		
+	}
+
 	public void rePositionCar(int deltaTime){
 		
 		radDeg = (float) Math.toRadians(controlls.getMovementDegrees());
@@ -151,8 +194,18 @@ public class Car implements Comparable<Car>,Runnable {
 			case "checkpoint3": passedChekpoints++; break;
 			case "lap": laps++; passedChekpoints = 0;	
 		}	
+		if(laps == 2){
+			if(!GameCore.finalRoundSaid){
+				finalRound.play();
+				GameCore.finalRoundSaid = true;
+			}
+		}
 		
-		if(laps == 1){
+		if(laps == 3){
+			if(!GameCore.crowdFinishedPlayed){
+				crowdFinish.play();
+				GameCore.crowdFinishedPlayed = true;
+			}
 			finishedRace = true;
 			stats.deAcceleration = 250;
 			controlls.throttleKeyUp();
@@ -347,7 +400,7 @@ public class Car implements Comparable<Car>,Runnable {
 	public void deAccelerate(int slowdownConstant){
 		
 		float deltaDeAcceleration = controlls.getDeltaDeAcceleration();
-		
+		deAccelerating = true;
 		if(currentSpeed < -stats.deAcceleration) {
 			
 			currentSpeed += deltaDeAcceleration*slowdownConstant;
@@ -572,5 +625,18 @@ public class Car implements Comparable<Car>,Runnable {
 		return -(Integer.compare(this.getTime(), o.getTime()));
 	}
 	
-	
+	public void initSounds(){
+		String path = "/Sound/carSounds/";
+		String type = ".ogg";
+		try {
+			finalRound = new Sound("/Sound/announcer/finalRound" + type);
+			crowdFinish = new Sound("/Sound/crowdFinish" + type);
+			still = new Sound(path + "still" + type);
+			acceleratingSound = new Sound(path + "accelerating" + type);
+			topSpeedSound = new Sound(path + "topSpeed" + type);
+			deAcceleratingSound = new Sound(path + "deAccelerate" + type);
+		} catch (SlickException e) {
+			System.out.println("ERROR! Could not load car sounds!");
+		}
+	}
 }

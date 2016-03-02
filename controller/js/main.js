@@ -13,8 +13,9 @@
   var WHITE = "0xffffff";
   var RED = "0xD40100";
   var redButtons;
-  var previousSteeringDirection = 1; // For vibreering. Hvis forrige retning var høyre og man nå tar til venstre --> vibrer
-  var directionChangeSound;
+  var tools_button;
+  /*var previousSteeringDirection = 1; // For vibreering. Hvis forrige retning var høyre og man nå tar til venstre --> vibrer
+  var directionChangeSound;*/
 
   var game = new Phaser.Game(800, 600, Phaser.AUTO, 'phaser-example', {
 
@@ -35,13 +36,15 @@
 
     game.load.image('vjoy_base', 'assets/base.png');
     game.load.image('vjoy_body', 'assets/body.png');
-    //game.load.image('vjoy_cap', 'assets/cap.png');
+    game.load.image('tools_button', 'assets/Tools_button.png');
     game.load.spritesheet('redButtons', 'assets/redButtons.png', 150, 149);
     //game.load.audio('directionChange', 'assets/squit.ogg');
 
     },
 
     create: function create() {
+
+
       game.stage.backgroundColor = '#EFEFEF';
 
       game.scale.scaleMode = Phaser.ScaleManager.EXACT_FIT;
@@ -59,6 +62,9 @@
           data = pointer.targetObject.sprite.data; // Henter data(knappID/buttonID) fra knappen som har blitt trykket.
           if(data == 1){
             redButtons.frame = 1;
+          }else if(data==4){
+            setUsername();
+            return;
           }
           buttonDown(data);
         }
@@ -80,10 +86,15 @@
 
       //directionChangeSound = game.add.audio('directionChange');
 
+      tools_button = game.add.sprite(this.game.width/2.3, this.game.height/6, 'tools_button');
+      tools_button.data = 4;
+      tools_button.scale.setTo(0.03,0.04);
+      tools_button.inputEnabled = true;
+
       redButtons = game.add.sprite(this.game.width/1.4, this.game.height/4, 'redButtons');
       redButtons.data = 1;
       redButtons.frame = 0;
-      redButtons.scale.setTo(1.3,1.4);
+      redButtons.scale.setTo(1,1.2);
       redButtons.inputEnabled = true;
       },
 
@@ -95,11 +106,11 @@
           buttonDown(3);
           steeringLeft = true;
 
-          if(previousSteeringDirection == 0){
+          /*if(previousSteeringDirection == 0){
             //window.navigator.vibrate(100);
             //directionChangeSound.play();
             previousSteeringDirection = 1;
-          }
+          }*/
         }
       }else if(steeringLeft){
         buttonUp(3);
@@ -111,11 +122,11 @@
           buttonDown(2);
           steeringRight = true;
 
-          if(previousSteeringDirection == 1){
+          /*if(previousSteeringDirection == 1){
             //directionChangeSound.play();
             //window.navigator.vibrate(100);
             previousSteeringDirection = 0;
-          }
+          }*/
         }
       }else if(steeringRight){
         buttonUp(2);
