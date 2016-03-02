@@ -26,7 +26,7 @@ public class Car implements Comparable<Car> {
 	private boolean offRoad, raceStarted, finishedRace, startClock;
 	private boolean paused;
 	
-	private float topSpeed, currentSpeed, radDeg, centerOfRotationYOffset;
+	private float currentSpeed, radDeg, centerOfRotationYOffset;
 	
 	float[] collisionBoxPoints;
 
@@ -84,7 +84,6 @@ public class Car implements Comparable<Car> {
 		raceStarted = false;
 		finishedRace = false;
 		startClock = false;
-		topSpeed = stats.topSpeed;
 		collisionBoxPoints = new float[4];
 		collisionBox = new Polygon(collisionBoxPoints);
 		movementVector = new Vector2f();
@@ -112,11 +111,8 @@ public class Car implements Comparable<Car> {
 		checkForCollision();
 		checkForOffRoad();
 		checkRaceTime();
-
 		sounds();
 	}
-
-	
 
 	public void rePositionCar(int deltaTime) {
 
@@ -293,8 +289,6 @@ public class Car implements Comparable<Car> {
 				case "positiveY": stopTurningInPositiveYdirection();break;
 				case "negativeY": stopTurningInNegativeYdirection();break;
 			}
-			
-		
 		}
 	}
 	
@@ -423,6 +417,9 @@ public class Car implements Comparable<Car> {
 		carLength = 128*stats.carSize;
 		carWidth = 64*stats.carSize;
 		
+		int colBoxPointsLength = 5;
+		int colBoxPointsWidth = 3;
+		
 		centerOfRotationX = position.x;
 		centerOfRotationY = position.y + centerOfRotationYOffset;
 
@@ -432,11 +429,11 @@ public class Car implements Comparable<Car> {
 		float backLeftX = (float)(centerOfRotationX+ Math.cos(radDeg+Math.PI/2)*carWidth/2),
 			  backLeftY = (float)(centerOfRotationY + Math.sin(radDeg+Math.PI/2)*carWidth/2);
 		
-		colBoxPointsLeftOfCar(5);
-		colBoxPointsTopOfCar(backLeftX, backLeftY, 3);
+		colBoxPointsLeftOfCar(colBoxPointsLength);
+		colBoxPointsTopOfCar(backLeftX, backLeftY, colBoxPointsWidth);
 		
-		colBoxPointsRightOfCar(backRightX, backRightY, 5);
-		colBoxPointsBackOfCar(3);
+		colBoxPointsRightOfCar(backRightX, backRightY, colBoxPointsLength);
+		colBoxPointsBackOfCar(colBoxPointsWidth);
 	}
 	
 	public void colBoxPointsLeftOfCar(int amountOfPoints){
@@ -498,7 +495,6 @@ public class Car implements Comparable<Car> {
 			collisionBox.addPoint(newPointX, newPointY);
 		}
 	}
-
 
 	public void checkRaceTime() {
 
@@ -584,23 +580,6 @@ public class Car implements Comparable<Car> {
 		return position;
 	}
 
-	public void run(GameContainer container, StateBasedGame game, int deltaTime) throws SlickException {
-
-		try {
-			Input input = container.getInput();
-			currentSpeed = controlls.getCurrentSpeed();
-			controlls.reactToControlls(input, deltaTime, paused);
-			rePositionCar(deltaTime);
-			checkForEdgeOfMap();
-			checkForCheckpoint();
-			//checkForCollision();
-			checkForOffRoad();
-			checkRaceTime();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-
 	public int getTime() {
 		return time;
 	}
@@ -632,6 +611,7 @@ public class Car implements Comparable<Car> {
 	}
 	
 	private void sounds() {
+		
 		if(currentSpeed < 1){
 			if(!still.playing())
 				still.play();
@@ -641,13 +621,6 @@ public class Car implements Comparable<Car> {
 				topSpeedSound.play();
 		}else{
 			topSpeedSound.stop();
-			
 		}
-		
-		
-		
-		
-
 	}
-
 }
