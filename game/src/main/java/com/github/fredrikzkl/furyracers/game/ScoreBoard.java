@@ -85,7 +85,7 @@ public class ScoreBoard {
 	}
 
 	public void drawScoreBoard() {
-		float speed = 1;
+		float speed = 4f;
 		float maxX = Application.screenSize.width;
 		float midWay = maxX / 2;
 		float marginX = midWay / 5;

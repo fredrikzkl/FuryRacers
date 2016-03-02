@@ -31,13 +31,6 @@ public class GameSession {
 	private Session backend;
 	private int playerNumber;
 
-	private String player1;
-	private String player2;
-	private String player3;
-	private String player4;
-	private String player1Username = "Player 1";
-	private String player2Username = "Player 2";
-
 	private static ArrayList<Player> players;
 
 	private static int gameState;
@@ -57,8 +50,7 @@ public class GameSession {
 	public void onOpen(Session session) throws IOException, EncodeException {
 		System.out.println("onOpen");
 		backend = session;
-		player1 = "";
-		player2 = "";
+		
 		sendToBackend("identify", "game");
 		sendToBackend("get ip", "");
 	}
@@ -85,12 +77,12 @@ public class GameSession {
 			String id = client.get(0).toString();
 			String username = client.get(1).toString();
 
-			if (player1.equals(id)) {
-				player1Username = username;
-			} else if (player2.equals(id)) {
-				player2Username = username;
+			for(Player player: players){
+				if(player.equals(id)){
+					player.setUsername(username);
+				}
 			}
-
+			
 			break;
 		}
 
