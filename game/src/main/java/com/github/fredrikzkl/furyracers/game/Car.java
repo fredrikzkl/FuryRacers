@@ -2,9 +2,6 @@ package com.github.fredrikzkl.furyracers.game;
 
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
-import javax.naming.directory.DirContext;
-import org.newdawn.slick.Color;
-import javax.naming.ldap.Control;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
 import org.newdawn.slick.Input;
@@ -15,10 +12,8 @@ import org.newdawn.slick.geom.Vector2f;
 import org.newdawn.slick.state.StateBasedGame;
 import org.newdawn.slick.GameContainer;
 
+public class Car implements Comparable<Car> {
 
-public class Car implements Comparable<Car>,Runnable {
-
-	
 	int playerNr;
 
 	private int laps, collisionSlowdownConstant = 4,  
@@ -34,175 +29,159 @@ public class Car implements Comparable<Car>,Runnable {
 	private float topSpeed, currentSpeed, radDeg, centerOfRotationYOffset;
 	
 	float[] collisionBoxPoints;
-	
+
 	private String tileType, timeElapsed;
 	public String id;
-	
+
 	private Image sprite;
 	private CarProperties stats;
-	private Level level; 
+	private Level level;
 	private Polygon collisionBox;
 	Vector2f position;
 
 	private Vector2f movementVector;
 	private Controlls controlls;
 
-	private float carLength;
-
-	private float carWidth;
-
-	private float centerOfRotationX;
-
-	private float centerOfRotationY;
+	private float carLength, carWidth, centerOfRotationX, centerOfRotationY;
 
 	private ArrayList<String> stoppingDirections = new ArrayList<String>();
 	
 	//-----------------------------//
 	private Sound finalRound;
 	private Sound crowdFinish;
+	private Sound checkpointSound;
+	private Sound lapSound;
+
 	private Sound still;
 	private Sound acceleratingSound;
 	private Sound topSpeedSound;
 	private Sound deAcceleratingSound;
 
-	
-	
 	private boolean deAccelerating;
-	
-	public Car(CarProperties stats, String id, int playerNr, float startX, float startY, Level level){
+
+	public Car(CarProperties stats, String id, int playerNr, float startX, float startY, Level level) {
 		this.stats = stats;
 		this.id = id;
 		this.playerNr = playerNr;
 		this.level = level;
-		position = new Vector2f(startX,startY);
+		position = new Vector2f(startX, startY);
 		controlls = new Controlls(this, stats);
-		
+
 		initVariables();
 		getCarSprite();
 
 		initSounds();
-		
+
 	}
-	
-	private void initVariables(){
-		System.out.println("yes");
+
+
+	private void initVariables() {
 		time = 0;
 		paused = true;
 		passedChekpoints = 0;
 		laps = 0;
 		offRoad = false;
-		raceStarted = false; 
-		finishedRace = false; 
+		raceStarted = false;
+		finishedRace = false;
 		startClock = false;
 		topSpeed = stats.topSpeed;
-		collisionBoxPoints  = new float[4];
+		collisionBoxPoints = new float[4];
 		collisionBox = new Polygon(collisionBoxPoints);
 		movementVector = new Vector2f();
 		centerOfRotationYOffset = 64*stats.carSize;
 	}
-	
-	private void getCarSprite(){
-		
+
+	private void getCarSprite() {
+
 		try {
-			sprite  = new Image(stats.imageFile);
+			sprite = new Image(stats.imageFile);
 		} catch (SlickException e) {
 			System.out.println("Could not find image file " + stats.imageFile);
 			e.printStackTrace();
 		}
 	}
-	
-	
-	public void update(GameContainer container, StateBasedGame game, int deltaTime)throws SlickException{
-		
+
+	public void update(GameContainer container, StateBasedGame game, int deltaTime) throws SlickException {
+
 		Input input = container.getInput();
 		currentSpeed = controlls.getCurrentSpeed();
-		controlls.reactToControlls(input, deltaTime,paused);
+		controlls.reactToControlls(input, deltaTime, paused);
 		rePositionCar(deltaTime);
 		checkForEdgeOfMap();
 		checkForCheckpoint();
 		checkForCollision();
 		checkForOffRoad();
 		checkRaceTime();
-		
-		//sounds();
-	}
-	
-	private void sounds() {
-		if(currentSpeed < 10){
-			topSpeedSound.stop();
-			deAcceleratingSound.stop();
-			acceleratingSound.stop();
-			if(!still.playing())
-			still.play();
-			
-		}else{
-			if(currentSpeed > (stats.topSpeed*0.80)){
-				if(!topSpeedSound.playing() && !acceleratingSound.playing())
-				topSpeedSound.play();
-				if(deAccelerating || !controlls.throttleKeyIsDown)
-				topSpeedSound.stop();
-			}else{
-				if(controlls.throttleKeyIsDown && !deAccelerating){
-					if(!acceleratingSound.playing() && !topSpeedSound.playing() && !deAcceleratingSound.playing())
-					acceleratingSound.play();
-				}else{
-					if(!deAcceleratingSound.playing() && !topSpeedSound.playing() && !acceleratingSound.playing())
-					deAcceleratingSound.play();
-				}
-			}
-		}
-		
+
+		sounds();
 	}
 
-	public void rePositionCar(int deltaTime){
-		
+	
+
+	public void rePositionCar(int deltaTime) {
+
 		radDeg = (float) Math.toRadians(controlls.getMovementDegrees());
 		float currentSpeed = controlls.getCurrentSpeed();
-		
-		movementVector.x = (float) Math.cos(radDeg)*currentSpeed*deltaTime/1000;
-		movementVector.y = (float) Math.sin(radDeg)*currentSpeed*deltaTime/1000;
-		
+
+		movementVector.x = (float) Math.cos(radDeg) * currentSpeed * deltaTime / 1000;
+		movementVector.y = (float) Math.sin(radDeg) * currentSpeed * deltaTime / 1000;
+
 		position.x += movementVector.x;
-		position.y += movementVector.y;	
+		position.y += movementVector.y;
 	}
-	
-	
-	public void checkForEdgeOfMap(){
-		
+
+	public void checkForEdgeOfMap() {
+
 		float[] colBoxPoints = collisionBox.getPoints();
-		
-		for(int i = 0; i < colBoxPoints.length; i+=2){
-			
-			if(colBoxPoints[i] < 5 || colBoxPoints[i] > level.getMapWidthPixels()-5)
+
+		for (int i = 0; i < colBoxPoints.length; i += 2) {
+
+			if (colBoxPoints[i] < 5 || colBoxPoints[i] > level.getMapWidthPixels() - 5)
 				position.x -= movementVector.x;
-			
-			if(colBoxPoints[i+1] < 5 || colBoxPoints[i+1] > level.getMapHeightPixels()-5)
+
+			if (colBoxPoints[i + 1] < 5 || colBoxPoints[i + 1] > level.getMapHeightPixels() - 5)
 				position.y -= movementVector.y;
 		}
 	}
-	
-	public void checkForCheckpoint(){
 
-		int tilePosX = (int) (position.x/level.getTileWidth());
-		int tilePosY = (int) (position.y/level.getTileHeight());
-		
+	public void checkForCheckpoint() {
+
+		int tilePosX = (int) (position.x / level.getTileWidth());
+		int tilePosY = (int) (position.y / level.getTileHeight());
+
 		tileType = level.getTileType(tilePosX, tilePosY, passedChekpoints);
-		
-		switch(tileType){
-			case "checkpoint1": passedChekpoints++; break;
-			case "checkpoint2": passedChekpoints++; break;
-			case "checkpoint3": passedChekpoints++; break;
-			case "lap": laps++; passedChekpoints = 0;	
-		}	
-		if(laps == 2){
-			if(!GameCore.finalRoundSaid){
+
+		switch (tileType) {
+		case "checkpoint1":
+			passedChekpoints++;
+			if (!checkpointSound.playing())
+				checkpointSound.play();
+			break;
+		case "checkpoint2":
+			passedChekpoints++;
+			if (!checkpointSound.playing())
+				checkpointSound.play();
+			break;
+		case "checkpoint3":
+			passedChekpoints++;
+			if (!checkpointSound.playing())
+				checkpointSound.play();
+			break;
+		case "lap":
+			if(!lapSound.playing() && laps != 3)
+				lapSound.play();
+			laps++;
+			passedChekpoints = 0;
+		}
+		if (laps == 2) {
+			if (!GameCore.finalRoundSaid) {
 				finalRound.play();
 				GameCore.finalRoundSaid = true;
 			}
 		}
-		
-		if(laps == 3){
-			if(!GameCore.crowdFinishedPlayed){
+
+		if (laps == 3) {
+			if (!GameCore.crowdFinishedPlayed) {
 				crowdFinish.play();
 				GameCore.crowdFinishedPlayed = true;
 			}
@@ -211,33 +190,31 @@ public class Car implements Comparable<Car>,Runnable {
 			controlls.throttleKeyUp();
 			controlls.leftKeyUp();
 			controlls.rightKeyUp();
-			setTime((int) (minutesElapsed+ secondsElapsed + tenthsOfASecondElapsed));
+			setTime((int) (minutesElapsed + secondsElapsed + tenthsOfASecondElapsed));
 		}
 	}
-	
-	public void checkForOffRoad(){
+
+	public void checkForOffRoad() {
 
 		float[] colBoxPoints = collisionBox.getPoints();
 		float xPos;
 		float yPos;
 		int pointsNotOffRoad = 0;
-		
 		int amountOfPoints = colBoxPoints.length;
 		
 		for(int i = 0; i < amountOfPoints; i+=2){
 			
-			
 			xPos = colBoxPoints[i];
-			yPos = colBoxPoints[i+1];
-			
-			if(level.offRoad(xPos, yPos)){
-				if(!offRoad){
+			yPos = colBoxPoints[i + 1];
+
+			if (level.offRoad(xPos, yPos)) {
+				if (!offRoad) {
 					controlls.changeTopSpeed(0.5f);
 					controlls.changeCurrentSpeed(0.5f);
 					offRoad = true;
 					break;
 				}
-			}else {
+			} else {
 				pointsNotOffRoad++;
 			}
 		}
@@ -247,8 +224,8 @@ public class Car implements Comparable<Car>,Runnable {
 			offRoad = false;
 		}
 	}
-	
-	public void checkForCollision(){
+
+	public void checkForCollision() {
 
 		ArrayList<String> directionsToStop;
 		ArrayList<String> stopTurningDirections;
@@ -262,14 +239,15 @@ public class Car implements Comparable<Car>,Runnable {
 		for(int i = 0; i < colBoxPoints.length; i+=2){
 			
 			xPos = colBoxPoints[i];
-			yPos = colBoxPoints[i+1];
-			
-			if(level.collision(xPos, yPos) && stoppedDirections !=2){
+			yPos = colBoxPoints[i + 1];
+
+			if (level.collision(xPos, yPos) && stoppedDirections != 2) {
 				directionsToStop = level.whichDirectionToStop(xPos, yPos, movementVector.x, movementVector.y);
 				stopTurningDirections = level.whichDirectionToStop(xPos, yPos,turningVector.y, turningVector.y);
 				stopCarDirection(directionsToStop);
 				resetCarRotation(stopTurningDirections);
 				if(directionsToStop.size() == 2)
+				if (directionsToStop.size() == 2)
 					break;
 				stoppedDirections++;
 			}
@@ -322,21 +300,28 @@ public class Car implements Comparable<Car>,Runnable {
 	
 	public void stopCarDirection(ArrayList<String> directionsToStop){
 
-		/*if(leftKeyIsDown){
-			movementDegrees += deltaAngleChange*1.1;
-		}else if(rightKeyIsDown){
-			movementDegrees -= deltaAngleChange*1.1;
-		}*/
-		
-		//deAccelerate(collisionSlowdownConstant);
-		
-		for(String directionToStop : directionsToStop){
-			
-			switch(directionToStop){
-				case "positiveX": position.x -= movementVector.x; break;
-				case "negativeX": position.x -= movementVector.x; break;
-				case "positiveY": position.y -= movementVector.y; break;
-				case "negativeY": position.y -= movementVector.y; break;
+		/*
+		 * if(leftKeyIsDown){ movementDegrees += deltaAngleChange*1.1; }else
+		 * if(rightKeyIsDown){ movementDegrees -= deltaAngleChange*1.1; }
+		 */
+
+		deAccelerate(collisionSlowdownConstant);
+
+		for (String directionToStop : directionsToStop) {
+
+			switch (directionToStop) {
+			case "positiveX":
+				/* if(movementVector.x > 0) */ position.x -= movementVector.x;
+				break;
+			case "negativeX":
+				/* if(movementVector.x < 0) */position.x -= movementVector.x;
+				break;
+			case "positiveY":
+				/* if(movementVector.y > 0) */position.y -= movementVector.y;
+				break;
+			case "negativeY":
+				/* if(movementVector.y < 0) */position.y -= movementVector.y;
+				break;
 			}
 			
 		
@@ -397,29 +382,29 @@ public class Car implements Comparable<Car>,Runnable {
 		
 		controlls.setMovementDegrees(movementDegrees);
 	}
-	
-	public void deAccelerate(int slowdownConstant){
-		
+
+	public void deAccelerate(int slowdownConstant) {
+
 		float deltaDeAcceleration = controlls.getDeltaDeAcceleration();
 		deAccelerating = true;
-		if(currentSpeed < -stats.deAcceleration) {
-			
-			currentSpeed += deltaDeAcceleration*slowdownConstant;
-		}else if(currentSpeed > -stats.deAcceleration && currentSpeed < 0){
-		
+		if (currentSpeed < -stats.deAcceleration) {
+
+			currentSpeed += deltaDeAcceleration * slowdownConstant;
+		} else if (currentSpeed > -stats.deAcceleration && currentSpeed < 0) {
+
 			currentSpeed = 0;
-		}else if(currentSpeed > stats.deAcceleration) {
-		
-			currentSpeed -= deltaDeAcceleration*slowdownConstant;
-		}else if(currentSpeed > 0 && currentSpeed < stats.deAcceleration){
-		
+		} else if (currentSpeed > stats.deAcceleration) {
+
+			currentSpeed -= deltaDeAcceleration * slowdownConstant;
+		} else if (currentSpeed > 0 && currentSpeed < stats.deAcceleration) {
+
 			currentSpeed = 0;
 		}
 	}
-	
+
 	public void render(Graphics g) {
-		
-		float carRotation = controlls.getMovementDegrees(); 
+
+		float carRotation = controlls.getMovementDegrees();
 		sprite.setCenterOfRotation(0, centerOfRotationYOffset);
 		sprite.draw(position.x, position.y, stats.carSize);
 		sprite.setRotation(carRotation);
@@ -514,80 +499,94 @@ public class Car implements Comparable<Car>,Runnable {
 		}
 	}
 
-	public void checkRaceTime(){
-		
-		if(startClock){
+
+	public void checkRaceTime() {
+
+		if (startClock) {
 			startTime = System.nanoTime();
 			startClock = false;
 			raceStarted = true;
 			paused = false;
 		}
-		
-		if(startTime != 0 && !finishedRace){
+
+		if (startTime != 0 && !finishedRace) {
 			currentTime = System.nanoTime();
 			nanoSecondsElapsed = currentTime - startTime;
 			minutesElapsed = TimeUnit.NANOSECONDS.toMinutes(nanoSecondsElapsed);
-			secondsElapsed = TimeUnit.NANOSECONDS.toSeconds(nanoSecondsElapsed) - 60*minutesElapsed;
-			tenthsOfASecondElapsed = TimeUnit.NANOSECONDS.toMillis(nanoSecondsElapsed)/100 - TimeUnit.NANOSECONDS.toSeconds(nanoSecondsElapsed)*10;
-			
+			secondsElapsed = TimeUnit.NANOSECONDS.toSeconds(nanoSecondsElapsed) - 60 * minutesElapsed;
+			tenthsOfASecondElapsed = TimeUnit.NANOSECONDS.toMillis(nanoSecondsElapsed) / 100
+					- TimeUnit.NANOSECONDS.toSeconds(nanoSecondsElapsed) * 10;
+
 			timeElapsed = minutesElapsed + ":" + secondsElapsed + ":" + tenthsOfASecondElapsed;
 		}
 	}
-	
-	public void buttonDown(String data){
+
+	public void buttonDown(String data) {
 		controlls.disableKeyboardInput();
-        switch(data){
-        	case "0": controlls.reverseKeyDown();break;
-        	case "1": controlls.throttleKeyDown();break;
-        	case "2": controlls.rightKeyDown();break;
-        	case "3": controlls.leftKeyDown();
-        }
-	}
-	
-	public void buttonUp(String data){
-		switch(data){
-			case "0": controlls.reverseKeyUp();break;
-			case "1": controlls.throttleKeyUp();break;
-			case "2": controlls.rightKeyUp();break;
-			case "3": controlls.leftKeyUp();
+		switch (data) {
+		case "0":
+			controlls.reverseKeyDown();
+			break;
+		case "1":
+			controlls.throttleKeyDown();
+			break;
+		case "2":
+			controlls.rightKeyDown();
+			break;
+		case "3":
+			controlls.leftKeyDown();
 		}
 	}
-	
-	
-	
-	public String getTimeElapsed(){
+
+	public void buttonUp(String data) {
+		switch (data) {
+		case "0":
+			controlls.reverseKeyUp();
+			break;
+		case "1":
+			controlls.throttleKeyUp();
+			break;
+		case "2":
+			controlls.rightKeyUp();
+			break;
+		case "3":
+			controlls.leftKeyUp();
+		}
+	}
+
+	public String getTimeElapsed() {
 		return timeElapsed;
 	}
-	
+
 	public int getPlayerNr() {
 		return playerNr;
 	}
-	
-	public Image getImage(){
+
+	public Image getImage() {
 		return sprite;
 	}
-	
-	public void startClock(){
+
+	public void startClock() {
 		startClock = true;
 	}
-	
-	public int getLaps(){
-		if(laps < maxLaps)
-			return laps+1;
+
+	public int getLaps() {
+		if (laps < maxLaps)
+			return laps + 1;
 		return maxLaps;
 	}
-	
-	public boolean finishedRace(){
+
+	public boolean finishedRace() {
 		return finishedRace;
 	}
-	
+
 	public Vector2f getPosition() {
 		return position;
 	}
 
-	public void run(GameContainer container, StateBasedGame game, int deltaTime)throws SlickException{
-		
-		try{
+	public void run(GameContainer container, StateBasedGame game, int deltaTime) throws SlickException {
+
+		try {
 			Input input = container.getInput();
 			currentSpeed = controlls.getCurrentSpeed();
 			controlls.reactToControlls(input, deltaTime, paused);
@@ -597,7 +596,7 @@ public class Car implements Comparable<Car>,Runnable {
 			//checkForCollision();
 			checkForOffRoad();
 			checkRaceTime();
-		}catch(Exception e){
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
@@ -609,25 +608,46 @@ public class Car implements Comparable<Car>,Runnable {
 	public void setTime(int time) {
 		this.time = time;
 	}
-	
-	
+
 	@Override
 	public int compareTo(Car o) {
 		return -(Integer.compare(this.getTime(), o.getTime()));
 	}
-	
-	public void initSounds(){
+
+	public void initSounds() {
 		String path = "/Sound/carSounds/";
 		String type = ".ogg";
 		try {
 			finalRound = new Sound("/Sound/announcer/finalRound" + type);
 			crowdFinish = new Sound("/Sound/crowdFinish" + type);
+			checkpointSound = new Sound("/Sound/checkpoint" + type);
+			lapSound = new Sound("/Sound/lap" + type);
+
 			still = new Sound(path + "still" + type);
-			acceleratingSound = new Sound(path + "accelerating" + type);
-			topSpeedSound = new Sound(path + "topSpeed" + type);
+			topSpeedSound = new Sound(path + "speed" + type);
 			deAcceleratingSound = new Sound(path + "deAccelerate" + type);
 		} catch (SlickException e) {
 			System.out.println("ERROR! Could not load car sounds!");
 		}
 	}
+	
+	private void sounds() {
+		if(currentSpeed < 1){
+			if(!still.playing())
+				still.play();
+		}
+		if(controlls.throttleKeyIsDown){
+			if(!topSpeedSound.playing())
+				topSpeedSound.play();
+		}else{
+			topSpeedSound.stop();
+			
+		}
+		
+		
+		
+		
+
+	}
+
 }
