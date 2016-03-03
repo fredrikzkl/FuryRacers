@@ -49,9 +49,7 @@ public class Car implements Comparable<Car>, Runnable {
 	private Sound lapSound;
 
 	private Sound still;
-	private Sound acceleratingSound;
 	private Sound topSpeedSound;
-	private Sound deAcceleratingSound;
 
 	private boolean deAccelerating;
 
@@ -452,23 +450,28 @@ public class Car implements Comparable<Car>, Runnable {
 
 			still = new Sound(path + "still" + type);
 			topSpeedSound = new Sound(path + "speed" + type);
-			deAcceleratingSound = new Sound(path + "deAccelerate" + type);
 		} catch (SlickException e) {
 			System.out.println("ERROR! Could not load car sounds!");
 		}
 	}
 	
+	public boolean deAcceleratingSoundPlayed = false;
+	
 	private void sounds() {
-		if(currentSpeed < 1){
+		if(currentSpeed < 1 && !topSpeedSound.playing()){
 			if(!still.playing())
 				still.play();
 		}
 		if(controlls.throttleKeyIsDown){
-			if(!topSpeedSound.playing())
+			if(!topSpeedSound.playing()){
+				still.stop();
 				topSpeedSound.play();
+				deAcceleratingSoundPlayed = false;
+			}
 		}else{
 			topSpeedSound.stop();
-			
+			if(!still.playing())
+				still.play();
 		}
 		
 		

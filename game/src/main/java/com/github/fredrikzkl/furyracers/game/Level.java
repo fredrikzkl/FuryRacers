@@ -8,7 +8,6 @@ import org.newdawn.slick.geom.Vector2f;
 
 public class Level {
 	private CourseHandler course;
-	
 
 	int tileWidth, tileHeight;
 	int mapWidthTiles, mapHeightTiles;
@@ -23,10 +22,7 @@ public class Level {
 	private boolean isLeftTileLineCrossed, isRightTileLineCrossed, isTopTileLineCrossed, isBottomTileLineCrossed;
 	private float yOfTileEndX, yOfTileStartX, xOfTileEndY, xOfTileStartY;
 
-	
-	//--------------------------------//
-	
-	
+	// --------------------------------//
 
 	public Level(int id) {
 		course = new CourseHandler(id);
@@ -47,29 +43,36 @@ public class Level {
 	}
 
 	private void musicControl() {
-			course.soundTrack.loop();
-			course.soundTrack.setVolume((float) 0.4);
-		
+		// course.soundTrack.loop();
+		course.soundTrack.setVolume((float) 0.4);
+
 	}
 
 	private void determineStartPosition() {
 		for (int x = 0; x < course.data.getWidth(); x++) {
 			for (int y = 0; y < course.data.getHeight(); y++) {
-				if (course.data.getTileProperty(course.data.getTileId(x, y, 1), "startPos", "-1").equals("start")) {
+				int tileIDroad = course.data.getTileId(x, y, roadLayer);
+				if (course.data.getTileProperty(tileIDroad, "startPos", "-1")
+						.equals("start")) {
 					startCoordinates = new Vector2f(x * tileWidth, y * tileHeight);
+					break;
 				}
-
-				if (course.data.getTileProperty(course.data.getTileId(x, y, 4), "timePos", "-1").equals("timer")) {
-					timerCoordinates = new Vector2f(x * tileWidth, y * tileHeight);
-					System.out.println("X:" + timerCoordinates.x + " Y:" + timerCoordinates.y);
-
-				} else {
-					timerCoordinates = new Vector2f(0, 0);
-				}
+				
 
 			}
+
+			/*
+			 * if (course.data.getTileProperty(course.data.getTileId(x, y, 4),
+			 * "timePos", "-1").equals("timer")) { timerCoordinates = new
+			 * Vector2f(x * tileWidth, y * tileHeight); System.out.println("X:"
+			 * + timerCoordinates.x + " Y:" + timerCoordinates.y); } else {
+			 * timerCoordinates = new Vector2f(0, 0); }
+			 */
+
 		}
 	}
+
+	
 
 	public void render(Graphics g, Camera camera) {
 
@@ -84,13 +87,13 @@ public class Level {
 		 * camera.getSize().x,(int) camera.getSize().y);
 		 */
 	}
-	
+
 	public void drawCars(Graphics g, List<Car> cars) {
-		g.drawImage(course.subLayer, 0,0);
+		g.drawImage(course.subLayer, 0, 0);
 		for (Car car : cars) {
 			car.render(g);
 		}
-		g.drawImage(course.topLayer, 0,0);
+		g.drawImage(course.topLayer, 0, 0);
 	}
 
 	public int getTileWidth() {
@@ -322,7 +325,5 @@ public class Level {
 	public void setTimerCoordinates(Vector2f timerCoordinates) {
 		this.timerCoordinates = timerCoordinates;
 	}
-
-
 
 }
