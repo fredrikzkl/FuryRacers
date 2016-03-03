@@ -39,7 +39,7 @@ public class GameCore extends BasicGameState {
 
 	Font font;
 	TrueTypeFont ttf;
-	Image subMapPic, mapPic;
+	Image subMapPic, mapPic, side;
 
 	public List<Car> cars;
 	public List<Player> players;
@@ -202,9 +202,8 @@ public class GameCore extends BasicGameState {
 			float startY = screenHeight / 10 + (yNextPlayerOffSet * i);
 			float startX = screenWidth / 40;
 
-			ttf.drawString(startX, startY, "Player" + cars.get(i).getPlayerNr() + ": " + players.get(i).getUsername());
+			ttf.drawString(startX, startY, players.get(i).getUsername() + "("+cars.get(i).getPlayerNr()+")");
 			ttf.drawString(startX, startY + yOffSet, "Lap " + cars.get(i).getLaps() + "/3");
-			ttf.drawString(startX, startY + yOffSet * 2, "" + cars.get(i).getTimeElapsed());
 		}
 
 	}
@@ -344,6 +343,7 @@ public class GameCore extends BasicGameState {
 			car.render(g);
 		}
 		g.drawImage(mapPic, 0, 0);
+		g.drawImage(side, camera.getX(), camera.getY());
 
 		g.translate(-camera.getX(), -camera.getY()); // End of camera
 		camera.zoom(g, 1 / camera.getZoom());
@@ -365,6 +365,7 @@ public class GameCore extends BasicGameState {
 		try {
 			subMapPic = new Image("Maps/course1sub.png");
 			mapPic = new Image("Maps/course1.png");
+			side = new Image("Sprites/background/stars1side.png");
 		} catch (SlickException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

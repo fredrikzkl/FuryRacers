@@ -64,6 +64,8 @@ public class Car implements Comparable<Car> {
 		this.id = id;
 		this.playerNr = playerNr;
 		this.level = level;
+		startY += (playerNr-1)*58; // For startplassering i forhold til andre biler
+		startX -= 128*stats.carSize; //Startposisjonen tar utgangspunkt i baksiden av bilen. Billengdene er forskjellige. Derfor plasseres bilen lenger bak, jo lenger den er.
 		position = new Vector2f(startX, startY);
 		controlls = new Controlls(this, stats);
 
