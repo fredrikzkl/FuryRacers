@@ -361,15 +361,6 @@ public class GameCore extends BasicGameState {
 		keyboardPlayerOne = false;
 		keyboardPlayerOne = false;
 
-		try {
-			subMapPic = new Image("Maps/course1sub.png");
-			mapPic = new Image("Maps/course1.png");
-			side = new Image("Sprites/background/stars1side.png");
-		} catch (SlickException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
 		font = new Font("Verdana", Font.BOLD, 20);
 		ttf = new TrueTypeFont(font, true);
 
