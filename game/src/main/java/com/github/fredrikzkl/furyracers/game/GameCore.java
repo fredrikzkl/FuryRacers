@@ -57,9 +57,9 @@ public class GameCore extends BasicGameState {
 	private long startGoSignalTime, goSignalTimeElapsed, secondsLeft;
 	private boolean raceFinished;
 	private TrueTypeFont countDownFont;
-	public Sound three, two, one, go; 
-	private boolean threePlayed,twoPlayed,onePlayed, goPlayed;
-	public static boolean  finalRoundSaid, crowdFinishedPlayed;
+	public Sound three, two, one, go;
+	private boolean threePlayed, twoPlayed, onePlayed, goPlayed;
+	public static boolean finalRoundSaid, crowdFinishedPlayed;
 
 	public void init(GameContainer container, StateBasedGame sbg) throws SlickException {
 		System.out.println("IP: " + IP);
@@ -145,22 +145,22 @@ public class GameCore extends BasicGameState {
 	}
 
 	public void drawCountdown(Graphics g) {
-		
+
 		Color countdownColor = new Color(221, 0, 0);
 
 		if (!raceStarted) {
-			if(secondsLeft>2){
-				if(!threePlayed){
+			if (secondsLeft > 2) {
+				if (!threePlayed) {
 					three.play();
 					threePlayed = true;
 				}
-			}else if(secondsLeft>1){
-				if(!twoPlayed){
+			} else if (secondsLeft > 1) {
+				if (!twoPlayed) {
 					two.play();
-					twoPlayed= true;
+					twoPlayed = true;
 				}
-			}else if(secondsLeft>0){
-				if(!onePlayed){
+			} else if (secondsLeft > 0) {
+				if (!onePlayed) {
 					one.play();
 					onePlayed = true;
 				}
@@ -178,7 +178,7 @@ public class GameCore extends BasicGameState {
 			goSignalTimeElapsed = currentTime - startGoSignalTime;
 			if (goSignalTimeElapsed < 1500) {
 				countDownFont.drawString(screenWidth / 2 - 50, screenHeight / 2 - 150, " RACE!", countdownColor);
-				if (!goPlayed){
+				if (!goPlayed) {
 					go.play();
 					goPlayed = true;
 				}
@@ -190,10 +190,13 @@ public class GameCore extends BasicGameState {
 	
 
 	public void drawCarTimes() {
-
-		if (level.getTimerCoordinates().x != 0 && level.getTimerCoordinates().y != 0) {
-			ttf.drawString(level.getTimerCoordinates().x, level.getTimerCoordinates().y, "00:00:00");
-		}
+		/*
+		 * if (level.getTimerCoordinates().x != 0 &&
+		 * level.getTimerCoordinates().y != 0) {
+		 * ttf.drawString(level.getTimerCoordinates().x,
+		 * level.getTimerCoordinates().y, "00:00:00"); }
+		 * 
+		 */
 
 		for (int i = 0; i < cars.size(); i++) {
 
@@ -338,12 +341,8 @@ public class GameCore extends BasicGameState {
 		camera.zoom(g, camera.getZoom());// Crasher om verdien <=0
 		g.translate(camera.getX(), camera.getY()); // Start of camera
 
-		g.drawImage(subMapPic, 0, 0);
-		for (Car car : cars) {
-			car.render(g);
-		}
-		g.drawImage(mapPic, 0, 0);
-		g.drawImage(side, camera.getX(), camera.getY());
+
+		level.drawCars(g, cars);
 
 		g.translate(-camera.getX(), -camera.getY()); // End of camera
 		camera.zoom(g, 1 / camera.getZoom());
@@ -395,8 +394,9 @@ public class GameCore extends BasicGameState {
 	public boolean isFinalRoundSaid() {
 		return finalRoundSaid;
 	}
+
 	public void setFinalRoundSaid(boolean finalRoundSaid) {
 		this.finalRoundSaid = finalRoundSaid;
 	}
-	
+
 }

@@ -162,7 +162,7 @@ public class ScoreBoard {
 
 		for (int i = 0; i < sortedPlayers.size(); i++) {
 			scoreBoardText.drawString(headerPosX, headerPosY + scoreBoardLength,
-					sortedPlayers.get(i).getId() + ": " + sortedPlayers.get(i).getScore());
+					sortedPlayers.get(i).getUsername() + ": " + sortedPlayers.get(i).getScore());
 			scoreBoardLength += textSize;
 
 		}
