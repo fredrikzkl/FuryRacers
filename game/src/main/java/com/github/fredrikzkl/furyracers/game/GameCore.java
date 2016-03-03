@@ -121,7 +121,7 @@ public class GameCore extends BasicGameState {
 	public void addFonts() {
 
 		InputStream inputStream;
-		float countdownFontSize = 100f;
+		float countdownFontSize = 70f;
 
 		try {
 			inputStream = ResourceLoader.getResourceAsStream("Font/Orbitron-Regular.ttf");
@@ -177,7 +177,7 @@ public class GameCore extends BasicGameState {
 			long currentTime = System.currentTimeMillis();
 			goSignalTimeElapsed = currentTime - startGoSignalTime;
 			if (goSignalTimeElapsed < 1500) {
-				countDownFont.drawString(screenWidth / 2 - 50, screenHeight / 2 - 150, " RACE!", countdownColor);
+				countDownFont.drawString(screenWidth / 2 - 50, screenHeight / 2 - 150, "RACE!", countdownColor);
 				if (!goPlayed) {
 					go.play();
 					goPlayed = true;
