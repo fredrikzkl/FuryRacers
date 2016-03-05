@@ -65,12 +65,12 @@ public class GameCore extends BasicGameState {
 		System.out.println("IP: " + IP);
 	}
 
-	public void gameStart(int levelNr, List<Player> players) throws SlickException {
+	public void gameStart(CourseHandler course, List<Player> players) throws SlickException {
 
 		initSounds();
 		GameSession.setGameState(getID());
 		Application.setInMenu(false);
-		level = new Level(levelNr);
+		level = new Level(course);
 		camera = new Camera(0, 0, level);
 		initVariables();
 		createPlayers(players);

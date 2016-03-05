@@ -1,6 +1,7 @@
 package com.github.fredrikzkl.furyracers;
 
 import java.awt.Font;
+import java.io.File;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -15,6 +16,8 @@ import org.newdawn.slick.TrueTypeFont;
 import org.newdawn.slick.state.BasicGameState;
 import org.newdawn.slick.state.StateBasedGame;
 import org.newdawn.slick.util.ResourceLoader;
+
+import com.github.fredrikzkl.furyracers.game.CourseHandler;
 import com.github.fredrikzkl.furyracers.game.GameCore;
 import com.github.fredrikzkl.furyracers.game.Player;
 import com.github.fredrikzkl.furyracers.network.GameSession;
@@ -25,6 +28,9 @@ public class Menu extends BasicGameState {
 
 	Font regularFont;
 	TrueTypeFont ip;
+	
+	private int mapSelected;
+	private CourseHandler course;
 
 	private final int ICONSIZE = 128;
 
@@ -36,7 +42,7 @@ public class Menu extends BasicGameState {
 	private float consoleSize = 15f;
 
 	private Color headerColor = new Color(221, 0, 0);
-	private Image icons, cars, controllerQR;
+	private Image icons, cars, controllerQR, nextLevelBorder;
 
 	private int tick;
 	private double seconds;
@@ -81,6 +87,7 @@ public class Menu extends BasicGameState {
 		addFonts();
 		getImages();
 		initSounds();
+		
 	}
 
 	public void update(GameContainer container, StateBasedGame game, int delta) throws SlickException {
@@ -98,12 +105,16 @@ public class Menu extends BasicGameState {
 		drawBacksideInfo();
 		drawPlayerIcons(container, game, g);
 		drawQRcode(g);
+		drawNextLevelInfo();
 	}
 	
 	public void initVariables() throws SlickException{
 		players = new ArrayList<Player>();
 		console = new ArrayList<String>();
 		console.add("Welcome to FuryRacers! Version: " + version);
+		
+		mapSelected = randomMap();
+		course = new CourseHandler(mapSelected);
 		
 		allReadyTimestamp = 0;
 		secondsToNextGame = 5;
@@ -204,7 +215,7 @@ public class Menu extends BasicGameState {
 
 	private void startGame(StateBasedGame game) throws SlickException {
 		music.stop();
-		core.gameStart(1, players);
+		core.gameStart(course, players);
 		game.enterState(1);
 	}
 
@@ -303,11 +314,30 @@ public class Menu extends BasicGameState {
 			icons = new Image("Sprites/menu/menu_sheet.png");
 			cars = new Image("Sprites/menu/carSheet.png");
 			controllerQR = new Image("QRcode/controllerQR.JPG");
+			nextLevelBorder = new Image("Sprites/UI/nextLevelBorder.png");
 		} catch (RuntimeException e) {
 			printConsole("ERROR! Sprite sheet not found!");
 		} catch (SlickException e) {
 			e.printStackTrace();
 		}
+	}
+	public void drawNextLevelInfo(){
+		float screenWidth = Application.screenSize.width;
+		float screenHeight = Application.screenSize.height;
+		float scaleValue = (float) ((screenWidth/nextLevelBorder.getWidth())/3.5);
+		float realXvalue = nextLevelBorder.getWidth()*scaleValue;
+		float realYvalue = nextLevelBorder.getHeight()*scaleValue;
+		float posX = ((screenWidth/2)-(realXvalue/2));
+		float posY = screenHeight-(realYvalue+25);
+		
+		nextLevelBorder.draw(posX,posY,scaleValue);
+		//Draw minimap
+		course.minimap.draw(posX,posY,realXvalue,realYvalue);
+		//Draw mapname
+		regularText.drawString(posX+(realXvalue/20), (posY + (realYvalue/10)), course.mapName);
+		//Draw nextLevelString
+		consoleText.drawString(posX, (posY - (console.size())-15), "Next course:");
+		
 	}
 
 	public void drawGameInfo(Graphics g) {
@@ -342,6 +372,19 @@ public class Menu extends BasicGameState {
 		int car = player.getxSel();
 		int color = player.getySel();
 		player.setSelect(car * player.maxY + color);
+	}
+	
+	private int randomMap(){
+		File dir = new File("Maps/");
+		int numberOfSubfolders = 0;
+		File listDir[] = dir.listFiles();
+		for (int i = 0; i < listDir.length; i++) {
+		    if (listDir[i].isDirectory()) {
+		            numberOfSubfolders++;
+		        }
+		}
+		return  1 + (int)(Math.random() * numberOfSubfolders);
+		
 	}
 
 	private void initSounds() {

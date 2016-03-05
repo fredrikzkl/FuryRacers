@@ -24,8 +24,8 @@ public class Level {
 
 	// --------------------------------//
 
-	public Level(int id) {
-		course = new CourseHandler(id);
+	public Level(CourseHandler course) {
+		this.course = course;
 
 		roadLayer = course.data.getLayerIndex("road");
 		propsLayer = course.data.getLayerIndex("props");
@@ -43,7 +43,7 @@ public class Level {
 	}
 
 	private void musicControl() {
-		// course.soundTrack.loop();
+		course.soundTrack.loop();
 		course.soundTrack.setVolume((float) 0.4);
 
 	}
@@ -54,20 +54,16 @@ public class Level {
 				int tileIDroad = course.data.getTileId(x, y, roadLayer);
 				if (course.data.getTileProperty(tileIDroad, "startPos", "-1")
 						.equals("start")) {
+					System.out.println("X: " + x + " Y: " + y);
 					startCoordinates = new Vector2f(x * tileWidth, y * tileHeight);
 					break;
 				}
 				
-
 			}
-
-			/*
-			 * if (course.data.getTileProperty(course.data.getTileId(x, y, 4),
-			 * "timePos", "-1").equals("timer")) { timerCoordinates = new
-			 * Vector2f(x * tileWidth, y * tileHeight); System.out.println("X:"
-			 * + timerCoordinates.x + " Y:" + timerCoordinates.y); } else {
-			 * timerCoordinates = new Vector2f(0, 0); }
-			 */
+		}
+		
+		if(startCoordinates == null){
+			startCoordinates = new Vector2f(0,0);
 
 		}
 	}
