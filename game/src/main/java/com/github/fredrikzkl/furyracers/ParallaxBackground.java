@@ -32,22 +32,22 @@ public class ParallaxBackground {
 	public ParallaxBackground(){
 		layers = new ArrayList<Layer>();
 
-		float speed = 0.02f;
+		float speed = 0.02f*6f;
 		layer1 = new Layer("city1",0,0,speed);
 		layer1sub = new Layer("city1",SCREENWIDTH,0,speed);
 		
 		determineScaling(layer1);
 		
-		speed = 0.01f;
+		speed = 0.01f*6f;
 		layer2 = new Layer("city2",0,0,speed);
 		layer2sub = new Layer("city2",SCREENWIDTH,0,speed);
 		
-		speed = 0.009f;
+		speed = 0.009f*4f;
 		layer3 = new Layer("hills",0,0,speed);
 		float trueLength = layer3.getImg().getWidth()*scaleValue;
 		layer3sub = new Layer("hills",(int)trueLength,0,speed);
 		
-		speed = 0.007f;
+		speed = 0.007f*4f;
 		layer4 = new Layer("stars2",0,0,speed);
 		layer4sub = new Layer("stars2",(int)trueLength,0,speed);
 		
