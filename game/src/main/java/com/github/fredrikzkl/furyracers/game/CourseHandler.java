@@ -50,7 +50,7 @@ public class CourseHandler {
 			info = new File (directory + "info.txt");
 			minimap = new Image(directory + "minimap.png");
 		} catch (SlickException e) {
-			System.out.println("Could not load level " + level + "properly! Jumping to next map..." + e);
+			System.out.println("Could not load level " + level + " properly! Jumping to next map..." + e);
 			subLayer = null;
 			topLayer = null;
 			soundTrack = null;

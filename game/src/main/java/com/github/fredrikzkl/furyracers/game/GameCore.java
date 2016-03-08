@@ -236,7 +236,7 @@ public class GameCore extends BasicGameState {
 			two = new Sound("/Sound/announcer/two.ogg");
 			one = new Sound("/Sound/announcer/one.ogg");
 			go = new Sound("/Sound/announcer/race!.ogg");
-		} catch (SlickException e) {
+		} catch (SlickException e) { 
 			System.out.println("ERROR: Could not load announcer files!" + e);
 		}
 
@@ -245,7 +245,7 @@ public class GameCore extends BasicGameState {
 	public void returnToMenu(GameContainer container, StateBasedGame game) throws SlickException {
 		Application.closeConnection();
 		Application.createGameSession();
-
+		
 		game.getState(menuID).init(container, game);
 		game.enterState(menuID);
 	}

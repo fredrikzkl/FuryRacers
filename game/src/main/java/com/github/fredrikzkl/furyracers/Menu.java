@@ -383,7 +383,9 @@ public class Menu extends BasicGameState {
 		            numberOfSubfolders++;
 		        }
 		}
-		return  1 + (int)(Math.random() * numberOfSubfolders);
+		//return  1 + (int)(Math.random() * numberOfSubfolders);
+		return 3;
+		
 		
 	}
 
