@@ -19,6 +19,23 @@
 
   var throttle = function(){console.log("Throttle")};
 
+  var usernamePrompt = function(){
+
+    console.log("hey");
+
+    var newUsername = prompt("Enter your name! (q to quit)", username);
+
+    if (newUsername == "" || newUsername == username || newUsername == null) {
+        return;
+    }else if(newUsername == "q"){
+        sendToBackend("disconnect");
+        return;
+    }
+
+    setUsername(newUsername);
+    sendToBackend("set username", username);
+  };
+
   var leftDown = function() { 
     if(!isLeftDown){ 
       isLeftDown = true; 
@@ -59,7 +76,6 @@
     if(!isThrottleDown){ 
       isThrottleDown = true; 
       isThrottleUp = false;
-      console.log("rightDown");
       buttonDown(throttleId);
       redButtons.frame = 1;
     }
@@ -68,8 +84,7 @@
   var throttleUp = function(){ 
     if(!isThrottleUp){ 
       isThrottleUp = true; 
-      isThrottleDown = false; 
-      console.log("leftUp");
+      isThrottleDown = false;
       buttonUp(throttleId);
       redButtons.frame = 0;
     }
@@ -132,21 +147,20 @@
       tools_button.data = 4;
       tools_button.scale.setTo(0.03,0.04);
       tools_button.inputEnabled = true;
+      tools_button.events.onInputDown.add(usernamePrompt, this);
 
       redButtons = game.add.sprite(this.game.width/1.4, this.game.height/4, 'redButtons');
       redButtons.data = 1;
       redButtons.frame = 0;
       redButtons.scale.setTo(1,1.2);
       redButtons.inputEnabled = true;
-      redButtons.events.onInputOver.add(throttle, this);
-      //redButtons.events.onInputOver.add(buttonDown(redButtons.data), this);
 
       var whitePaddleX = 0;
-      var whitePaddleY = game.stage.height/4;
+      var whitePaddleY = 0;
       var whitePaddleWidth = game.stage.width/2.5;
-      var whitePaddleHeight = game.stage.height/2;
+      var whitePaddleHeight = game.stage.height;
 
-      var arrowKeysMargin = whitePaddleHeight/60;
+      var arrowKeysMargin = whitePaddleHeight/200;
 
       var arrowLeftX = whitePaddleX + arrowKeysMargin;
       var arrowLeftY = whitePaddleY + arrowKeysMargin;
@@ -217,6 +231,7 @@
           rightArrowImage.scale.setTo(0.5, 0.5);
 
 
+
       backgroundArrowLeft.events.onInputOver.add(leftDown, this);
       backgroundArrowLeft.events.onInputDown.add(leftDown, this);
 
@@ -234,12 +249,10 @@
 
       redButtons.events.onInputOut.add(throttleUp, this);
       redButtons.events.onInputUp.add(throttleUp, this);
-    },
 
-
-    update: function update() {
-     
+    
     }
+
   });
 
 }.call(this, Phaser));

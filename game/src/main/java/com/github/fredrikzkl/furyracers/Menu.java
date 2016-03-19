@@ -5,10 +5,12 @@ import java.io.File;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+
 import org.newdawn.slick.Color;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
+import org.newdawn.slick.Input;
 import org.newdawn.slick.Music;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.Sound;
@@ -80,18 +82,19 @@ public class Menu extends BasicGameState {
 
 	public void init(GameContainer container, StateBasedGame game) throws SlickException {
 		
-		
 		QR.genQR(controllerIP);
+		
 		Application.setInMenu(true);
 		initVariables();
 		addFonts();
 		getImages();
 		initSounds();
+		GameSession.setGameState(getID());
 		
 	}
 
 	public void update(GameContainer container, StateBasedGame game, int delta) throws SlickException {
-		GameSession.setGameState(getID());
+		setKeyboardCommands(container, game);
 		setTime();
 		readyCheck(game);
 	}
@@ -127,6 +130,16 @@ public class Menu extends BasicGameState {
 		music.loop();
 		music.setVolume((float) 0.4);
 		getReadySaid = false;
+	}
+	
+	private void setKeyboardCommands(GameContainer container, StateBasedGame game) throws SlickException{
+		
+		Input input = container.getInput();
+		if (input.isKeyPressed(Input.KEY_R)) {
+			Application.closeConnection();
+			Application.createGameSession();
+			init(container, game);
+		}
 	}
 	
 	public void setTime(){
@@ -383,8 +396,7 @@ public class Menu extends BasicGameState {
 		            numberOfSubfolders++;
 		        }
 		}
-		//return  1 + (int)(Math.random() * numberOfSubfolders);
-		return 3;
+		return  1 + (int)(Math.random() * numberOfSubfolders);
 		
 		
 	}

@@ -10,12 +10,12 @@ import net.glxn.qrgen.javase.QRCode;
 
 public class QRgenerator {
 	
-	int backColor = 0xEFEFEF;
+	int backgroundColor = 0xEFEFEF;
 	int frontColor = 0x0;
 	
 	public void genQR(String IPtoController){
 		ByteArrayOutputStream out = QRCode.from(IPtoController)
-                .to(ImageType.PNG).withColor(frontColor, backColor).stream();
+                .to(ImageType.PNG).withColor(frontColor, backgroundColor).stream();
 
 		try {
 			FileOutputStream fout = new FileOutputStream(new File(

@@ -1,11 +1,15 @@
 package com.github.fredrikzkl.furyracers.game;
 
 import java.awt.Font;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+
+import javax.websocket.EncodeException;
+
 import org.newdawn.slick.Color;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
@@ -22,6 +26,7 @@ import org.newdawn.slick.state.GameState;
 import org.newdawn.slick.state.StateBasedGame;
 import org.newdawn.slick.state.transition.Transition;
 import org.newdawn.slick.util.ResourceLoader;
+
 import com.github.fredrikzkl.furyracers.Application;
 import com.github.fredrikzkl.furyracers.network.GameSession;
 
@@ -85,7 +90,13 @@ public class GameCore extends BasicGameState {
 		checkForKeyboardInput(container, game);
 		startCountdown();
 		checkCountdown();
-		updateCars(container, game, deltaTime);
+		try {
+			updateCars(container, game, deltaTime);
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (EncodeException e) {
+			e.printStackTrace();
+		}
 		checkDistances();
 		camera.zoomLogic();
 		camera.updateCamCoordinates();
@@ -211,7 +222,7 @@ public class GameCore extends BasicGameState {
 
 	}
 
-	public void updateCars(GameContainer container, StateBasedGame game, int deltaTime) throws SlickException {
+	public void updateCars(GameContainer container, StateBasedGame game, int deltaTime) throws SlickException, IOException, EncodeException {
 
 		int carsFinished = 0;
 

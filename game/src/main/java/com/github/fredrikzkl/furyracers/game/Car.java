@@ -1,7 +1,12 @@
 package com.github.fredrikzkl.furyracers.game;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
+
+import javax.websocket.EncodeException;
+
+import org.newdawn.slick.Game;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
 import org.newdawn.slick.Input;
@@ -11,6 +16,8 @@ import org.newdawn.slick.geom.Polygon;
 import org.newdawn.slick.geom.Vector2f;
 import org.newdawn.slick.state.StateBasedGame;
 import org.newdawn.slick.GameContainer;
+
+import com.github.fredrikzkl.furyracers.network.GameSession;
 
 public class Car implements Comparable<Car> {
 
@@ -71,7 +78,6 @@ public class Car implements Comparable<Car> {
 		getCarSprite();
 
 		initSounds();
-
 	}
 
 	private void initVariables() {
@@ -99,7 +105,7 @@ public class Car implements Comparable<Car> {
 		}
 	}
 
-	public void update(GameContainer container, StateBasedGame game, int deltaTime) throws SlickException {
+	public void update(GameContainer container, StateBasedGame game, int deltaTime) throws SlickException, IOException, EncodeException {
 
 		Input input = container.getInput();
 		currentSpeed = controlls.getCurrentSpeed();
@@ -189,7 +195,7 @@ public class Car implements Comparable<Car> {
 		}
 	}
 
-	public void checkForOffRoad() {
+	public void checkForOffRoad() throws IOException, EncodeException {
 
 		float[] colBoxPoints = collisionBox.getPoints();
 		float xPos;
@@ -207,6 +213,7 @@ public class Car implements Comparable<Car> {
 					controlls.changeTopSpeed(0.5f);
 					controlls.changeCurrentSpeed(0.5f);
 					offRoad = true;
+					GameSession.toggleRumbling(id);
 					break;
 				}
 			} else {
@@ -217,7 +224,12 @@ public class Car implements Comparable<Car> {
 		if(offRoad && pointsNotOffRoad == amountOfPointsXY/2){
 			controlls.changeTopSpeed(2);
 			offRoad = false;
+			GameSession.toggleRumbling(id);
 		}
+	}
+	
+	private void toggleRumbling(){
+		
 	}
 
 	public void checkForCollision() {
@@ -521,15 +533,19 @@ public class Car implements Comparable<Car> {
 		switch (data) {
 		case "0":
 			controlls.reverseKeyDown();
+			//System.out.println("RightUp");
 			break;
 		case "1":
 			controlls.throttleKeyDown();
+			//System.out.println("RightUp");
 			break;
 		case "2":
 			controlls.rightKeyDown();
+			System.out.println("RightDown");
 			break;
 		case "3":
 			controlls.leftKeyDown();
+			System.out.println("LeftDown");
 		}
 	}
 
@@ -543,9 +559,11 @@ public class Car implements Comparable<Car> {
 			break;
 		case "2":
 			controlls.rightKeyUp();
+			System.out.println("RightUp");
 			break;
 		case "3":
 			controlls.leftKeyUp();
+			System.out.println("LeftUp");
 		}
 	}
 
