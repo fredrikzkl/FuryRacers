@@ -52,7 +52,6 @@ public class GameSession {
 	}
 
 	public void onOpen(Session session) throws IOException, EncodeException {
-		System.out.println("onOpen");
 		backend = session;
 		
 		sendToBackend("identify", "game");
@@ -84,6 +83,10 @@ public class GameSession {
 	
 	public static void toggleRumbling(String id) throws IOException, EncodeException{
 		sendToClient("rumble", id, "");
+	}
+	
+	public static void carColorToController(String recieverId, String colorCode){
+		sendToClient("set color", recieverId, colorCode);
 	}
 
 	public void onMessage(Session session, String message) throws IOException, EncodeException, SlickException {
@@ -154,8 +157,6 @@ public class GameSession {
 
 				break;
 			}
-			
-			System.out.println("GAAAAY");
 
 			sendToBackend("get username", id);
 

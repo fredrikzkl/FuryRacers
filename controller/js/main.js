@@ -1,5 +1,12 @@
 /* global Phaser */
 
+function setBackgroundColor(color){
+
+  game.stage.backgroundColor = color;
+}
+
+var game;
+
 (function (Phaser) {
   'use strict';
 
@@ -14,14 +21,28 @@
   var rightArrowId = 2;
   var leftArrowId = 3;
 
+  var arrowLeftBlackArea;
+  var arrowRightBlackArea;
+  var backgroundArrowLeftBlackArea;
+  var bakcgroundArrowRightBlackArea;
+  var whitePaddleBackground;
+  var redButtons;
+  var tools_button;
+
+  var GREY = "0xbebbbd";
+  var BLACK = "0x111213";
+  var WHITE = "0xffffff";
+  var RED = "0xD40100";
+  var offWHITE = '#EFEFEF';
+
   var buttonDown = function(buttonID){};
   var buttonUp = function(buttonID){};
 
   var throttle = function(){console.log("Throttle")};
 
-  var usernamePrompt = function(){
+ 
 
-    console.log("hey");
+  var usernamePrompt = function(){  
 
     var newUsername = prompt("Enter your name! (q to quit)", username);
 
@@ -90,24 +111,47 @@
     }
   };
 
+  function createThrottleButton(dis){
 
-  var arrowLeft;
-  var arrowRight;
-  var backgroundArrowLeft;
-  var bakcgroundArrowRight;
-  var whitePaddle;
-  var redButtons;
-  var tools_button;
+    redButtons = game.add.sprite(dis.game.width/1.4, dis.game.height/4, 'redButtons');
+    redButtons.data = 1;
+    redButtons.frame = 0;
+    redButtons.scale.setTo(1,1.2);
+    redButtons.inputEnabled = true;
+  }
 
-  var GREY = "0xbebbbd";
-  var BLACK = "0x111213";
-  var WHITE = "0xffffff";
-  var RED = "0xD40100";
-  
-  /*var previousSteeringDirection = 1; // For vibreering. Hvis forrige retning var høyre og man nå tar til venstre --> vibrer
-  var directionChangeSound;*/
+  function createToolsButton(dis){
 
-  var game = new Phaser.Game(800, 600, Phaser.AUTO, 'phaser-example', {
+    tools_button = game.add.sprite(dis.game.width/2.3, dis.game.height/6, 'tools_button');
+    tools_button.data = 4;
+    tools_button.scale.setTo(0.03,0.04);
+    tools_button.inputEnabled = true;
+  }
+
+  function createButtonEvents(game){
+
+    tools_button.events.onInputDown.add(usernamePrompt, game);
+
+    backgroundArrowLeftBlackArea.events.onInputOver.add(leftDown, game);
+    backgroundArrowLeftBlackArea.events.onInputDown.add(leftDown, game);
+
+    bakcgroundArrowRightBlackArea.events.onInputOver.add(rightDown, game);
+    bakcgroundArrowRightBlackArea.events.onInputDown.add(rightDown, game);
+
+    backgroundArrowLeftBlackArea.events.onInputOut.add(leftUp, game);
+    backgroundArrowLeftBlackArea.events.onInputUp.add(leftUp, game);
+
+    bakcgroundArrowRightBlackArea.events.onInputOut.add(rightUp, game);
+    bakcgroundArrowRightBlackArea.events.onInputUp.add(rightUp, game);
+
+    redButtons.events.onInputDown.add(throttleDown, game);
+    redButtons.events.onInputOver.add(throttleDown, game);
+
+    redButtons.events.onInputOut.add(throttleUp, game);
+    redButtons.events.onInputUp.add(throttleUp, game);
+  }
+
+    game = new Phaser.Game(800, 600, Phaser.AUTO, 'controller', {
 
     preload: function preload() {
 
@@ -132,124 +176,96 @@
 
     },
 
-    create: function create() {
+    create: function create(){
 
-
-      game.stage.backgroundColor = '#EFEFEF';
+      setBackgroundColor(offWHITE, game);
 
       game.scale.scaleMode = Phaser.ScaleManager.EXACT_FIT;
-
       game.scale.fullScreenScaleMode = Phaser.ScaleManager.EXACT_FIT;
       game.scale.startFullScreen(false);
       game.scale.refresh();
 
-      tools_button = game.add.sprite(this.game.width/2.3, this.game.height/6, 'tools_button');
-      tools_button.data = 4;
-      tools_button.scale.setTo(0.03,0.04);
-      tools_button.inputEnabled = true;
-      tools_button.events.onInputDown.add(usernamePrompt, this);
+      createToolsButton(this);
+      createThrottleButton(this);
+     
+      var whitePaddleBackgroundX = 0;
+      var whitePaddleBackgroundY = 0;
+      var whitePaddleBackgroundWidth = game.stage.width/2.5;
+      var whitePaddleBackgroundHeight = game.stage.height;
 
-      redButtons = game.add.sprite(this.game.width/1.4, this.game.height/4, 'redButtons');
-      redButtons.data = 1;
-      redButtons.frame = 0;
-      redButtons.scale.setTo(1,1.2);
-      redButtons.inputEnabled = true;
+      whitePaddleBackground = game.add.graphics(0,0);
+      whitePaddleBackground.beginFill(WHITE, 1);
+      whitePaddleBackground.drawRect(
+        whitePaddleBackgroundX,
+        whitePaddleBackgroundY,
+        whitePaddleBackgroundWidth,
+        whitePaddleBackgroundHeight);
 
-      var whitePaddleX = 0;
-      var whitePaddleY = 0;
-      var whitePaddleWidth = game.stage.width/2.5;
-      var whitePaddleHeight = game.stage.height;
+      var arrowKeysMargin = whitePaddleBackgroundHeight/200;
 
-      var arrowKeysMargin = whitePaddleHeight/200;
+      var arrowLeftBlackAreaX = whitePaddleBackgroundX + arrowKeysMargin;
+      var arrowLeftBlackAreaY = whitePaddleBackgroundY + arrowKeysMargin;
+      var arrowLeftBlackAreaWidth = (whitePaddleBackgroundWidth - 3*arrowKeysMargin)/2;
+      var arrowLeftBlackAreaHeight = (whitePaddleBackgroundHeight - 2*arrowKeysMargin);
+      var arrowLeftBlackAreaEndX = arrowLeftBlackAreaX + arrowLeftBlackAreaWidth;
+      var arrowLeftBlackAreaEndY = arrowLeftBlackAreaY + arrowLeftBlackAreaHeight;
 
-      var arrowLeftX = whitePaddleX + arrowKeysMargin;
-      var arrowLeftY = whitePaddleY + arrowKeysMargin;
-      var arrowLeftWidth = (whitePaddleWidth - 3*arrowKeysMargin)/2;
-      var arrowLeftHeight = (whitePaddleHeight - 2*arrowKeysMargin);
-      var arrowLeftEndX = arrowLeftX + arrowLeftWidth;
-      var arrowLeftEndY = arrowLeftY + arrowLeftHeight;
+      var arrowRightBlackAreaX = arrowLeftBlackAreaEndX + arrowKeysMargin;
+      var arrowRightBlackAreaY = arrowLeftBlackAreaY;
+      var arrowRightBlackAreaWidth = arrowLeftBlackAreaWidth;
+      var arrowRightBlackAreaHeight = arrowLeftBlackAreaHeight;
+      var arrowRightBlackAreaEndX = arrowRightBlackAreaX + arrowRightBlackAreaWidth;
+      var arrowRightBlackAreaEndY = arrowRightBlackAreaY + arrowRightBlackAreaHeight; 
 
-      var arrowRightX = arrowLeftEndX + arrowKeysMargin;
-      var arrowRightY = arrowLeftY;
-      var arrowRightWidth = arrowLeftWidth;
-      var arrowRightHeight = arrowLeftHeight;
-      var arrowRightEndX = arrowRightX + arrowRightWidth;
-      var arrowRightEndY = arrowRightY + arrowRightHeight; 
+      var middleOfArrowLeftBlackAreaX = (arrowLeftBlackAreaX + arrowLeftBlackAreaEndX)/2;
+      var middleOfArrowLeftBlackAreaY = (arrowLeftBlackAreaY + arrowLeftBlackAreaEndY)/2;
 
-      var middleOfArrowLeftX = (arrowLeftX + arrowLeftEndX)/2;
-      var middleOfArrowLeftY = (arrowLeftY + arrowLeftEndY)/2;
+      var middleOfArrowRightBlackAreaX = (arrowRightBlackAreaX + arrowRightBlackAreaEndX)/2;
+      var middleOfArrowRightBlackAreaY = (arrowRightBlackAreaY + arrowRightBlackAreaEndY)/2;
 
-      var middleOfArrowRightX = (arrowRightX + arrowRightEndX)/2;
-      var middleOfArrowRightY = (arrowRightY + arrowRightEndY)/2;
-
-      whitePaddle = game.add.graphics(0,0);
-      whitePaddle.beginFill(WHITE, 1);
-      whitePaddle.drawRect(
-        whitePaddleX,
-        whitePaddleY,
-        whitePaddleWidth,
-        whitePaddleHeight);
+     
     //Pilene som skal ligge over det hvite området
-      arrowLeft = game.add.graphics(0,0);
-      arrowLeft.beginFill(BLACK,1);
-      arrowLeft.drawRect(
-        arrowLeftX,
-        arrowLeftY,
-        arrowLeftWidth,
-        arrowLeftHeight);
+      arrowLeftBlackArea = game.add.graphics(0,0);
+      arrowLeftBlackArea.beginFill(BLACK,1);
+      arrowLeftBlackArea.drawRect(
+        arrowLeftBlackAreaX,
+        arrowLeftBlackAreaY,
+        arrowLeftBlackAreaWidth,
+        arrowLeftBlackAreaHeight);
 
-      arrowRight = game.add.graphics(0,0);
-      arrowRight.beginFill(BLACK,1);
-      arrowRight.drawRect(
-        arrowRightX,
-        arrowRightY,
-        arrowRightWidth,
-        arrowRightHeight);
+      arrowRightBlackArea = game.add.graphics(0,0);
+      arrowRightBlackArea.beginFill(BLACK,1);
+      arrowRightBlackArea.drawRect(
+        arrowRightBlackAreaX,
+        arrowRightBlackAreaY,
+        arrowRightBlackAreaWidth,
+        arrowRightBlackAreaHeight);
 
 
-      bakcgroundArrowRight = game.add.sprite(0, 0);
-      bakcgroundArrowRight.addChild(arrowRight);
-      bakcgroundArrowRight.data = 2; // knappID/buttonID
-      bakcgroundArrowRight.inputEnabled = true;
+      bakcgroundArrowRightBlackArea = game.add.sprite(0, 0);
+      bakcgroundArrowRightBlackArea.addChild(arrowRightBlackArea);
+      bakcgroundArrowRightBlackArea.data = 2; // knappID/buttonID
+      bakcgroundArrowRightBlackArea.inputEnabled = true;
 
-      backgroundArrowLeft = game.add.sprite(0, 0);
-      backgroundArrowLeft.addChild(arrowLeft);
-      backgroundArrowLeft.data = 3; //knappID/buttonID
-      backgroundArrowLeft.inputEnabled = true;
+      backgroundArrowLeftBlackArea = game.add.sprite(0, 0);
+      backgroundArrowLeftBlackArea.addChild(arrowLeftBlackArea);
+      backgroundArrowLeftBlackArea.data = 3; //knappID/buttonID
+      backgroundArrowLeftBlackArea.inputEnabled = true;
 
-      var scale = 0.25;
-      var arrowSpriteWidth = 200*scale;
-      var arrowSpriteHeight = 250*scale;
+      var arrowImageScale = 0.25;
+      var arrowSpriteWidth = 200*arrowImageScale;
+      var arrowSpriteHeight = 250*arrowImageScale;
 
-      var leftArrowImage = game.add.sprite(middleOfArrowLeftX - arrowSpriteWidth, middleOfArrowLeftY - arrowSpriteHeight, 'arrows');
+      var leftArrowImage = game.add.sprite(middleOfArrowLeftBlackAreaX - arrowSpriteWidth, middleOfArrowLeftBlackAreaY - arrowSpriteHeight, 'arrows');
           leftArrowImage.frame = 0;
           leftArrowImage.scale.setTo(0.5, 0.5);
 
 
-      var rightArrowImage = game.add.sprite(middleOfArrowRightX - arrowSpriteWidth, middleOfArrowRightY - arrowSpriteHeight, 'arrows');
+      var rightArrowImage = game.add.sprite(middleOfArrowRightBlackAreaX - arrowSpriteWidth, middleOfArrowRightBlackAreaY - arrowSpriteHeight, 'arrows');
           rightArrowImage.frame = 1;
           rightArrowImage.scale.setTo(0.5, 0.5);
 
-
-
-      backgroundArrowLeft.events.onInputOver.add(leftDown, this);
-      backgroundArrowLeft.events.onInputDown.add(leftDown, this);
-
-      bakcgroundArrowRight.events.onInputOver.add(rightDown, this);
-      bakcgroundArrowRight.events.onInputDown.add(rightDown, this);
-
-      backgroundArrowLeft.events.onInputOut.add(leftUp, this);
-      backgroundArrowLeft.events.onInputUp.add(leftUp, this);
-
-      bakcgroundArrowRight.events.onInputOut.add(rightUp, this);
-      bakcgroundArrowRight.events.onInputUp.add(rightUp, this);
-
-      redButtons.events.onInputDown.add(throttleDown, this);
-      redButtons.events.onInputOver.add(throttleDown, this);
-
-      redButtons.events.onInputOut.add(throttleUp, this);
-      redButtons.events.onInputUp.add(throttleUp, this);
-
+      createButtonEvents(this);
     
     }
 

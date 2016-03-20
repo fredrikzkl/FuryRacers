@@ -165,8 +165,10 @@ public class Menu extends BasicGameState {
 		// Cars - tegner svart om spiller ikke finnes
 		for (int i = 0; i < 4; i++) {
 			if (i < players.size()) {
+				int carSelection = players.get(i).getxSel();
+				int colorSelection = players.get(i).getySel();
 				g.drawImage(
-						cars.getSubImage(players.get(i).getxSel() * ICONSIZE, players.get(i).getySel() * ICONSIZE,
+						cars.getSubImage( carSelection * ICONSIZE, colorSelection * ICONSIZE,
 								ICONSIZE, ICONSIZE),
 						(float) (Application.screenSize.width / 3.8 + (i * 160)), Application.screenSize.height / 4);
 			}else{
