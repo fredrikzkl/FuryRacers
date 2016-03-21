@@ -21,26 +21,26 @@ var game;
   var rightArrowId = 2;
   var leftArrowId = 3;
 
-  var arrowLeftBlackArea;
-  var arrowRightBlackArea;
-  var backgroundArrowLeftBlackArea;
-  var bakcgroundArrowRightBlackArea;
+  var arrowLeftArea;
+  var arrowRightArea;
+  var backgroundarrowLeftArea;
+  var bakcgroundArrowRightArea;
   var whitePaddleBackground;
   var redButtons;
   var tools_button;
 
   var GREY = "0xbebbbd";
+  var lightGray = "0xb3b3b3"
   var BLACK = "0x111213";
   var WHITE = "0xffffff";
   var RED = "0xD40100";
-  var offWHITE = '#EFEFEF';
+  var offWHITE = '0xEFEFEF';
+  var greenYellowish = "  0xb8b894";
 
   var buttonDown = function(buttonID){};
   var buttonUp = function(buttonID){};
 
   var throttle = function(){console.log("Throttle")};
-
- 
 
   var usernamePrompt = function(){  
 
@@ -61,7 +61,6 @@ var game;
     if(!isLeftDown){ 
       isLeftDown = true; 
       isLeftUp = false; 
-      console.log("leftDown");
       buttonDown(leftArrowId);
     }
   };
@@ -70,7 +69,6 @@ var game;
     if(!isRightDown){ 
       isRightDown = true; 
       isRightUp = false;
-      console.log("rightDown");
       buttonDown(rightArrowId);
     }
   };
@@ -79,7 +77,6 @@ var game;
     if(!isLeftUp){ 
       isLeftUp = true; 
       isLeftDown = false; 
-      console.log("leftUp");
       buttonUp(leftArrowId);
     }
   };
@@ -88,7 +85,6 @@ var game;
     if(!isRightUp){ 
       isRightUp = true; 
       isRightDown = false; 
-      console.log("rightUp");
       buttonUp(rightArrowId);
     }
   };
@@ -122,9 +118,14 @@ var game;
 
   function createToolsButton(dis){
 
-    tools_button = game.add.sprite(dis.game.width/2.3, dis.game.height/6, 'tools_button');
+    var screenWidth = dis.game.width;
+    var screenHeight = dis.game.height;
+    var toolsButtonY = screenHeight / 90; 
+    var toolsButtonX = screenWidth - screenWidth/15;
+
+    tools_button = game.add.sprite(toolsButtonX, toolsButtonY, 'tools_button');
     tools_button.data = 4;
-    tools_button.scale.setTo(0.03,0.04);
+    tools_button.scale.setTo(0.02,0.025);
     tools_button.inputEnabled = true;
   }
 
@@ -132,17 +133,17 @@ var game;
 
     tools_button.events.onInputDown.add(usernamePrompt, game);
 
-    backgroundArrowLeftBlackArea.events.onInputOver.add(leftDown, game);
-    backgroundArrowLeftBlackArea.events.onInputDown.add(leftDown, game);
+    backgroundarrowLeftArea.events.onInputOver.add(leftDown, game);
+    backgroundarrowLeftArea.events.onInputDown.add(leftDown, game);
 
-    bakcgroundArrowRightBlackArea.events.onInputOver.add(rightDown, game);
-    bakcgroundArrowRightBlackArea.events.onInputDown.add(rightDown, game);
+    bakcgroundArrowRightArea.events.onInputOver.add(rightDown, game);
+    bakcgroundArrowRightArea.events.onInputDown.add(rightDown, game);
 
-    backgroundArrowLeftBlackArea.events.onInputOut.add(leftUp, game);
-    backgroundArrowLeftBlackArea.events.onInputUp.add(leftUp, game);
+    backgroundarrowLeftArea.events.onInputOut.add(leftUp, game);
+    backgroundarrowLeftArea.events.onInputUp.add(leftUp, game);
 
-    bakcgroundArrowRightBlackArea.events.onInputOut.add(rightUp, game);
-    bakcgroundArrowRightBlackArea.events.onInputUp.add(rightUp, game);
+    bakcgroundArrowRightArea.events.onInputOut.add(rightUp, game);
+    bakcgroundArrowRightArea.events.onInputUp.add(rightUp, game);
 
     redButtons.events.onInputDown.add(throttleDown, game);
     redButtons.events.onInputOver.add(throttleDown, game);
@@ -193,75 +194,67 @@ var game;
       var whitePaddleBackgroundWidth = game.stage.width/2.5;
       var whitePaddleBackgroundHeight = game.stage.height;
 
-      whitePaddleBackground = game.add.graphics(0,0);
-      whitePaddleBackground.beginFill(WHITE, 1);
-      whitePaddleBackground.drawRect(
-        whitePaddleBackgroundX,
-        whitePaddleBackgroundY,
-        whitePaddleBackgroundWidth,
-        whitePaddleBackgroundHeight);
-
       var arrowKeysMargin = whitePaddleBackgroundHeight/200;
 
-      var arrowLeftBlackAreaX = whitePaddleBackgroundX + arrowKeysMargin;
-      var arrowLeftBlackAreaY = whitePaddleBackgroundY + arrowKeysMargin;
-      var arrowLeftBlackAreaWidth = (whitePaddleBackgroundWidth - 3*arrowKeysMargin)/2;
-      var arrowLeftBlackAreaHeight = (whitePaddleBackgroundHeight - 2*arrowKeysMargin);
-      var arrowLeftBlackAreaEndX = arrowLeftBlackAreaX + arrowLeftBlackAreaWidth;
-      var arrowLeftBlackAreaEndY = arrowLeftBlackAreaY + arrowLeftBlackAreaHeight;
+      var arrowLeftAreaX = whitePaddleBackgroundX + arrowKeysMargin;
+      var arrowLeftAreaY = whitePaddleBackgroundY + arrowKeysMargin;
+      var arrowLeftAreaWidth = (whitePaddleBackgroundWidth - 3*arrowKeysMargin)/2;
+      var arrowLeftAreaHeight = (whitePaddleBackgroundHeight - 2*arrowKeysMargin);
+      var arrowLeftAreaEndX = arrowLeftAreaX + arrowLeftAreaWidth;
+      var arrowLeftAreaEndY = arrowLeftAreaY + arrowLeftAreaHeight;
 
-      var arrowRightBlackAreaX = arrowLeftBlackAreaEndX + arrowKeysMargin;
-      var arrowRightBlackAreaY = arrowLeftBlackAreaY;
-      var arrowRightBlackAreaWidth = arrowLeftBlackAreaWidth;
-      var arrowRightBlackAreaHeight = arrowLeftBlackAreaHeight;
-      var arrowRightBlackAreaEndX = arrowRightBlackAreaX + arrowRightBlackAreaWidth;
-      var arrowRightBlackAreaEndY = arrowRightBlackAreaY + arrowRightBlackAreaHeight; 
+      var arrowRightAreaX = arrowLeftAreaEndX + arrowKeysMargin;
+      var arrowRightAreaY = arrowLeftAreaY;
+      var arrowRightAreaWidth = arrowLeftAreaWidth;
+      var arrowRightAreaHeight = arrowLeftAreaHeight;
+      var arrowRightAreaEndX = arrowRightAreaX + arrowRightAreaWidth;
+      var arrowRightAreaEndY = arrowRightAreaY + arrowRightAreaHeight; 
 
-      var middleOfArrowLeftBlackAreaX = (arrowLeftBlackAreaX + arrowLeftBlackAreaEndX)/2;
-      var middleOfArrowLeftBlackAreaY = (arrowLeftBlackAreaY + arrowLeftBlackAreaEndY)/2;
+      var middleOfarrowLeftAreaX = (arrowLeftAreaX + arrowLeftAreaEndX)/2;
+      var middleOfarrowLeftAreaY = (arrowLeftAreaY + arrowLeftAreaEndY)/2;
 
-      var middleOfArrowRightBlackAreaX = (arrowRightBlackAreaX + arrowRightBlackAreaEndX)/2;
-      var middleOfArrowRightBlackAreaY = (arrowRightBlackAreaY + arrowRightBlackAreaEndY)/2;
+      var middleOfArrowRightAreaX = (arrowRightAreaX + arrowRightAreaEndX)/2;
+      var middleOfArrowRightAreaY = (arrowRightAreaY + arrowRightAreaEndY)/2;
 
      
     //Pilene som skal ligge over det hvite området
-      arrowLeftBlackArea = game.add.graphics(0,0);
-      arrowLeftBlackArea.beginFill(BLACK,1);
-      arrowLeftBlackArea.drawRect(
-        arrowLeftBlackAreaX,
-        arrowLeftBlackAreaY,
-        arrowLeftBlackAreaWidth,
-        arrowLeftBlackAreaHeight);
+      arrowLeftArea = game.add.graphics(0,0);
+      arrowLeftArea.beginFill(lightGray,1);
+      arrowLeftArea.drawRect(
+        arrowLeftAreaX,
+        arrowLeftAreaY,
+        arrowLeftAreaWidth,
+        arrowLeftAreaHeight);
 
-      arrowRightBlackArea = game.add.graphics(0,0);
-      arrowRightBlackArea.beginFill(BLACK,1);
-      arrowRightBlackArea.drawRect(
-        arrowRightBlackAreaX,
-        arrowRightBlackAreaY,
-        arrowRightBlackAreaWidth,
-        arrowRightBlackAreaHeight);
+      arrowRightArea = game.add.graphics(0,0);
+      arrowRightArea.beginFill(lightGray,1);
+      arrowRightArea.drawRect(
+        arrowRightAreaX,
+        arrowRightAreaY,
+        arrowRightAreaWidth,
+        arrowRightAreaHeight);
 
 
-      bakcgroundArrowRightBlackArea = game.add.sprite(0, 0);
-      bakcgroundArrowRightBlackArea.addChild(arrowRightBlackArea);
-      bakcgroundArrowRightBlackArea.data = 2; // knappID/buttonID
-      bakcgroundArrowRightBlackArea.inputEnabled = true;
+      bakcgroundArrowRightArea = game.add.sprite(0, 0);
+      bakcgroundArrowRightArea.addChild(arrowRightArea);
+      bakcgroundArrowRightArea.data = 2; // knappID/buttonID
+      bakcgroundArrowRightArea.inputEnabled = true;
 
-      backgroundArrowLeftBlackArea = game.add.sprite(0, 0);
-      backgroundArrowLeftBlackArea.addChild(arrowLeftBlackArea);
-      backgroundArrowLeftBlackArea.data = 3; //knappID/buttonID
-      backgroundArrowLeftBlackArea.inputEnabled = true;
+      backgroundarrowLeftArea = game.add.sprite(0, 0);
+      backgroundarrowLeftArea.addChild(arrowLeftArea);
+      backgroundarrowLeftArea.data = 3; //knappID/buttonID
+      backgroundarrowLeftArea.inputEnabled = true;
 
       var arrowImageScale = 0.25;
       var arrowSpriteWidth = 200*arrowImageScale;
       var arrowSpriteHeight = 250*arrowImageScale;
 
-      var leftArrowImage = game.add.sprite(middleOfArrowLeftBlackAreaX - arrowSpriteWidth, middleOfArrowLeftBlackAreaY - arrowSpriteHeight, 'arrows');
+      var leftArrowImage = game.add.sprite(middleOfarrowLeftAreaX - arrowSpriteWidth, middleOfarrowLeftAreaY - arrowSpriteHeight, 'arrows');
           leftArrowImage.frame = 0;
           leftArrowImage.scale.setTo(0.5, 0.5);
 
 
-      var rightArrowImage = game.add.sprite(middleOfArrowRightBlackAreaX - arrowSpriteWidth, middleOfArrowRightBlackAreaY - arrowSpriteHeight, 'arrows');
+      var rightArrowImage = game.add.sprite(middleOfArrowRightAreaX - arrowSpriteWidth, middleOfArrowRightAreaY - arrowSpriteHeight, 'arrows');
           rightArrowImage.frame = 1;
           rightArrowImage.scale.setTo(0.5, 0.5);
 
