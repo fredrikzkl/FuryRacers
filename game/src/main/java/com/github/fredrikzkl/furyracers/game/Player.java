@@ -29,8 +29,8 @@ public class Player implements Comparable<Player>{
 		
 		setySel(playerNr -1);
 		
-		rgbRED = new Color(252f, 0f, 0f, 0.5f);
-		rgbBLUE = new Color(0f, 0f, 50f, 0.5f);
+		rgbRED = new Color(252f, 0f, 0f, 0.4f);
+		rgbBLUE = new Color(0f, 0f, 250f, 0.3f);
 		rgbGREEN = new Color(0f,255f, 0f, 0.5f);
 		rgbYELLOW = new Color(255f,255f,0f,0.5f);
 	}

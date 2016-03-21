@@ -217,7 +217,7 @@ public class GameCore extends BasicGameState {
 			Color carColor = players.get(i).getCarColor();
 			float cornerRadius = 4f;
 
-			RoundedRectangle box = new RoundedRectangle(startX-5, startY-5, screenWidth/10, screenHeight/10, cornerRadius);
+			RoundedRectangle box = new RoundedRectangle(startX-5, startY-5, screenWidth/8, screenHeight/10, cornerRadius);
 			g.setColor(carColor);
 			g.fill(box);
 			ttf.drawString(startX, startY,players.get(i).getUsername());
