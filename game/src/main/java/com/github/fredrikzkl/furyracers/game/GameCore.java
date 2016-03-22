@@ -1,11 +1,15 @@
 package com.github.fredrikzkl.furyracers.game;
 
 import java.awt.Font;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+
+import javax.websocket.EncodeException;
+
 import org.newdawn.slick.Color;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
@@ -16,12 +20,15 @@ import org.newdawn.slick.Sound;
 import org.newdawn.slick.SpriteSheet;
 import org.newdawn.slick.TrueTypeFont;
 import org.newdawn.slick.geom.Circle;
+import org.newdawn.slick.geom.Rectangle;
+import org.newdawn.slick.geom.RoundedRectangle;
 import org.newdawn.slick.geom.Vector2f;
 import org.newdawn.slick.state.BasicGameState;
 import org.newdawn.slick.state.GameState;
 import org.newdawn.slick.state.StateBasedGame;
 import org.newdawn.slick.state.transition.Transition;
 import org.newdawn.slick.util.ResourceLoader;
+
 import com.github.fredrikzkl.furyracers.Application;
 import com.github.fredrikzkl.furyracers.network.GameSession;
 
@@ -97,7 +104,7 @@ public class GameCore extends BasicGameState {
 	public void render(GameContainer container, StateBasedGame sbg, Graphics g) throws SlickException {
 
 		relocateCam(g);
-		drawCarTimes();
+		drawCarTimes(g);
 		drawCountdown(g);
 		ttf.drawString(screenWidth - 300, 10, IP);// Ip addresene øverst i
 
@@ -122,14 +129,17 @@ public class GameCore extends BasicGameState {
 
 		InputStream inputStream;
 		float countdownFontSize = 70f;
+		float ttfSize = 20f;
 
 		try {
 			inputStream = ResourceLoader.getResourceAsStream("Font/Orbitron-Regular.ttf");
 			Font timberFont = Font.createFont(Font.TRUETYPE_FONT, inputStream);
 
 			timberFont = timberFont.deriveFont(countdownFontSize);
-
 			countDownFont = new TrueTypeFont(timberFont, true);
+			
+			timberFont = timberFont.deriveFont(ttfSize);
+			ttf = new TrueTypeFont(timberFont, true);
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -189,7 +199,7 @@ public class GameCore extends BasicGameState {
 	}
 	
 
-	public void drawCarTimes() {
+	public void drawCarTimes(Graphics g) {
 		/*
 		 * if (level.getTimerCoordinates().x != 0 &&
 		 * level.getTimerCoordinates().y != 0) {
@@ -204,8 +214,13 @@ public class GameCore extends BasicGameState {
 			float yNextPlayerOffSet = yOffSet * 4;
 			float startY = screenHeight / 10 + (yNextPlayerOffSet * i);
 			float startX = screenWidth / 40;
+			Color carColor = players.get(i).getCarColor();
+			float cornerRadius = 4f;
 
-			ttf.drawString(startX, startY, players.get(i).getUsername() + "("+cars.get(i).getPlayerNr()+")");
+			RoundedRectangle box = new RoundedRectangle(startX-5, startY-5, screenWidth/8, screenHeight/10, cornerRadius);
+			g.setColor(carColor);
+			g.fill(box);
+			ttf.drawString(startX, startY,players.get(i).getUsername());
 			ttf.drawString(startX, startY + yOffSet, "Lap " + cars.get(i).getLaps() + "/3");
 		}
 
@@ -216,7 +231,15 @@ public class GameCore extends BasicGameState {
 		int carsFinished = 0;
 
 		for (Car car : cars) {
-			car.update(container, game, deltaTime);
+			try {
+				car.update(container, game, deltaTime);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (EncodeException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			if (car.finishedRace())
 				carsFinished++;
 		}

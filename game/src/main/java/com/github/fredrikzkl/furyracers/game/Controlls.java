@@ -7,7 +7,7 @@ public class Controlls {
 	private float deltaAngleChange, deltaDeAcceleration;
 	private CarProperties stats;
 	private Car car;
-	boolean reverseKeyIsDown, throttleKeyIsDown, leftKeyIsDown, rightKeyIsDown, usingKeyboard = false;
+	boolean reverseKeyIsDown, throttleKeyIsDown, leftKeyIsDown, rightKeyIsDown, usingKeyboard, ignoreNextRight, ignoreNextLeft = false;
 
 	float currentSpeed, movementDegrees = 0;
 
@@ -149,13 +149,30 @@ public class Controlls {
 	}
 
 	public void leftKeyDown() {
-		leftKeyIsDown = true;
-		rightKeyUp();
+		if(!ignoreNextLeft){
+			leftKeyIsDown = true;
+			//rightKeyIsDown = false;
+		}
+		
+		ignoreNextLeft = false;
 	}
 
 	public void rightKeyDown() {
-		rightKeyIsDown = true;
-		leftKeyUp();
+		if(!ignoreNextRight){
+			rightKeyIsDown = true;
+			//leftKeyIsDown = false;
+		}
+		ignoreNextRight = false;
+	}
+
+	public void rightKeyUp() {
+		
+		if(!rightKeyIsDown){
+			ignoreNextRight = true;
+		}else{
+			rightKeyIsDown = false;
+			ignoreNextRight = false;
+		}
 	}
 
 	public void reverseKeyDown() {
@@ -164,12 +181,15 @@ public class Controlls {
 	}
 
 	public void leftKeyUp() {
-		leftKeyIsDown = false;
+		
+		if(!leftKeyIsDown){
+			ignoreNextLeft = true;
+		}else{
+			leftKeyIsDown = false;
+			ignoreNextLeft = false;
+		}
 	}
 
-	public void rightKeyUp() {
-		rightKeyIsDown = false;
-	}
 
 	public void reverseKeyUp() {
 		reverseKeyIsDown = false;
