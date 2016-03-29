@@ -22,7 +22,7 @@ public class Camera {
 	public Camera(float startX, float startY, Level level){
 		
 		x = startX;
-		y= startY;
+		y = startY;
 		
 		monitorHeight = Application.screenSize.height;
 		monitorWidth = Application.screenSize.width;
@@ -94,14 +94,6 @@ public class Camera {
 		update(x,y);
 	}
 
-	public float getX() {
-		return x;
-	}
-
-	public float getY() {
-		return y;
-	}
-
 
 	public void zoom(Graphics g, float zoom) {
 		g.scale(zoom, zoom);
@@ -131,6 +123,14 @@ public class Camera {
 	public void setClosestEdge(Vector2f closestEdge){
 		
 		this.closestEdge = closestEdge;
+	}
+	
+	public float getX() {
+		return x;
+	}
+
+	public float getY() {
+		return y;
 	}
 }
 

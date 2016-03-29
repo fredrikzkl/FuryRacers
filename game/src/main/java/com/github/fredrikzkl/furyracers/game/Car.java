@@ -3,10 +3,7 @@ package com.github.fredrikzkl.furyracers.game;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
-
 import javax.websocket.EncodeException;
-
-import org.newdawn.slick.Game;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
 import org.newdawn.slick.Input;
@@ -21,16 +18,16 @@ import com.github.fredrikzkl.furyracers.network.GameSession;
 
 public class Car implements Comparable<Car> {
 
+	
+	private int originalCarWidth = 64, originalCarLength = 128; 
 	int playerNr;
-
-	private int laps, collisionSlowdownConstant = 4,  
-			maxLaps = 3, passedChekpoints,time;
+	private int laps, maxLaps = 3, passedChekpoints, time;
 	
 	private long startTime, nanoSecondsElapsed, 
 	secondsElapsed,minutesElapsed, tenthsOfASecondElapsed,
 	currentTime = 0;
 	
-	private boolean offRoad, raceStarted, finishedRace, startClock;
+	private boolean offRoad, finishedRace, startClock;
 	private boolean paused;
 	
 	private float currentSpeed, radDeg, centerOfRotationYOffset;
@@ -44,10 +41,9 @@ public class Car implements Comparable<Car> {
 	private CarProperties stats;
 	private Level level;
 	private Polygon collisionBox;
-	Vector2f position;
 
-	private Vector2f movementVector;
-	private Controlls controlls;
+	private Vector2f movementVector, position, startPos;
+	Controlls controlls;
 
 	private float carLength, carWidth, centerOfRotationX, centerOfRotationY;
 
@@ -58,26 +54,44 @@ public class Car implements Comparable<Car> {
 	private Sound crowdFinish;
 	private Sound checkpointSound;
 	private Sound lapSound;
-
 	private Sound still;
 	private Sound topSpeedSound;
-
-	private boolean deAccelerating;
+	private CollisionHandler collision;
 
 	public Car(CarProperties stats, String id, int playerNr, float startX, float startY, Level level) {
+		
+		collision = new CollisionHandler(this);
+		carLength = originalCarLength*stats.carSize;
+		carWidth = originalCarWidth*stats.carSize;
+		
+		startX -= carLength; //Billengdene er forskjellige. Derfor plasseres bilen lenger bak, jo lenger den er.
+		startPos = new Vector2f(startX, startY);
+		
 		this.stats = stats;
 		this.id = id;
 		this.playerNr = playerNr;
 		this.level = level;
-		startY += (playerNr-1)*58; // For startplassering i forhold til andre biler
-		startX -= 128*stats.carSize; //Startposisjonen tar utgangspunkt i baksiden av bilen. Billengdene er forskjellige. Derfor plasseres bilen lenger bak, jo lenger den er.
-		position = new Vector2f(startX, startY);
+		
 		controlls = new Controlls(this, stats);
-
-		initVariables();
 		getCarSprite();
-
+		initVariables();
 		initSounds();
+		detStartPos();		
+	}
+	
+	private void detStartPos(){
+		
+		Car previousCar = GameCore.getCar(playerNr-1);
+		float spaceBetweenCars = originalCarWidth/4;
+
+		if(previousCar != null){
+			
+			float prevStartY = previousCar.getStartPos().y;
+			float closestEdgeY = prevStartY + previousCar.getCarWidth();
+			startPos.y = closestEdgeY + spaceBetweenCars; // For startplassering i forhold til andre biler
+		}
+		
+		position = new Vector2f(startPos);
 	}
 
 	private void initVariables() {
@@ -86,13 +100,13 @@ public class Car implements Comparable<Car> {
 		passedChekpoints = 0;
 		laps = 0;
 		offRoad = false;
-		raceStarted = false;
+	
 		finishedRace = false;
 		startClock = false;
 		collisionBoxPoints = new float[4];
 		collisionBox = new Polygon(collisionBoxPoints);
 		movementVector = new Vector2f();
-		centerOfRotationYOffset = 64*stats.carSize;
+		centerOfRotationYOffset = originalCarWidth*stats.carSize;
 	}
 
 	private void getCarSprite() {
@@ -113,7 +127,7 @@ public class Car implements Comparable<Car> {
 		rePositionCar(deltaTime);
 		checkForEdgeOfMap();
 		checkForCheckpoint();
-		checkForCollision();
+		collision.checkForCollision();
 		checkForOffRoad();
 		checkRaceTime();
 		sounds();
@@ -228,40 +242,26 @@ public class Car implements Comparable<Car> {
 		}
 	}
 	
-	private void toggleRumbling(){
-		
-	}
+	public void deAccelerate(int slowdownConstant) {
 
-	public void checkForCollision() {
+		float deltaDeAcceleration = controlls.getDeltaDeAcceleration();
+		if (currentSpeed < -stats.deAcceleration) {
 
-		ArrayList<String> directionsToStop;
-		ArrayList<String> stopTurningDirections;
-		
-		float[] colBoxPoints = collisionBox.getPoints();
-		float xPos;
-		float yPos;
-		int stoppedDirections = 0;
-		Vector2f turningVector = getTurningDirectionVector();
-		
-		for(int i = 0; i < colBoxPoints.length; i+=2){
-			
-			xPos = colBoxPoints[i];
-			yPos = colBoxPoints[i + 1];
+			currentSpeed += deltaDeAcceleration * slowdownConstant;
+		} else if (currentSpeed > -stats.deAcceleration && currentSpeed < 0) {
 
-			if (level.collision(xPos, yPos) && stoppedDirections != 2) {
-				directionsToStop = level.whichDirectionToStop(xPos, yPos, movementVector.x, movementVector.y);
-				stopTurningDirections = level.whichDirectionToStop(xPos, yPos,turningVector.y, turningVector.y);
-				stopCarDirection(directionsToStop);
-				resetCarRotation(stopTurningDirections);
-				if(directionsToStop.size() == 2)
-				if (directionsToStop.size() == 2)
-					break;
-				stoppedDirections++;
-			}
+			currentSpeed = 0;
+		} else if (currentSpeed > stats.deAcceleration) {
+
+			currentSpeed -= deltaDeAcceleration * slowdownConstant;
+		} else if (currentSpeed > 0 && currentSpeed < stats.deAcceleration) {
+
+			currentSpeed = 0;
 		}
 	}
 	
-	private Vector2f getTurningDirectionVector(){
+	
+	Vector2f getTurningDirectionVector(){
 		
 		String turningDirection = controlls.getTurningDirection();
 		float deltaAngleChange = controlls.getDeltaAngleChange();
@@ -290,122 +290,7 @@ public class Car implements Comparable<Car> {
 		return turningVector;
 	}
 	
-	private void resetCarRotation(ArrayList<String> stopTurningDirections){
-		
-		for(String directionToStop : stopTurningDirections){
-			
-			switch(directionToStop){
-				case "positiveX": stopTurningInPositiveXdirection();break;
-				case "negativeX": stopTurningInNegativeXdirection(); break;
-				case "positiveY": stopTurningInPositiveYdirection();break;
-				case "negativeY": stopTurningInNegativeYdirection();break;
-			}
-		}
-	}
 	
-	public void stopCarDirection(ArrayList<String> directionsToStop){
-
-		/*
-		 * if(leftKeyIsDown){ movementDegrees += deltaAngleChange*1.1; }else
-		 * if(rightKeyIsDown){ movementDegrees -= deltaAngleChange*1.1; }
-		 */
-
-		deAccelerate(collisionSlowdownConstant);
-
-		for (String directionToStop : directionsToStop) {
-
-			switch (directionToStop) {
-			case "positiveX":
-				/* if(movementVector.x > 0) */ position.x -= movementVector.x;
-				break;
-			case "negativeX":
-				/* if(movementVector.x < 0) */position.x -= movementVector.x;
-				break;
-			case "positiveY":
-				/* if(movementVector.y > 0) */position.y -= movementVector.y;
-				break;
-			case "negativeY":
-				/* if(movementVector.y < 0) */position.y -= movementVector.y;
-				break;
-			}
-			
-		
-		}
-		stoppingDirections  = directionsToStop;
-	}
-	
-	private void stopTurningInPositiveXdirection(){
-		
-		float deltaAngleChange = controlls.getDeltaAngleChange();
-		float movementDegrees = controlls.getMovementDegrees();
-		
-	
-			if(movementVector.y > 0)
-				movementDegrees += deltaAngleChange;
-			else
-				movementDegrees -= deltaAngleChange;
-		
-		
-		controlls.setMovementDegrees(movementDegrees);
-	}
-	
-	private void stopTurningInNegativeXdirection(){
-		
-		float deltaAngleChange = controlls.getDeltaAngleChange();
-		float movementDegrees = controlls.getMovementDegrees();
-		
-		if(movementVector.y < 0)
-			movementDegrees += deltaAngleChange;
-		else
-			movementDegrees -= deltaAngleChange;
-		
-		controlls.setMovementDegrees(movementDegrees);
-	}
-	
-	private void stopTurningInPositiveYdirection(){
-		
-		float deltaAngleChange = controlls.getDeltaAngleChange();
-		float movementDegrees = controlls.getMovementDegrees();
-		
-		if(movementVector.x > 0)
-			movementDegrees -= deltaAngleChange;
-		else
-			movementDegrees += deltaAngleChange;
-		
-		controlls.setMovementDegrees(movementDegrees);
-	}
-	
-	private void stopTurningInNegativeYdirection(){
-		
-		float deltaAngleChange = controlls.getDeltaAngleChange();
-		float movementDegrees = controlls.getMovementDegrees();
-		
-		if(movementVector.x < 0)
-			movementDegrees -= deltaAngleChange*1.001;
-		else
-			movementDegrees += deltaAngleChange;
-		
-		controlls.setMovementDegrees(movementDegrees);
-	}
-
-	public void deAccelerate(int slowdownConstant) {
-
-		float deltaDeAcceleration = controlls.getDeltaDeAcceleration();
-		deAccelerating = true;
-		if (currentSpeed < -stats.deAcceleration) {
-
-			currentSpeed += deltaDeAcceleration * slowdownConstant;
-		} else if (currentSpeed > -stats.deAcceleration && currentSpeed < 0) {
-
-			currentSpeed = 0;
-		} else if (currentSpeed > stats.deAcceleration) {
-
-			currentSpeed -= deltaDeAcceleration * slowdownConstant;
-		} else if (currentSpeed > 0 && currentSpeed < stats.deAcceleration) {
-
-			currentSpeed = 0;
-		}
-	}
 
 	public void render(Graphics g) {
 
@@ -424,9 +309,6 @@ public class Car implements Comparable<Car> {
 	}
 	
 	public void generateCollisionBoxPoints(){
-		
-		carLength = 128*stats.carSize;
-		carWidth = 64*stats.carSize;
 		
 		int colBoxPointsLength = 5;
 		int colBoxPointsWidth = 3;
@@ -512,7 +394,6 @@ public class Car implements Comparable<Car> {
 		if (startClock) {
 			startTime = System.nanoTime();
 			startClock = false;
-			raceStarted = true;
 			paused = false;
 		}
 
@@ -588,6 +469,11 @@ public class Car implements Comparable<Car> {
 			return laps + 1;
 		return maxLaps;
 	}
+	
+	public float[] getCollisionBoxPoints(){
+		
+		return collisionBox.getPoints();
+	}
 
 	public boolean finishedRace() {
 		return finishedRace;
@@ -654,4 +540,17 @@ public class Car implements Comparable<Car> {
 	public String getUsername(){
 		return username;
 	}
+	
+	public Vector2f getMovementVector(){
+		return movementVector;
+	}
+	
+	public Vector2f getStartPos(){
+		return startPos;
+	}
+	
+	public float getCarWidth(){
+		return carWidth;
+	}
+	
 }

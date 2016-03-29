@@ -1,0 +1,326 @@
+package com.github.fredrikzkl.furyracers.game;
+
+import java.util.ArrayList;
+
+import org.newdawn.slick.geom.Vector2f;
+
+public class CollisionHandler {
+	
+	CourseHandler course = Level.course;
+	
+	public float slope, constant;
+	private static boolean isLeftTileLineCrossed, isRightTileLineCrossed, isTopTileLineCrossed, isBottomTileLineCrossed;
+	private static float yOfTileEndX, yOfTileStartX, xOfTileEndY, xOfTileStartY;
+	
+	private static int collisionSlowdownConstant = 4;  
+	private Vector2f movementVector;
+	
+	private Car car;
+	private Controlls controlls;
+	
+	public CollisionHandler(Car car){
+		this.car = car;
+		controlls = car.controlls; 
+		movementVector = car.getMovementVector();
+	}
+	
+	void checkForCollision() {
+
+		ArrayList<String> directionsToStop;
+		ArrayList<String> stopTurningDirections;
+		
+		float[] colBoxPoints = car.getCollisionBoxPoints();
+		float xPos;
+		float yPos;
+		int stoppedDirections = 0;
+		Vector2f turningVector = car.getTurningDirectionVector(),
+				 movementVector = car.getMovementVector();
+		
+		for(int i = 0; i < colBoxPoints.length; i+=2){
+			
+			xPos = colBoxPoints[i];
+			yPos = colBoxPoints[i + 1];
+
+			if (collision(xPos, yPos) && stoppedDirections != 2) {
+				directionsToStop = whichDirectionToStop(xPos, yPos, movementVector.x, movementVector.y);
+				stopTurningDirections = whichDirectionToStop(xPos, yPos,turningVector.y, turningVector.y);
+				stopCarDirection(directionsToStop);
+				resetCarRotation(stopTurningDirections);
+				if(directionsToStop.size() == 2)
+				if (directionsToStop.size() == 2)
+					break;
+				stoppedDirections++;
+			}
+		}
+	}
+	
+	void stopCarDirection(ArrayList<String> directionsToStop){
+
+		/*
+		 * if(leftKeyIsDown){ movementDegrees += deltaAngleChange*1.1; }else
+		 * if(rightKeyIsDown){ movementDegrees -= deltaAngleChange*1.1; }
+		 */
+		
+		Vector2f movementVector = car.getMovementVector();
+		Vector2f position = car.getPosition();
+
+		car.deAccelerate(collisionSlowdownConstant);
+
+		for (String directionToStop : directionsToStop) {
+
+			switch (directionToStop) {
+			case "positiveX":
+				/* if(movementVector.x > 0) */ position.x -= movementVector.x;
+				break;
+			case "negativeX":
+				/* if(movementVector.x < 0) */position.x -= movementVector.x;
+				break;
+			case "positiveY":
+				/* if(movementVector.y > 0) */position.y -= movementVector.y;
+				break;
+			case "negativeY":
+				/* if(movementVector.y < 0) */position.y -= movementVector.y;
+				break;
+			}
+			
+		
+		}
+	}
+	
+	private void resetCarRotation(ArrayList<String> stopTurningDirections){
+		
+		for(String directionToStop : stopTurningDirections){
+			
+			switch(directionToStop){
+				case "positiveX": stopTurningInPositiveXdirection();break;
+				case "negativeX": stopTurningInNegativeXdirection(); break;
+				case "positiveY": stopTurningInPositiveYdirection();break;
+				case "negativeY": stopTurningInNegativeYdirection();break;
+			}
+		}
+	}
+	
+	private void stopTurningInPositiveXdirection(){
+		
+		float deltaAngleChange = car.controlls.getDeltaAngleChange();
+		float movementDegrees = car.controlls.getMovementDegrees();
+		
+	
+			if(movementVector.y > 0)
+				movementDegrees += deltaAngleChange;
+			else
+				movementDegrees -= deltaAngleChange;
+		
+		
+		controlls.setMovementDegrees(movementDegrees);
+	}
+	
+	private void stopTurningInNegativeXdirection(){
+		
+		float deltaAngleChange = controlls.getDeltaAngleChange();
+		float movementDegrees = controlls.getMovementDegrees();
+		
+		if(movementVector.y < 0)
+			movementDegrees += deltaAngleChange;
+		else
+			movementDegrees -= deltaAngleChange;
+		
+		controlls.setMovementDegrees(movementDegrees);
+	}
+	
+	private void stopTurningInPositiveYdirection(){
+		
+		float deltaAngleChange = controlls.getDeltaAngleChange();
+		float movementDegrees = controlls.getMovementDegrees();
+		
+		if(movementVector.x > 0)
+			movementDegrees -= deltaAngleChange;
+		else
+			movementDegrees += deltaAngleChange;
+		
+		controlls.setMovementDegrees(movementDegrees);
+	}
+	
+	private void stopTurningInNegativeYdirection(){
+		
+		float deltaAngleChange = controlls.getDeltaAngleChange();
+		float movementDegrees = controlls.getMovementDegrees();
+		
+		if(movementVector.x < 0)
+			movementDegrees -= deltaAngleChange*1.001;
+		else
+			movementDegrees += deltaAngleChange;
+		
+		controlls.setMovementDegrees(movementDegrees);
+	}
+	
+	
+	 boolean collision(float xPos, float yPos) {
+
+		int tileX = (int) (xPos / Level.tileWidth), tileY = (int) (yPos / Level.tileHeight);
+		
+		int tileIDprops = course.data.getTileId(tileX, tileY, Level.propsLayer);
+
+		boolean isColliding = course.data.getTileProperty(tileIDprops, "collision", "-1").equals("1");
+
+		return isColliding;
+	}
+
+	private ArrayList<String> whichDirectionToStop(float xCarPos, float yCarPos, float xVector, float yVector) {
+
+		ArrayList<String> stopCarMovement = new ArrayList<String>();
+
+		int tileX = (int) (xCarPos / Level.tileWidth), tileY = (int) (yCarPos / Level.tileHeight);
+
+		boolean leftTileIsObstacle = isCollisionObstacle(tileX - 1, tileY),
+				rightTileIsObstacle = isCollisionObstacle(tileX + 1, tileY),
+				topTileIsObstacle = isCollisionObstacle(tileX, tileY - 1),
+				bottomTileIsObstacle = isCollisionObstacle(tileX, tileY + 1);
+
+		boolean carMovingLeft = (xVector < 0), carMovingRight = (xVector > 0),
+				carMovingUp = (yVector < 0), carMovingDown = (yVector > 0);
+
+		int tileStartX = tileX * Level.tileWidth, 
+			tileStartY = tileY * Level.tileHeight;
+		int tileEndX = tileStartX + Level.tileWidth - 1, 
+			tileEndY = tileStartY + Level.tileHeight - 1;
+
+		float slope = yVector / xVector;
+		float constant = yCarPos - slope * xCarPos; // c = y - ax
+
+		intersectionPointsOfLine(slope, constant, tileStartX, tileStartY, tileEndX, tileEndY);
+		checkIntersectionsWithTile(tileStartX, tileStartY, tileEndX, tileEndY);
+
+		if (isRightTileLineCrossed && carMovingLeft) {
+			if (rightTileIsObstacle) {
+				if (carMovingUp) {
+					if (bottomTileIsObstacle) {
+						stopCarMovement.add("negativeY");
+						stopCarMovement.add("negativeX");
+						return stopCarMovement;
+					} else {
+						stopCarMovement.add("negativeY");
+						return stopCarMovement;
+					}
+				} else if (carMovingDown) {
+					if (topTileIsObstacle) {
+						stopCarMovement.add("positiveY");
+						stopCarMovement.add("negativeX");
+						return stopCarMovement;
+					}else{
+						stopCarMovement.add("positiveY");
+						return stopCarMovement;
+					}
+				}
+			}else{
+				stopCarMovement.add("negativeX");
+				return stopCarMovement;
+			}
+		}
+		
+		if(isLeftTileLineCrossed && carMovingRight){
+			if(leftTileIsObstacle) {
+				if(carMovingUp){
+					if(bottomTileIsObstacle){
+						stopCarMovement.add("negativeY");
+						stopCarMovement.add("positiveX");
+						return stopCarMovement;
+					}else{
+						stopCarMovement.add("negativeY");
+						return stopCarMovement;
+					}
+				}else if(carMovingDown){
+					if(topTileIsObstacle){
+						stopCarMovement.add("positiveY");
+						stopCarMovement.add("positiveX");
+						return stopCarMovement;
+					}
+				}
+			}else{
+				stopCarMovement.add("positiveX");
+				return stopCarMovement;
+			}
+		}
+		
+		if(isBottomTileLineCrossed && carMovingUp){
+			if(bottomTileIsObstacle){
+				if(carMovingLeft){
+					if(rightTileIsObstacle){
+						stopCarMovement.add("negativeY");
+						stopCarMovement.add("negativeX");
+						return stopCarMovement;
+					}else{
+						stopCarMovement.add("negativeX");
+						return stopCarMovement;
+					}
+				}else if(carMovingRight){
+					if(topTileIsObstacle){
+						stopCarMovement.add("negativeY");
+						stopCarMovement.add("positiveX");
+						return stopCarMovement;
+					}
+				}
+			}else{
+				stopCarMovement.add("negativeY");
+				return stopCarMovement;
+			}
+		}
+		
+		if(isTopTileLineCrossed && carMovingDown){
+			if(topTileIsObstacle) {
+				if(carMovingRight){
+					if(rightTileIsObstacle){
+						stopCarMovement.add("positiveY");
+						stopCarMovement.add("negativeX");
+						return stopCarMovement;
+					}else{
+						stopCarMovement.add("negativeX");
+						return stopCarMovement;
+					}
+				}else if(carMovingLeft){
+					if(topTileIsObstacle){
+						stopCarMovement.add("positiveY");
+						stopCarMovement.add("negativeX");
+						return stopCarMovement;
+					}
+				}
+			}else{
+				stopCarMovement.add("positiveY");
+				return stopCarMovement;
+			}
+		}
+		
+		return stopCarMovement;
+	}
+	
+	
+	private void intersectionPointsOfLine(float slope, float constant, int tileStartX, int tileStartY, int tileEndX, int tileEndY){
+		yOfTileEndX = slope*tileEndX + constant; // y = ax + c
+		yOfTileStartX = slope*tileStartX + constant;
+												
+		xOfTileEndY = (tileEndY - constant)/slope; // x = (y-c)/a
+		xOfTileStartY = (tileStartY - constant)/slope;
+	}
+	
+	
+	 private void checkIntersectionsWithTile(int tileStartX, int tileStartY,int tileEndX, int tileEndY){
+
+		isLeftTileLineCrossed = isTileLineCrossed(tileStartY, tileEndY, yOfTileStartX);
+		isRightTileLineCrossed = isTileLineCrossed(tileStartY, tileEndY, yOfTileEndX);
+		isTopTileLineCrossed = isTileLineCrossed(tileStartX, tileEndX, xOfTileStartY);
+		isBottomTileLineCrossed = isTileLineCrossed(tileStartX, tileEndX, xOfTileEndY);
+	}
+
+	 boolean isCollisionObstacle(int tileX, int tileY) {
+
+		int tileId = course.data.getTileId(tileX, tileY, Level.propsLayer);
+		return course.data.getTileProperty(tileId, "collision", "-1").equals("1");
+	}
+
+	static boolean isTileLineCrossed(float tileStart, float tileEnd, float carCrossedAt) {
+		
+		int errorMargin = 2;
+		return (tileStart - errorMargin <= carCrossedAt && carCrossedAt <= tileEnd + errorMargin);
+	}
+
+}

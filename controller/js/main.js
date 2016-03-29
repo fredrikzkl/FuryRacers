@@ -112,7 +112,7 @@ var game;
     redButtons = game.add.sprite(dis.game.width/1.4, dis.game.height/4, 'redButtons');
     redButtons.data = 1;
     redButtons.frame = 0;
-    redButtons.scale.setTo(1,1.2);
+    redButtons.scale.setTo(1.5,1.8);
     redButtons.inputEnabled = true;
   }
 

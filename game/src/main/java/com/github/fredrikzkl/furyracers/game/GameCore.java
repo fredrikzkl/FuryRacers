@@ -45,10 +45,10 @@ public class GameCore extends BasicGameState {
 	public float initalZoom, zoom = 1;
 
 	Font font;
-	TrueTypeFont ttf;
+	TrueTypeFont infoFont;
 	Image subMapPic, mapPic, side;
 
-	public List<Car> cars;
+	public static List<Car> cars;
 	public List<Player> players;
 
 	private int screenWidth, screenHeight;
@@ -66,6 +66,8 @@ public class GameCore extends BasicGameState {
 	private TrueTypeFont countDownFont;
 	public Sound three, two, one, go;
 	private boolean threePlayed, twoPlayed, onePlayed, goPlayed;
+
+	private float infoFontSize;
 	public static boolean finalRoundSaid, crowdFinishedPlayed;
 
 	public void init(GameContainer container, StateBasedGame sbg) throws SlickException {
@@ -96,9 +98,6 @@ public class GameCore extends BasicGameState {
 		checkDistances();
 		camera.zoomLogic();
 		camera.updateCamCoordinates();
-
-		// System.out.println("TIMERX: " + level.getTimerCoordinates().x + "
-		// timer Y : " + level.getTimerCoordinates().y);
 	}
 
 	public void render(GameContainer container, StateBasedGame sbg, Graphics g) throws SlickException {
@@ -106,7 +105,7 @@ public class GameCore extends BasicGameState {
 		relocateCam(g);
 		drawCarTimes(g);
 		drawCountdown(g);
-		ttf.drawString(screenWidth - 300, 10, IP);// Ip addresene øverst i
+		infoFont.drawString(screenWidth - 300, 10, IP);// Ip addresene øverst i
 
 		if (raceFinished)
 			scoreboard.drawScoreBoard();
@@ -129,7 +128,7 @@ public class GameCore extends BasicGameState {
 
 		InputStream inputStream;
 		float countdownFontSize = 70f;
-		float ttfSize = 20f;
+		infoFontSize = 20f;
 
 		try {
 			inputStream = ResourceLoader.getResourceAsStream("Font/Orbitron-Regular.ttf");
@@ -138,8 +137,8 @@ public class GameCore extends BasicGameState {
 			timberFont = timberFont.deriveFont(countdownFontSize);
 			countDownFont = new TrueTypeFont(timberFont, true);
 			
-			timberFont = timberFont.deriveFont(ttfSize);
-			ttf = new TrueTypeFont(timberFont, true);
+			timberFont = timberFont.deriveFont(infoFontSize);
+			infoFont = new TrueTypeFont(timberFont, true);
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -182,7 +181,6 @@ public class GameCore extends BasicGameState {
 			goSignal = true;
 		}
 
-
 		if (goSignal) {
 			long currentTime = System.currentTimeMillis();
 			goSignalTimeElapsed = currentTime - startGoSignalTime;
@@ -200,30 +198,40 @@ public class GameCore extends BasicGameState {
 	
 
 	public void drawCarTimes(Graphics g) {
-		/*
-		 * if (level.getTimerCoordinates().x != 0 &&
-		 * level.getTimerCoordinates().y != 0) {
-		 * ttf.drawString(level.getTimerCoordinates().x,
-		 * level.getTimerCoordinates().y, "00:00:00"); }
-		 * 
-		 */
 
 		for (int i = 0; i < cars.size(); i++) {
 
-			float yOffSet = 20;
-			float yNextPlayerOffSet = yOffSet * 4;
-			float startY = screenHeight / 10 + (yNextPlayerOffSet * i);
-			float startX = screenWidth / 40;
+			float nextLineYOffSet = infoFontSize,
+				  yNextPlayerOffSet = nextLineYOffSet * 4,
+				  startY = screenHeight / 10 + (yNextPlayerOffSet * i),
+				  startX = screenWidth / 40,
+				  cornerRadius = 4f;
+			
 			Color carColor = players.get(i).getCarColor();
-			float cornerRadius = 4f;
+			String username = players.get(i).getUsername(),
+				   laps = "Lap " + cars.get(i).getLaps() + "/3";
+			
+			int usernameLength = username.length();
+			int lapsLength = laps.length();
+			
+			float infoBoxWidth = (float) (infoFontSize*infoBoxWidth(usernameLength, lapsLength)*0.65),
+				  infoBoxHeight = screenHeight*2/infoFontSize;
 
-			RoundedRectangle box = new RoundedRectangle(startX-5, startY-5, screenWidth/8, screenHeight/10, cornerRadius);
+			RoundedRectangle box = new RoundedRectangle(startX-5, startY-5,infoBoxWidth, infoBoxHeight, cornerRadius);
 			g.setColor(carColor);
 			g.fill(box);
-			ttf.drawString(startX, startY,players.get(i).getUsername());
-			ttf.drawString(startX, startY + yOffSet, "Lap " + cars.get(i).getLaps() + "/3");
+			infoFont.drawString(startX, startY, username);
+			infoFont.drawString(startX, startY + nextLineYOffSet, laps);
 		}
 
+	}
+	
+	private int infoBoxWidth(int usernameLength, int lapsLength ){
+		if(usernameLength < lapsLength){
+			return lapsLength;
+		}
+		
+		return usernameLength;
 	}
 
 	public void updateCars(GameContainer container, StateBasedGame game, int deltaTime) throws SlickException {
@@ -234,10 +242,8 @@ public class GameCore extends BasicGameState {
 			try {
 				car.update(container, game, deltaTime);
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (EncodeException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			if (car.finishedRace())
@@ -246,11 +252,8 @@ public class GameCore extends BasicGameState {
 		
 		if(carsFinished == cars.size()){
 			raceFinished = true;
-			//returnToMenu(container , game);
 		}
 	}
-	
-	
 	
 
 	private void initSounds() {
@@ -299,26 +302,24 @@ public class GameCore extends BasicGameState {
 		Vector2f closestEdge = new Vector2f(level.getMapWidthPixels(), level.getMapHeightPixels());
 
 		for (Car car : cars) {
-			if (car.position.x > longestDistance.x) {
-				longestDistance.x = car.position.x;
+			if (car.getPosition().x > longestDistance.x) {
+				longestDistance.x = car.getPosition().x;
 			}
-			if (car.position.x < shortestDistance.x) {
-				shortestDistance.x = car.position.x;
+			if (car.getPosition().x < shortestDistance.x) {
+				shortestDistance.x = car.getPosition().x;
 			}
-			if (car.position.y > longestDistance.y) {
-				longestDistance.y = car.position.y;
+			if (car.getPosition().y > longestDistance.y) {
+				longestDistance.y = car.getPosition().y;
 			}
-			if (car.position.y < shortestDistance.y) {
-				shortestDistance.y = car.position.y;
+			if (car.getPosition().y < shortestDistance.y) {
+				shortestDistance.y = car.getPosition().y;
 			}
-
-			if (car.position.x < closestEdge.x) {
-				closestEdge.x = car.position.x;
+			if (car.getPosition().x < closestEdge.x) {
+				closestEdge.x = car.getPosition().x;
 			}
-			if (car.position.y < closestEdge.y) {
-				closestEdge.y = car.position.y;
+			if (car.getPosition().y < closestEdge.y) {
+				closestEdge.y = car.getPosition().y;
 			}
-
 		}
 
 		Vector2f deltaDistance = new Vector2f();
@@ -332,24 +333,10 @@ public class GameCore extends BasicGameState {
 
 	public void checkForKeyboardInput(GameContainer container, StateBasedGame game) throws SlickException {
 		Input input = container.getInput();
-		/*
-		 * if(input.isKeyDown(Input.KEY_A) && !keyboardPlayerOne){ int
-		 * amountOfPlayers = cars.size();
-		 * createPlayer(amountOfPlayers+1,"keyboardPlayer",1);
-		 * cars.get(amountOfPlayers).activateKeyboardInput(); keyboardPlayerOne
-		 * = true; }
-		 * 
-		 * if(input.isKeyDown(Input.KEY_B) && !keyboardPlayerTwo){ int
-		 * amountOfPlayers = cars.size();
-		 * createPlayer(amountOfPlayers+1,"keyboardPlayerTwo",1);
-		 * cars.get(amountOfPlayers).activateKeyboardInput(); keyboardPlayerTwo
-		 * = true; }
-		 */
 
 		if (input.isKeyPressed(Input.KEY_R)) {
 			returnToMenu(container, game);
 		}
-
 	}
 
 	public void createPlayer(int nr, String id, int playerChoice) throws SlickException {
@@ -385,7 +372,7 @@ public class GameCore extends BasicGameState {
 		keyboardPlayerOne = false;
 
 		font = new Font("Verdana", Font.BOLD, 20);
-		ttf = new TrueTypeFont(font, true);
+		infoFont = new TrueTypeFont(font, true);
 
 		screenWidth = Application.screenSize.width;
 		screenHeight = Application.screenSize.height;
@@ -394,10 +381,6 @@ public class GameCore extends BasicGameState {
 
 	public void setIP(String ip) {
 		IP = ip + "/furyracers";
-	}
-
-	public int getID() {
-		return 1;
 	}
 
 	public float getZoom() {
@@ -412,5 +395,19 @@ public class GameCore extends BasicGameState {
 	public void setFinalRoundSaid(boolean finalRoundSaid) {
 		this.finalRoundSaid = finalRoundSaid;
 	}
+	
+	public static Car getCar(int playerNr){
+		
+		if(playerNr < 1){
+			return null;
+		}
+		
+		return cars.get(playerNr-1);
+	}
+	
+	public int getID() {
+		return 1;
+	}
+
 
 }
