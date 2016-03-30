@@ -1,27 +1,23 @@
 package com.github.fredrikzkl.furyracers.game;
 
 import java.util.ArrayList;
-
 import org.newdawn.slick.geom.Vector2f;
 
 public class CollisionHandler {
 	
 	CourseHandler course = Level.course;
 	
-	public float slope, constant;
 	private static boolean isLeftTileLineCrossed, isRightTileLineCrossed, isTopTileLineCrossed, isBottomTileLineCrossed;
 	private static float yOfTileEndX, yOfTileStartX, xOfTileEndY, xOfTileStartY;
 	
 	private static int collisionSlowdownConstant = 4;  
-	private Vector2f movementVector;
 	
 	private Car car;
 	private Controlls controlls;
 	
 	public CollisionHandler(Car car){
 		this.car = car;
-		controlls = car.controlls; 
-		movementVector = car.getMovementVector();
+		controlls = car.controlls;
 	}
 	
 	void checkForCollision() {
@@ -33,20 +29,20 @@ public class CollisionHandler {
 		float xPos;
 		float yPos;
 		int stoppedDirections = 0;
-		Vector2f turningVector = car.getTurningDirectionVector(),
-				 movementVector = car.getMovementVector();
+		Vector2f turningVector = car.getTurningDirectionVector();
+		Vector2f movementVector = car.getMovementVector();
 		
 		for(int i = 0; i < colBoxPoints.length; i+=2){
 			
 			xPos = colBoxPoints[i];
 			yPos = colBoxPoints[i + 1];
 
-			if (collision(xPos, yPos) && stoppedDirections != 2) {
+			if (collisionTile(xPos, yPos) && stoppedDirections != 2) {
 				directionsToStop = whichDirectionToStop(xPos, yPos, movementVector.x, movementVector.y);
 				stopTurningDirections = whichDirectionToStop(xPos, yPos,turningVector.y, turningVector.y);
-				stopCarDirection(directionsToStop);
-				resetCarRotation(stopTurningDirections);
-				if(directionsToStop.size() == 2)
+				stopCarDirection(directionsToStop, movementVector);
+				resetCarRotation(stopTurningDirections, movementVector);
+
 				if (directionsToStop.size() == 2)
 					break;
 				stoppedDirections++;
@@ -54,14 +50,8 @@ public class CollisionHandler {
 		}
 	}
 	
-	void stopCarDirection(ArrayList<String> directionsToStop){
-
-		/*
-		 * if(leftKeyIsDown){ movementDegrees += deltaAngleChange*1.1; }else
-		 * if(rightKeyIsDown){ movementDegrees -= deltaAngleChange*1.1; }
-		 */
+	void stopCarDirection(ArrayList<String> directionsToStop, Vector2f movementVector){
 		
-		Vector2f movementVector = car.getMovementVector();
 		Vector2f position = car.getPosition();
 
 		car.deAccelerate(collisionSlowdownConstant);
@@ -69,41 +59,40 @@ public class CollisionHandler {
 		for (String directionToStop : directionsToStop) {
 
 			switch (directionToStop) {
-			case "positiveX":
-				/* if(movementVector.x > 0) */ position.x -= movementVector.x;
-				break;
-			case "negativeX":
-				/* if(movementVector.x < 0) */position.x -= movementVector.x;
-				break;
-			case "positiveY":
-				/* if(movementVector.y > 0) */position.y -= movementVector.y;
-				break;
-			case "negativeY":
-				/* if(movementVector.y < 0) */position.y -= movementVector.y;
-				break;
+				case "positiveX":
+					position.x -= movementVector.x;
+					break;
+				case "negativeX":
+					position.x -= movementVector.x;
+					break;
+				case "positiveY":
+					position.y -= movementVector.y;
+					break;
+				case "negativeY":
+					position.y -= movementVector.y;
+					break;
 			}
 			
-		
 		}
 	}
 	
-	private void resetCarRotation(ArrayList<String> stopTurningDirections){
+	private void resetCarRotation(ArrayList<String> stopTurningDirections, Vector2f movementVector){
 		
 		for(String directionToStop : stopTurningDirections){
 			
 			switch(directionToStop){
-				case "positiveX": stopTurningInPositiveXdirection();break;
-				case "negativeX": stopTurningInNegativeXdirection(); break;
-				case "positiveY": stopTurningInPositiveYdirection();break;
-				case "negativeY": stopTurningInNegativeYdirection();break;
+				case "positiveX": stopTurningInPositiveXdirection(movementVector);break;
+				case "negativeX": stopTurningInNegativeXdirection(movementVector); break;
+				case "positiveY": stopTurningInPositiveYdirection(movementVector);break;
+				case "negativeY": stopTurningInNegativeYdirection(movementVector);break;
 			}
 		}
 	}
 	
-	private void stopTurningInPositiveXdirection(){
+	private void stopTurningInPositiveXdirection(Vector2f movementVector){
 		
-		float deltaAngleChange = car.controlls.getDeltaAngleChange();
-		float movementDegrees = car.controlls.getMovementDegrees();
+		float deltaAngleChange = controlls.getDeltaAngleChange();
+		float movementDegrees = controlls.getMovementDegrees();
 		
 	
 			if(movementVector.y > 0)
@@ -115,7 +104,7 @@ public class CollisionHandler {
 		controlls.setMovementDegrees(movementDegrees);
 	}
 	
-	private void stopTurningInNegativeXdirection(){
+	private void stopTurningInNegativeXdirection(Vector2f movementVector){
 		
 		float deltaAngleChange = controlls.getDeltaAngleChange();
 		float movementDegrees = controlls.getMovementDegrees();
@@ -128,7 +117,7 @@ public class CollisionHandler {
 		controlls.setMovementDegrees(movementDegrees);
 	}
 	
-	private void stopTurningInPositiveYdirection(){
+	private void stopTurningInPositiveYdirection(Vector2f movementVector){
 		
 		float deltaAngleChange = controlls.getDeltaAngleChange();
 		float movementDegrees = controlls.getMovementDegrees();
@@ -141,7 +130,7 @@ public class CollisionHandler {
 		controlls.setMovementDegrees(movementDegrees);
 	}
 	
-	private void stopTurningInNegativeYdirection(){
+	private void stopTurningInNegativeYdirection(Vector2f movementVector){
 		
 		float deltaAngleChange = controlls.getDeltaAngleChange();
 		float movementDegrees = controlls.getMovementDegrees();
@@ -155,7 +144,7 @@ public class CollisionHandler {
 	}
 	
 	
-	 boolean collision(float xPos, float yPos) {
+	 boolean collisionTile(float xPos, float yPos) {
 
 		int tileX = (int) (xPos / Level.tileWidth), tileY = (int) (yPos / Level.tileHeight);
 		
@@ -170,7 +159,8 @@ public class CollisionHandler {
 
 		ArrayList<String> stopCarMovement = new ArrayList<String>();
 
-		int tileX = (int) (xCarPos / Level.tileWidth), tileY = (int) (yCarPos / Level.tileHeight);
+		int tileX = (int) (xCarPos / Level.tileWidth), 
+			tileY = (int) (yCarPos / Level.tileHeight);
 
 		boolean leftTileIsObstacle = isCollisionObstacle(tileX - 1, tileY),
 				rightTileIsObstacle = isCollisionObstacle(tileX + 1, tileY),

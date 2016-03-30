@@ -19,13 +19,12 @@ import com.github.fredrikzkl.furyracers.network.GameSession;
 public class Car implements Comparable<Car> {
 
 	
-	private int originalCarWidth = 64, originalCarLength = 128; 
-	int playerNr;
+	private int originalCarWidth = 64, originalCarLength = 128, playerNr;
 	private int laps, maxLaps = 3, passedChekpoints, time;
 	
 	private long startTime, nanoSecondsElapsed, 
-	secondsElapsed,minutesElapsed, tenthsOfASecondElapsed,
-	currentTime = 0;
+				 secondsElapsed, minutesElapsed, 
+				 tenthsOfASecondElapsed, currentTime = 0;
 	
 	private boolean offRoad, finishedRace, startClock;
 	private boolean paused;
@@ -60,38 +59,37 @@ public class Car implements Comparable<Car> {
 
 	public Car(CarProperties stats, String id, int playerNr, float startX, float startY, Level level) {
 		
+		controlls = new Controlls(this, stats);
 		collision = new CollisionHandler(this);
 		carLength = originalCarLength*stats.carSize;
 		carWidth = originalCarWidth*stats.carSize;
-		
-		startX -= carLength; //Billengdene er forskjellige. Derfor plasseres bilen lenger bak, jo lenger den er.
-		startPos = new Vector2f(startX, startY);
 		
 		this.stats = stats;
 		this.id = id;
 		this.playerNr = playerNr;
 		this.level = level;
 		
-		controlls = new Controlls(this, stats);
 		getCarSprite();
 		initVariables();
 		initSounds();
-		detStartPos();		
+		detStartPos(startX, startY);
+		position = new Vector2f(startPos);
 	}
 	
-	private void detStartPos(){
+	private void detStartPos(float startX, float startY){
 		
 		Car previousCar = GameCore.getCar(playerNr-1);
 		float spaceBetweenCars = originalCarWidth/4;
+		startX -= carLength; //Bilen plasseres bakover etter hvor lang den er.
 
 		if(previousCar != null){
 			
 			float prevStartY = previousCar.getStartPos().y;
 			float closestEdgeY = prevStartY + previousCar.getCarWidth();
-			startPos.y = closestEdgeY + spaceBetweenCars; // For startplassering i forhold til andre biler
+			startY = closestEdgeY + spaceBetweenCars;
 		}
 		
-		position = new Vector2f(startPos);
+		startPos = new Vector2f(startX, startY);
 	}
 
 	private void initVariables() {
@@ -148,13 +146,16 @@ public class Car implements Comparable<Car> {
 	public void checkForEdgeOfMap() {
 
 		float[] colBoxPoints = collisionBox.getPoints();
+		int safetyMargin = 7,
+			startOfMapX = safetyMargin, 
+			startOfMapY = safetyMargin;
 
 		for (int i = 0; i < colBoxPoints.length; i += 2) {
 
-			if (colBoxPoints[i] < 5 || colBoxPoints[i] > level.getMapWidthPixels() - 5)
+			if (colBoxPoints[i] < startOfMapX || colBoxPoints[i] > level.getMapWidthPixels() - startOfMapX)
 				position.x -= movementVector.x;
 
-			if (colBoxPoints[i + 1] < 5 || colBoxPoints[i + 1] > level.getMapHeightPixels() - 5)
+			if (colBoxPoints[i + 1] < startOfMapY || colBoxPoints[i + 1] > level.getMapHeightPixels() - startOfMapY)
 				position.y -= movementVector.y;
 		}
 	}
@@ -212,10 +213,10 @@ public class Car implements Comparable<Car> {
 	public void checkForOffRoad() throws IOException, EncodeException {
 
 		float[] colBoxPoints = collisionBox.getPoints();
-		float xPos;
-		float yPos;
-		int pointsNotOffRoad = 0;
-		int amountOfPointsXY = colBoxPoints.length;
+		float xPos,
+			  yPos;
+		int pointsNotOffRoad = 0,
+			amountOfPointsXY = colBoxPoints.length;
 		
 		for(int i = 0; i < amountOfPointsXY; i+=2){
 			
@@ -289,8 +290,6 @@ public class Car implements Comparable<Car> {
 		
 		return turningVector;
 	}
-	
-	
 
 	public void render(Graphics g) {
 
@@ -414,11 +413,9 @@ public class Car implements Comparable<Car> {
 		switch (data) {
 		case "0":
 			controlls.reverseKeyDown();
-			//System.out.println("RightUp");
 			break;
 		case "1":
 			controlls.throttleKeyDown();
-			//System.out.println("RightUp");
 			break;
 		case "2":
 			controlls.rightKeyDown();
@@ -440,11 +437,9 @@ public class Car implements Comparable<Car> {
 			break;
 		case "2":
 			controlls.rightKeyUp();
-			System.out.println("RightUp");
 			break;
 		case "3":
 			controlls.leftKeyUp();
-			System.out.println("LeftUp");
 		}
 	}
 

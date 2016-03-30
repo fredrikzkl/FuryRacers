@@ -74,9 +74,9 @@ public class Controlls {
 
 	public void reactToKeyboard(Input input) {
 
-		if (car.playerNr == 1) {
+		if (car.getPlayerNr() == 1) {
 			reactToArrowKeys(input);
-		} else if (car.playerNr == 2) {
+		} else if (car.getPlayerNr() == 2) {
 			reactToWasdKeys(input);
 		}
 	}
