@@ -61,8 +61,8 @@ public class Car implements Comparable<Car> {
 		
 		controlls = new Controlls(this, stats);
 		collision = new CollisionHandler(this);
-		carLength = originalCarLength*stats.carSize;
-		carWidth = originalCarWidth*stats.carSize;
+		carLength = originalCarLength * stats.carSize;
+		carWidth = originalCarWidth * stats.carSize;
 		
 		this.stats = stats;
 		this.id = id;
@@ -101,7 +101,7 @@ public class Car implements Comparable<Car> {
 	
 		finishedRace = false;
 		startClock = false;
-		collisionBoxPoints = new float[4];
+		collisionBoxPoints = new float[16];
 		collisionBox = new Polygon(collisionBoxPoints);
 		movementVector = new Vector2f();
 		centerOfRotationYOffset = originalCarWidth*stats.carSize;
@@ -213,8 +213,7 @@ public class Car implements Comparable<Car> {
 	public void checkForOffRoad() throws IOException, EncodeException {
 
 		float[] colBoxPoints = collisionBox.getPoints();
-		float xPos,
-			  yPos;
+		float xPos, yPos;
 		int pointsNotOffRoad = 0,
 			amountOfPointsXY = colBoxPoints.length;
 		
@@ -317,74 +316,73 @@ public class Car implements Comparable<Car> {
 
 		float backRightX = (float)(centerOfRotationX + Math.cos(radDeg-Math.PI/2)*carWidth/2),
 			  backRightY = (float)(centerOfRotationY + Math.sin(radDeg-Math.PI/2)*carWidth/2);
-		
 		float backLeftX = (float)(centerOfRotationX+ Math.cos(radDeg+Math.PI/2)*carWidth/2),
 			  backLeftY = (float)(centerOfRotationY + Math.sin(radDeg+Math.PI/2)*carWidth/2);
 		
-		colBoxPointsLeftOfCar(colBoxPointsLength);
-		colBoxPointsTopOfCar(backLeftX, backLeftY, colBoxPointsWidth);
+		Vector2f backRight = new Vector2f(backRightX, backRightY);
+		Vector2f backLeft = new Vector2f(backLeftX, backLeftY);
 		
-		colBoxPointsRightOfCar(backRightX, backRightY, colBoxPointsLength);
-		colBoxPointsBackOfCar(colBoxPointsWidth);
+		Vector2f frontLeft = colBoxPointsLeftOfCar(backLeft, colBoxPointsLength);
+		Vector2f frontRight = colBoxPointsTopOfCar(frontLeft, colBoxPointsWidth);
+		
+		colBoxPointsRightOfCar(frontRight, colBoxPointsLength);
+		colBoxPointsBackOfCar(backRight, colBoxPointsWidth);
 	}
 	
-	public void colBoxPointsLeftOfCar(int amountOfPoints){
+	private Vector2f colBoxPointsLeftOfCar(Vector2f backLeft, int amountOfPoints){
 		
-		float backLeftX = (float)(centerOfRotationX + Math.cos(radDeg+Math.PI/2)*carWidth/2),
-			  backLeftY = (float)(centerOfRotationY + Math.sin(radDeg+Math.PI/2)*carWidth/2);
-		
-		float newPointX, newPointY; 
+		Vector2f newPoint = new Vector2f(0,0);
 		
 		for(int i = 0; i < amountOfPoints; i++){
 			
-			newPointX = (float) (backLeftX +  Math.cos(radDeg)*carLength*i/(amountOfPoints-1));
-			newPointY = (float) (backLeftY +  Math.sin(radDeg)*carLength*i/(amountOfPoints-1));
+			newPoint.x = (float) (backLeft.x +  Math.cos(radDeg)*carLength*i/(amountOfPoints-1));
+			newPoint.y = (float) (backLeft.y +  Math.sin(radDeg)*carLength*i/(amountOfPoints-1));
 			
-			collisionBox.addPoint(newPointX, newPointY);
+			collisionBox.addPoint(newPoint.x, newPoint.y);
 		}
+		
+		return newPoint;
+		
 	}
 	
-	public void colBoxPointsTopOfCar(float startPointX, float startPointY, int amountOfPoints){
+	private Vector2f colBoxPointsTopOfCar(Vector2f frontLeft, int amountOfPoints){
 		
-		float frontLeftX = (float)(startPointX + Math.cos(radDeg)*carLength),
-			  frontLeftY = (float)(startPointY + Math.sin(radDeg)*carLength);
+		Vector2f newPoint = new Vector2f(0,0);
 		
 		for(int i = 1; i < amountOfPoints; i++){
 			
-			float newPointX = (float) (frontLeftX +  Math.cos(radDeg-Math.PI/2)*carWidth*i/(amountOfPoints-1)),
-				  newPointY = (float) (frontLeftY +  Math.sin(radDeg-Math.PI/2)*carWidth*i/(amountOfPoints-1));
+			 newPoint.x = (float) (frontLeft.x +  Math.cos(radDeg-Math.PI/2)*carWidth*i/(amountOfPoints-1));
+			 newPoint.y = (float) (frontLeft.y +  Math.sin(radDeg-Math.PI/2)*carWidth*i/(amountOfPoints-1));
 			
-			collisionBox.addPoint(newPointX, newPointY);
+			collisionBox.addPoint(newPoint.x, newPoint.y);
+		}
+		
+		return newPoint;
+	}
+	
+	private void colBoxPointsRightOfCar(Vector2f frontRight, int amountOfPoints){
+		
+		Vector2f newPoint = new Vector2f(0,0); 
+		
+		for(int i = 1; i > amountOfPoints; i++){
+			
+			newPoint.x = (float) (frontRight.x +  Math.cos(-radDeg)*carLength*i/(amountOfPoints-1));
+			newPoint.y = (float) (frontRight.y +  Math.sin(-radDeg)*carLength*i/(amountOfPoints-1));
+			
+			collisionBox.addPoint(newPoint.x, newPoint.y);
 		}
 	}
 	
-	public void colBoxPointsRightOfCar(float startPointX, float startPointY, int amountOfPoints){
+	private void colBoxPointsBackOfCar(Vector2f backRight, int amountOfPoints){
 		
-		float frontRightX = (float)(startPointX + Math.cos(radDeg)*carLength);
-		float frontRightY = (float)(startPointY + Math.sin(radDeg)*carLength);
+		Vector2f newPoint = new Vector2f(0,0);
 		
-		float newPointX, newPointY; 
-		
-		for(int i = 1; i > amountOfPoints; i--){
+		for(int i = 1; i < amountOfPoints-1; i++){
 			
-			newPointX = (float) (frontRightX +  Math.cos(radDeg+Math.PI)*carLength*i/(amountOfPoints-1));
-			newPointY = (float) (frontRightY +  Math.sin(radDeg+Math.PI)*carLength*i/(amountOfPoints-1));
-			
-			collisionBox.addPoint(newPointX, newPointY);
-		}
-	}
-	
-	public void colBoxPointsBackOfCar(int amountOfPoints){
-		
-		float backRightX = (float)(centerOfRotationX + Math.cos(radDeg-Math.PI/2)*carWidth/2),
-			  backRightY = (float)(centerOfRotationY + Math.sin(radDeg-Math.PI/2)*carWidth/2);
-		
-		for(int i = 0; i < amountOfPoints; i++){
-			
-			float newPointX = (float) (backRightX +  Math.cos(radDeg+Math.PI/2)*carWidth*i/(amountOfPoints-1)),
-				  newPointY = (float) (backRightY +  Math.sin(radDeg+Math.PI/2)*carWidth*i/(amountOfPoints-1));
-			
-			collisionBox.addPoint(newPointX, newPointY);
+			newPoint.x = (float) (backRight.x +  Math.cos(radDeg+Math.PI/2)*carWidth*i/(amountOfPoints-1));
+			newPoint.y = (float) (backRight.y +  Math.sin(radDeg+Math.PI/2)*carWidth*i/(amountOfPoints-1));
+				
+			collisionBox.addPoint(newPoint.x, newPoint.y);
 		}
 	}
 
@@ -419,11 +417,9 @@ public class Car implements Comparable<Car> {
 			break;
 		case "2":
 			controlls.rightKeyDown();
-			System.out.println("RightDown");
 			break;
 		case "3":
 			controlls.leftKeyDown();
-			System.out.println("LeftDown");
 		}
 	}
 

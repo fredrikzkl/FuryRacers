@@ -112,9 +112,6 @@ public class GameSession {
 
 			String id = client.get(0).toString();
 			String username = client.get(1).toString();
-			System.out.println(id);
-			
-			System.out.println("from" + players.get(0).getId());
 			
 			for(int i = 0; i < players.size(); i++){
 				if(players.get(i).getId().equals(id)){
@@ -126,7 +123,6 @@ public class GameSession {
 		}
 		
 		case "added client": {
-			System.out.println("New player connecting...");
 			menu.printConsole("New player connecting...");
 			String id = jsonObj.getString("data");
 			addPlayer(id);
@@ -152,11 +148,8 @@ public class GameSession {
 			String id = jsonObj.getString("from");
 			String data = jsonObj.getString("data");
 
-			if (data.equals("")) {
-				System.out.println("data.equals('')");
-
+			if (data.equals(""))
 				break;
-			}
 
 			sendToBackend("get username", id);
 
