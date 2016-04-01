@@ -104,8 +104,9 @@ public class GameCore extends BasicGameState {
 
 		relocateCam(g);
 		drawCarTimes(g);
-		drawCountdown(g);
-		infoFont.drawString(screenWidth - 300, 10, IP);// Ip addresene øverst i
+		countdown(g);
+		int stringWidth = infoFont.getWidth(IP);
+		infoFont.drawString(screenWidth - stringWidth, 10, IP);// Ip addresene øverst i
 
 		if (raceFinished)
 			scoreboard.drawScoreBoard();
@@ -153,28 +154,13 @@ public class GameCore extends BasicGameState {
 		}
 	}
 
-	public void drawCountdown(Graphics g) {
-
-		Color countdownColor = new Color(221, 0, 0);
+	public void countdown(Graphics g) {
 
 		if (!raceStarted) {
-			if (secondsLeft > 2) {
-				if (!threePlayed) {
-					three.play();
-					threePlayed = true;
-				}
-			} else if (secondsLeft > 1) {
-				if (!twoPlayed) {
-					two.play();
-					twoPlayed = true;
-				}
-			} else if (secondsLeft > 0) {
-				if (!onePlayed) {
-					one.play();
-					onePlayed = true;
-				}
-			}
-			countDownFont.drawString(screenWidth / 2, screenHeight / 2 - 150, "" + secondsLeft, countdownColor);
+			countdownAnnouncer();
+			String secondsLeftString = "" + secondsLeft;
+			drawCountdown(secondsLeftString);
+			
 		} else if (startGoSignal) {
 			startGoSignalTime = System.currentTimeMillis();
 			startGoSignal = false;
@@ -185,7 +171,7 @@ public class GameCore extends BasicGameState {
 			long currentTime = System.currentTimeMillis();
 			goSignalTimeElapsed = currentTime - startGoSignalTime;
 			if (goSignalTimeElapsed < 1500) {
-				countDownFont.drawString(screenWidth / 2 - 50, screenHeight / 2 - 150, "RACE!", countdownColor);
+				drawCountdown("RACE!");
 				if (!goPlayed) {
 					go.play();
 					goPlayed = true;
@@ -196,28 +182,60 @@ public class GameCore extends BasicGameState {
 		}
 	}
 	
+	private void drawCountdown(String string){
+		
+		Color countdownColor = new Color(221, 0, 0);
+		int stringWidth = countDownFont.getWidth(string);
+		float margin = screenHeight/10;
+		float startX = screenWidth / 2 - stringWidth/2 + margin;
+		float startY = screenHeight / 2 - margin;
+		
+		countDownFont.drawString(startX, startY, string, countdownColor);
+	}
+	private void countdownAnnouncer(){
+		
+		if (secondsLeft > 2) {
+			if (!threePlayed) {
+				three.play();
+				threePlayed = true;
+			}
+		} else if (secondsLeft > 1) {
+			if (!twoPlayed) {
+				two.play();
+				twoPlayed = true;
+			}
+		} else if (secondsLeft > 0) {
+			if (!onePlayed) {
+				one.play();
+				onePlayed = true;
+			}
+		}
+	}
+	
 
 	public void drawCarTimes(Graphics g) {
 
 		for (int i = 0; i < cars.size(); i++) {
 
-			float nextLineYOffSet = infoFontSize,
+			float margin = screenWidth/160,
+				  nextLineYOffSet = infoFontSize,
 				  yNextPlayerOffSet = nextLineYOffSet * 4,
 				  startY = screenHeight / 10 + (yNextPlayerOffSet * i),
-				  startX = screenWidth / 40,
+				  startX =  screenWidth / 40,
 				  cornerRadius = 4f;
 			
 			Color carColor = players.get(i).getCarColor();
 			String username = players.get(i).getUsername(),
 				   laps = "Lap " + cars.get(i).getLaps() + "/3";
 			
-			int usernameLength = username.length();
-			int lapsLength = laps.length();
+			int usernameLength = infoFont.getWidth(username),
+			    lapsLength = infoFont.getWidth(laps),
+			    fontHeight = infoFont.getHeight();
 			
-			float infoBoxWidth = (float) (infoFontSize*infoBoxWidth(usernameLength, lapsLength)*0.65),
-				  infoBoxHeight = screenHeight*2/infoFontSize;
-
-			RoundedRectangle box = new RoundedRectangle(startX-5, startY-5,infoBoxWidth, infoBoxHeight, cornerRadius);
+			float infoBoxWidth = infoBoxWidth(usernameLength, lapsLength) + margin*2,
+				  infoBoxHeight = fontHeight * 2 + margin*2;
+			
+			RoundedRectangle box = new RoundedRectangle(startX-margin, startY-margin, infoBoxWidth, infoBoxHeight, cornerRadius);
 			g.setColor(carColor);
 			g.fill(box);
 			infoFont.drawString(startX, startY, username);

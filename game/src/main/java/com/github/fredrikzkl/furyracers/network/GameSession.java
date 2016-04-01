@@ -88,6 +88,10 @@ public class GameSession {
 	public static void carColorToController(String recieverId, String colorCode){
 		sendToClient("set color", recieverId, colorCode);
 	}
+	
+	public static void carModelToController(String recieverId, String carModel){
+		sendToClient("set carModel", recieverId, carModel);
+	}
 
 	public void onMessage(Session session, String message) throws IOException, EncodeException, SlickException {
 		JsonReader jsonReader = Json.createReader(new StringReader(message));
@@ -113,10 +117,9 @@ public class GameSession {
 			String id = client.get(0).toString();
 			String username = client.get(1).toString();
 			
-			for(int i = 0; i < players.size(); i++){
-				if(players.get(i).getId().equals(id)){
-					System.out.println(username);
-					players.get(i).setUsername(username);
+			for(Player player : players ){
+				if(player.getId().equals(id)){
+					player.setUsername(username);
 				}
 			}
 			break;
@@ -194,7 +197,6 @@ public class GameSession {
 						for (Car car : game.cars) {
 							if (from.equals(car.id)) {
 								car.buttonUp(data);
-								//car.disableKeyboardInput();
 							}
 						}
 
@@ -230,8 +232,8 @@ public class GameSession {
 			}
 		}
 		if (notExist) {
-			System.out.println("Player: '" + from + "' doesnt exist as a player! Added to plyerlist..");
-			menu.printConsole("Player: '" + from + "' doesnt exist as a player! Adding to plyerlist..");
+			System.out.println( from + " doesn't exist as a player! Added to plyerlist..");
+			menu.printConsole( from + "' doesn't exist as a player! Adding to plyerlist..");
 			addPlayer(from);
 		}
 
@@ -240,14 +242,13 @@ public class GameSession {
 
 	private void addPlayer(String id) throws IOException, EncodeException, SlickException {
 		if (players.size() > 4) {
-			System.out.println("The game is full!");
 			menu.printConsole("The game is full!");
 			printPlayers();
 		} else {
 			players.add(new Player(id, playerNumber));
 			sendToBackend("get username", id);
 			menu.updatePlayerList(players);
-			menu.printConsole("Player '" + id + "' joined the game! Assigned as player: " + playerNumber);
+			menu.printConsole(id + " joined the game! Assigned as player: " + playerNumber);
 			playerNumber++;
 		}
 	}

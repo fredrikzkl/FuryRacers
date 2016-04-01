@@ -3,8 +3,6 @@ package com.github.fredrikzkl.furyracers;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.newdawn.slick.Graphics;
-
 public class ParallaxBackground {
 	
 	private final int SCREENWIDTH = Application.screenSize.width;
@@ -56,8 +54,6 @@ public class ParallaxBackground {
 		layer5sub = new Layer("stars1",(int)trueLength,0,speed);
 		
 		moon = new Layer("moon",0,0,0);
-		
-		
 
 		layers.add(layer5);
 		layers.add(layer5sub);

@@ -42,6 +42,7 @@ public class Menu extends BasicGameState {
 	private TrueTypeFont regularText;
 	private TrueTypeFont consoleText;
 	private float consoleSize = 15f;
+	private int screenWidth, screenHeight;
 
 	private Color headerColor = new Color(221, 0, 0);
 	private Image icons, cars, controllerQR, nextLevelBorder;
@@ -83,7 +84,6 @@ public class Menu extends BasicGameState {
 	public void init(GameContainer container, StateBasedGame game) throws SlickException {
 		
 		QR.genQR(controllerIP);
-		
 		Application.setInMenu(true);
 		initVariables();
 		addFonts();
@@ -106,12 +106,16 @@ public class Menu extends BasicGameState {
 		drawHeader();
 		drawGameInfo(g);
 		drawBacksideInfo();
-		drawPlayerIcons(container, game, g);
+		drawPlayerIcons(container, g);
 		drawQRcode(g);
 		drawNextLevelInfo();
 	}
 	
 	public void initVariables() throws SlickException{
+		
+		screenWidth = Application.screenSize.width;
+		screenHeight = Application.screenSize.height;
+		
 		players = new ArrayList<Player>();
 		console = new ArrayList<String>();
 		console.add("Welcome to FuryRacers! Version: " + version);
@@ -152,40 +156,71 @@ public class Menu extends BasicGameState {
 
 	public void drawQRcode(Graphics g){
 
-		g.drawImage(controllerQR, Application.screenSize.width - controllerQR.getWidth()-50, 50);
+		int margin = screenWidth/38;
+		g.drawImage(controllerQR, screenWidth - controllerQR.getWidth()- margin, margin);
 	}
 	
 	public void drawHeader(){
 		
-		header.drawString(Application.screenSize.width / 3, 50, "Fury Racers", headerColor);
+		String headerString = "Fury Racers";
+		int stringLength = header.getWidth(headerString);
+		float xPos = screenWidth/2 - stringLength/2;
+		header.drawString(xPos, screenHeight/15, "Fury Racers", headerColor);
 	}
 
-	private void drawPlayerIcons(GameContainer container, StateBasedGame game, Graphics g) {
+	private void drawPlayerIcons(GameContainer container, Graphics g) {
 
-		// Cars - tegner svart om spiller ikke finnes
+		float yPos = screenHeight / 4;
+		int margin = 32; 
+		int maxPlayers = 4;
+		float playerIconsLength = maxPlayers * (ICONSIZE + margin);
+		float startPlayerIconsX = screenWidth/2 - playerIconsLength/2;
+
 		for (int i = 0; i < 4; i++) {
-			if (i < players.size()) {
-				int carSelection = players.get(i).getxSel();
-				int colorSelection = players.get(i).getySel();
-				g.drawImage(
-						cars.getSubImage( carSelection * ICONSIZE, colorSelection * ICONSIZE,
-								ICONSIZE, ICONSIZE),
-						(float) (Application.screenSize.width / 3.8 + (i * 160)), Application.screenSize.height / 4);
-			}else{
-				g.drawImage(icons.getSubImage(256, 0, 128, 128),(float) (Application.screenSize.width / 3.8 + (i * 160)), Application.screenSize.height / 4);
-			}
+			float xPos = startPlayerIconsX + i * (ICONSIZE + margin);
+			drawCarSprite(xPos, yPos, i, g);
 		}
-
-		// Bordersene
+		
+		drawBoarder(startPlayerIconsX, yPos, g);
+	}
+	
+	private void drawCarSprite(float xPos, float yPos, int i, Graphics g){
+		
+		if (i < players.size()) {
+			int carSelectNum = players.get(i).getxSel();
+			int colorSelectNum = players.get(i).getySel();
+			
+			g.drawImage( getCarImage(carSelectNum, colorSelectNum), xPos, yPos);
+		}else{
+			g.drawImage(getEmptyBlackImage(), xPos, yPos);
+		}
+	}
+	
+	private void drawBoarder(float startPlayerIcons, float yPos, Graphics g){
+		
+		int margin = 32; 
+		
 		for (int i = 0; i < 4; i++) {
+			float xPos = startPlayerIcons + i * (ICONSIZE + margin);
+			
 			if (i < players.size() && players.get(i).isReady()) {
-				g.drawImage(icons.getSubImage(128, 0, 128, 128),
-						(float) (Application.screenSize.width / 3.8 + (i * 160)), Application.screenSize.height / 4);
+				g.drawImage(icons.getSubImage(128, 0, 128, 128), xPos, yPos);
 				continue;
 			}
-			g.drawImage(icons.getSubImage(0, 0, 128, 128), (float) (Application.screenSize.width / 3.8 + (i * 160)),
-					Application.screenSize.height / 4);
+			g.drawImage(icons.getSubImage(0, 0, 128, 128), xPos, yPos);
 		}
+	}
+	
+	private Image getCarImage(int carSelectNum, int colorSelectNum){
+		
+		Image carImage = cars.getSubImage( carSelectNum * ICONSIZE, colorSelectNum * ICONSIZE, ICONSIZE, ICONSIZE); 
+		
+		return carImage;
+	}
+	
+	private Image getEmptyBlackImage(){
+		
+		return icons.getSubImage(256, 0, 128, 128);
 	}
 
 	public boolean allPlayersAreReady() {
@@ -247,57 +282,76 @@ public class Menu extends BasicGameState {
 
 	public void buttonDown(String data, int playerNr) {
 		switch (data) {
-		case "1":
-			for (int i = 0; i < players.size(); i++) {
-				if (playerNr == i + 1) {
-					if (players.get(i).isCarChosen()) {
-						if (players.get(i).isReady()) {
-							players.get(i).setReady(false);
-							deSelect.play();
-						} else {
-							determinePlayerChoice(players.get(i));
-							players.get(i).setReady(true);
-							playerReady.play();
-						}
+			
+			case "1":
+				selectButtonDown(playerNr);
+				break;
+			case "2":
+				rightButtonDown(playerNr);
+				break;
+			case "3":
+				leftButtonDown(playerNr);
+				break;
+		}
+	}
+	
+	private void selectButtonDown(int playerNr){
+		
+		for (int i = 0; i < players.size(); i++) {
+			if (playerNr == i + 1) {
+				Player player = players.get(i);
+				if (player.isCarChosen()) {
+					if (player.isReady()) {
+						player.setReady(false);
+						deSelect.play();
 					} else {
-						players.get(i).setCarChosen(true);
-						select_car.play();
+						determinePlayerChoice(player);
+						player.setReady(true);
+						playerReady.play();
 					}
+				} else {
+					player.setCarChosen(true);
+					select_car.play();
 				}
 			}
-			break;
-		case "2":
-			for (int i = 0; i < players.size(); i++) {
-				if (playerNr == i + 1) {
-					if (!players.get(i).isReady()) {
-						if (players.get(i).isCarChosen()) {
-							players.get(i).setySel(players.get(i).getySel() + 1);
-							spray.play();
-						} else {
-							players.get(i).setxSel(players.get(i).getxSel() + 1);
-							car_select.play();
+		}
+	}
+	
+	private void rightButtonDown(int playerNr){
+		
+		for (int i = 0; i < players.size(); i++) {
+			if (playerNr == i + 1) {
+				Player player = players.get(i);
+				if (!player.isReady()) {
+					if (player.isCarChosen()) {
+						player.setySel(player.getySel() + 1);
+						spray.play();
+					} else {
+						player.setxSel(player.getxSel() + 1);
+						car_select.play();
 
-						}
+					}
 
+				}
+			}
+		}
+	}
+	
+	private void leftButtonDown(int playerNr){
+		
+		for (int i = 0; i < players.size(); i++) {
+			if (playerNr == i + 1) {
+				Player player = players.get(i);
+				if (!player.isReady()) {
+					if (player.isCarChosen()) {
+						player.setySel(player.getySel() - 1);
+						spray.play();
+					} else {
+						player.setxSel(player.getxSel() - 1);
+						car_select.play();
 					}
 				}
 			}
-			break;
-		case "3":
-			for (int i = 0; i < players.size(); i++) {
-				if (playerNr == i + 1) {
-					if (!players.get(i).isReady()) {
-						if (players.get(i).isCarChosen()) {
-							players.get(i).setySel(players.get(i).getySel() - 1);
-							spray.play();
-						} else {
-							players.get(i).setxSel(players.get(i).getxSel() - 1);
-							car_select.play();
-						}
-					}
-				}
-			}
-			break;
 		}
 	}
 
@@ -337,8 +391,7 @@ public class Menu extends BasicGameState {
 		}
 	}
 	public void drawNextLevelInfo(){
-		float screenWidth = Application.screenSize.width;
-		float screenHeight = Application.screenSize.height;
+
 		float scaleValue = (float) ((screenWidth/nextLevelBorder.getWidth())/3.5);
 		float realXvalue = nextLevelBorder.getWidth()*scaleValue;
 		float realYvalue = nextLevelBorder.getHeight()*scaleValue;
@@ -358,7 +411,7 @@ public class Menu extends BasicGameState {
 	public void drawGameInfo(Graphics g) {
 
 		// countdown
-		header.drawString(Application.screenSize.width - 125, Application.screenSize.height - 75, countDown);
+		header.drawString(screenWidth - 125, screenHeight - 75, countDown);
 		
 		String blinkingText;
 		if (players.isEmpty())
@@ -367,18 +420,20 @@ public class Menu extends BasicGameState {
 			blinkingText = "Ready up and the game will begin";
 		if (allPlayersAreReady() && !players.isEmpty())
 			blinkingText = "Game is starting";
-
+		
+		int stringLength = regularText.getWidth(blinkingText);
+		
+		float xPos = screenWidth/2 - stringLength/2;
 		// Blinking text
 		if (Math.sin(tick / 500) > 0) {
-			regularText.drawString((float) (Application.screenSize.width / 2.8 - blinkingText.length()),
-					Application.screenSize.height / 2, blinkingText);
+			regularText.drawString( xPos, screenHeight / 2, blinkingText);
 		}
 		
 	}
 
 	public void drawBacksideInfo() {
 		for (int i = console.size(); i > 0; i--) {
-			consoleText.drawString(0, Application.screenSize.height - (consoleSize * (console.size() - i + 1)),
+			consoleText.drawString(0, screenHeight - (consoleSize * (console.size() - i + 1)),
 					console.get(i - 1));// Draws the console
 		}
 	}
@@ -399,8 +454,6 @@ public class Menu extends BasicGameState {
 		        }
 		}
 		return  1 + (int)(Math.random() * numberOfSubfolders);
-		
-		
 	}
 
 	private void initSounds() {

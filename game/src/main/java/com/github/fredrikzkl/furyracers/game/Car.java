@@ -17,7 +17,6 @@ import org.newdawn.slick.GameContainer;
 import com.github.fredrikzkl.furyracers.network.GameSession;
 
 public class Car implements Comparable<Car> {
-
 	
 	private int originalCarWidth = 64, originalCarLength = 128, playerNr;
 	private int laps, maxLaps = 3, passedChekpoints, time;
@@ -47,8 +46,7 @@ public class Car implements Comparable<Car> {
 	private float carLength, carWidth, centerOfRotationX, centerOfRotationY;
 
 	private ArrayList<String> stoppingDirections = new ArrayList<String>();
-	
-	//-----------------------------//
+
 	private Sound finalRound;
 	private Sound crowdFinish;
 	private Sound checkpointSound;
