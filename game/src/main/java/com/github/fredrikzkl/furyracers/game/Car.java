@@ -19,7 +19,7 @@ import com.github.fredrikzkl.furyracers.network.GameSession;
 public class Car implements Comparable<Car> {
 	
 	private int originalCarWidth = 64, originalCarLength = 128, playerNr;
-	private int laps, maxLaps = 3, passedChekpoints, time;
+	private int laps, maxLaps = GameCore.maxLaps, passedChekpoints, time;
 	
 	private long startTime, nanoSecondsElapsed, 
 				 secondsElapsed, minutesElapsed, 

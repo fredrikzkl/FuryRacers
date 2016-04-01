@@ -44,6 +44,7 @@ public class GameCore extends BasicGameState {
 
 	public float initalZoom, zoom = 1;
 
+	public static int maxLaps = 3;
 	Font font;
 	TrueTypeFont infoFont;
 	Image subMapPic, mapPic, side;
@@ -226,7 +227,7 @@ public class GameCore extends BasicGameState {
 			
 			Color carColor = players.get(i).getCarColor();
 			String username = players.get(i).getUsername(),
-				   laps = "Lap " + cars.get(i).getLaps() + "/3";
+				   laps = "Lap " + cars.get(i).getLaps() + "/" + maxLaps;
 			
 			int usernameLength = infoFont.getWidth(username),
 			    lapsLength = infoFont.getWidth(laps),
