@@ -355,6 +355,10 @@ public class GameCore extends BasicGameState {
 		if (input.isKeyPressed(Input.KEY_R)) {
 			returnToMenu(container, game);
 		}
+		
+		if (input.isKeyPressed(Input.KEY_H)) {
+			scoreboard.drawScoreBoard();
+		}
 	}
 
 	public void createPlayer(int nr, String id, int playerChoice) throws SlickException {

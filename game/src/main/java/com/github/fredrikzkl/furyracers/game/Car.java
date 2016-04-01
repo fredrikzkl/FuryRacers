@@ -19,7 +19,7 @@ import com.github.fredrikzkl.furyracers.network.GameSession;
 public class Car implements Comparable<Car> {
 	
 	private int originalCarWidth = 64, originalCarLength = 128, playerNr;
-	private int laps, maxLaps = 3, passedChekpoints, time;
+	private int laps, maxLaps = 0, passedChekpoints, time;
 	
 	private long startTime, nanoSecondsElapsed, 
 				 secondsElapsed, minutesElapsed, 
@@ -187,14 +187,14 @@ public class Car implements Comparable<Car> {
 			laps++;
 			passedChekpoints = 0;
 		}
-		if (laps == 2) {
+		if (laps == maxLaps-1) {
 			if (!GameCore.finalRoundSaid) {
 				finalRound.play();
 				GameCore.finalRoundSaid = true;
 			}
 		}
 
-		if (laps == 3) {
+		if (laps == maxLaps) {
 			if (!GameCore.crowdFinishedPlayed) {
 				crowdFinish.play();
 				GameCore.crowdFinishedPlayed = true;
