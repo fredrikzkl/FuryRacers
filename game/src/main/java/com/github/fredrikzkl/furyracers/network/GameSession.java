@@ -59,38 +59,33 @@ public class GameSession {
 	}
 
 	private static void sendToBackend(String action, String data) throws IOException, EncodeException {
-		backend.getBasicRemote().sendObject(Json.createObjectBuilder().add("action", action).add("data", data).build());
+		backend.getBasicRemote().sendObject(Json.createObjectBuilder()
+				.add("action", action)
+				.add("data", data).build());
 	}
 	
-	public static Map<String, String> config = null;
 	
-	private static void sendToClient(String action, String recieverId, String data){
-		 JsonBuilderFactory factory = Json.createBuilderFactory(config);
-		 JsonObject value = factory.createObjectBuilder()
+	private static void sendToClient(String recieverId, String action, String data) throws IOException, EncodeException{
+		 JsonObject message = Json.createObjectBuilder()
 		     .add("to", recieverId)
 		     .add("action", "pass through")
-		     .add("data", factory.createObjectBuilder()
+		     .add("data", Json.createObjectBuilder()
 		         .add("action", action)
 		         .add("data", data)).build();
-		 try {
-			backend.getBasicRemote().sendObject(value);
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (EncodeException e) {
-			e.printStackTrace();
-		}
+		 
+		backend.getBasicRemote().sendObject(message);
 	}
 	
 	public static void toggleRumbling(String id) throws IOException, EncodeException{
-		sendToClient("rumble", id, "");
+		sendToClient(id, "rumble", "");
 	}
 	
-	public static void carColorToController(String recieverId, String colorCode){
-		sendToClient("set color", recieverId, colorCode);
+	public static void carColorToController(String recieverId, String colorCode) throws IOException, EncodeException{
+		sendToClient(recieverId, "set color", colorCode);
 	}
 	
-	public static void carModelToController(String recieverId, String carModel){
-		sendToClient("set carModel", recieverId, carModel);
+	public static void carModelToController(String recieverId, String carModel) throws IOException, EncodeException{
+		sendToClient(recieverId, "set carModel", carModel);
 	}
 
 	public void onMessage(Session session, String message) throws IOException, EncodeException, SlickException {
@@ -128,29 +123,27 @@ public class GameSession {
 		case "added client": {
 			menu.printConsole("New player connecting...");
 			String id = jsonObj.getString("data");
-			addPlayer(id);
+			addPlayer(id, players.size()+1);
 			break;
 		}
 
 		case "dropped client": {
 			String id = jsonObj.getString("data");
 			int spot = 0;
-			String username = id;
 			for (Player player : players) {
 				if (player.getId().equals(id)) {
 					spot = player.getPlayerNr();
-					username = player.getUsername();
 				}
 			}
 			players.remove(spot-1);
-			System.out.println("Player " + username + " dropped! Player slot " + spot + " removed");
 			break;
 		}
 
 		case "play as": {
+			
 			String id = jsonObj.getString("from");
 			String data = jsonObj.getString("data");
-
+			
 			if (data.equals(""))
 				break;
 
@@ -160,55 +153,24 @@ public class GameSession {
 		}
 
 		case "buttonDown": {
+			if (!jsonObj.containsKey("from"))
+				return;
+			
 			String data = jsonObj.getJsonNumber("data").toString();
 			String from = jsonObj.getString("from");
-
-			if (!checkIfPlayerExist(from)) {
-
-				for (int i = 0; i < players.size(); i++) {
-
-					if (players.get(i).getId().equals(from)) {
-						if (getGameState() == 0) {
-							menu.buttonDown(data, players.get(i).getPlayerNr());
-						}else{
-							for (Car car : game.cars) {
-								if (from.equals(car.id)) {
-									car.buttonDown(data);
-								}
-							}
-						}
-					}
-				}
-			}
-
-			if (!jsonObj.containsKey("from")) {
-				return;
-			}
-			from = jsonObj.getString("from");
+			buttonDown(from, data);
+			
 			break;
 		}
 		case "buttonUp": {
+			
+			if (!jsonObj.containsKey("from"))
+				return;
+			
 			String data = jsonObj.getJsonNumber("data").toString();
 			String from = jsonObj.getString("from");
+			buttonUp(from, data);
 
-			for (int i = 0; i < players.size(); i++) {
-				if (players.get(i).getId().equals(from)) {
-					if (getGameState() == 1) { // Checks if the game is in the
-						for (Car car : game.cars) {
-							if (from.equals(car.id)) {
-								car.buttonUp(data);
-							}
-						}
-
-					}
-
-				}
-			}
-
-			if (!jsonObj.containsKey("from")) {
-				return;
-			}
-			from = jsonObj.getString("from");
 			break;
 		}
 
@@ -216,40 +178,54 @@ public class GameSession {
 			String ip = jsonObj.getJsonString("data").toString();
 			game.setIP(ip);
 			menu.setIP(ip);
-
 		}
 	}
 }
+	private void buttonDown(String from, String data) throws IOException, EncodeException, SlickException{
+
+		boolean playerExists = false;
+		for (Player player : players) {
+
+			if (player.getId().equals(from)) {
+				playerExists = true;
+				if (getGameState() == 0) {
+					menu.buttonDown(data, player.getPlayerNr());
+				}else{
+					player.getCar().buttonDown(data);
+				}
+			}
+		}
+		
+		if(!playerExists){
+			menu.printConsole( from + " doesn't exist as a player! Adding to plyerlist..");
+			addPlayer(from, players.size()+1);
+		}
+	}
+	
+	private void buttonUp(String from, String data){
+		
+		for (Player player : players) {
+			if (player.getId().equals(from)) {
+				if (getGameState() == 1) { 
+					player.getCar().buttonUp(data);
+				}
+			}
+		}
+	}
 
 	public void closeConnection() throws IOException, EncodeException{
 		sendToBackend("disconnect", "");
 	}
-	private boolean checkIfPlayerExist(String from) throws IOException, EncodeException, SlickException {
-		boolean notExist = true;
-		for (Player player : players) {
-			if (player.getId().equals(from)) {
-				notExist = false;
-			}
-		}
-		if (notExist) {
-			System.out.println( from + " doesn't exist as a player! Added to plyerlist..");
-			menu.printConsole( from + "' doesn't exist as a player! Adding to plyerlist..");
-			addPlayer(from);
-		}
 
-		return notExist;
-	}
-
-	private void addPlayer(String id) throws IOException, EncodeException, SlickException {
+	private void addPlayer(String id, int playerNr) throws IOException, EncodeException, SlickException {
 		if (players.size() > 4) {
 			menu.printConsole("The game is full!");
 			printPlayers();
 		} else {
-			players.add(new Player(id, playerNumber));
+			players.add(new Player(id, playerNr));
 			sendToBackend("get username", id);
 			menu.updatePlayerList(players);
-			menu.printConsole(id + " joined the game! Assigned as player: " + playerNumber);
-			playerNumber++;
+			menu.printConsole(id + " joined the game! Assigned as player: " + playerNr);
 		}
 	}
 

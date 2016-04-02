@@ -214,7 +214,10 @@ public class GameCore extends BasicGameState {
 	}
 	
 
-	public void drawPlayerInfo(Graphics g) {
+	private void drawPlayerInfo(Graphics g) {
+		
+		float margin = screenWidth/160;
+		float fontHeight = infoFont.getHeight();
 
 		for (int i = 0; i < cars.size(); i++) {
 			
@@ -223,10 +226,7 @@ public class GameCore extends BasicGameState {
 				   laps = "Lap " + cars.get(i).getLaps() + "/" + maxLaps;
 			
 			int usernameLength = infoFont.getWidth(username),
-				lapsLength = infoFont.getWidth(laps),
-				fontHeight = infoFont.getHeight();
-
-			float margin = screenWidth/160;
+				lapsLength = infoFont.getWidth(laps);
 			
 			float infoBoxWidth = infoBoxWidth(usernameLength, lapsLength) + margin*2,
 				  infoBoxHeight = fontHeight*2 + margin*2,

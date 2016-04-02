@@ -1,5 +1,9 @@
 package com.github.fredrikzkl.furyracers.game;
 
+import java.io.IOException;
+
+import javax.websocket.EncodeException;
+
 import org.newdawn.slick.Color;
 
 import com.github.fredrikzkl.furyracers.network.GameSession;
@@ -23,7 +27,7 @@ public class Player implements Comparable<Player>{
 	private int ySel = 0;
 	private int select = 0;
 	
-	public Player(String id, int playerNr){
+	public Player(String id, int playerNr) throws IOException, EncodeException{
 		this.id=id;
 		this.playerNr=playerNr;
 		
@@ -44,7 +48,7 @@ public class Player implements Comparable<Player>{
 		return getId().hashCode();
 	}
 	
-	public void setxSel(int xSel) {
+	public void setxSel(int xSel) throws IOException, EncodeException {
 		if(xSel > maxX-1){
 			this.xSel = 0;
 		}else if(xSel<0){
@@ -56,7 +60,7 @@ public class Player implements Comparable<Player>{
 		setCarModelToController(this.xSel);
 	}
 
-	public void setySel(int ySel) {
+	public void setySel(int ySel) throws IOException, EncodeException {
 		if(ySel >= maxY){
 			this.ySel = 0;
 		}else if(ySel<0){
@@ -68,7 +72,7 @@ public class Player implements Comparable<Player>{
 		setCarColorToController(this.ySel);
 	}
 
-	private void setCarColorToController(int ySel){
+	private void setCarColorToController(int ySel) throws IOException, EncodeException{
 		
 		switch(ySel){
 			
@@ -91,7 +95,7 @@ public class Player implements Comparable<Player>{
 		}
 	}
 	
-	private void setCarModelToController(int xSel){
+	private void setCarModelToController(int xSel) throws IOException, EncodeException{
 		
 		switch(xSel){
 			
@@ -172,5 +176,9 @@ public class Player implements Comparable<Player>{
 	public String toString(){
 		return "Player " + getPlayerNr() + " ID:'" + getId() +"'";
 		
+	}
+	
+	public Car getCar(){
+		return GameCore.cars.get(playerNr-1);
 	}
 }

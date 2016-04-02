@@ -2,9 +2,12 @@ package com.github.fredrikzkl.furyracers;
 
 import java.awt.Font;
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.websocket.EncodeException;
 
 import org.newdawn.slick.Color;
 import org.newdawn.slick.GameContainer;
@@ -280,7 +283,7 @@ public class Menu extends BasicGameState {
 		console.add(text);
 	}
 
-	public void buttonDown(String data, int playerNr) {
+	public void buttonDown(String data, int playerNr) throws IOException, EncodeException {
 		switch (data) {
 			
 			case "1":
@@ -317,7 +320,7 @@ public class Menu extends BasicGameState {
 		}
 	}
 	
-	private void rightButtonDown(int playerNr){
+	private void rightButtonDown(int playerNr) throws IOException, EncodeException{
 		
 		for (int i = 0; i < players.size(); i++) {
 			if (playerNr == i + 1) {
@@ -337,7 +340,7 @@ public class Menu extends BasicGameState {
 		}
 	}
 	
-	private void leftButtonDown(int playerNr){
+	private void leftButtonDown(int playerNr) throws IOException, EncodeException{
 		
 		for (int i = 0; i < players.size(); i++) {
 			if (playerNr == i + 1) {
