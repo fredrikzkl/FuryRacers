@@ -1,20 +1,19 @@
 package com.github.fredrikzkl.furyracers.game;
 
-import org.newdawn.slick.Input;
-
 public class Controlls {
 
 	private float deltaAngleChange, deltaDeAcceleration, topSpeed;
 	private CarProperties stats;
-	private Car car;
-	boolean reverseKeyIsDown, throttleKeyIsDown, leftKeyIsDown, rightKeyIsDown, usingKeyboard, ignoreNextRight, ignoreNextLeft = false;
+	boolean 
+	reverseKeyIsDown, throttleKeyIsDown, leftKeyIsDown, 
+	rightKeyIsDown, usingKeyboard, ignoreNextRight, 
+	ignoreNextLeft = false;
 
 	float currentSpeed, movementDegrees = 0;
 
-	public Controlls(Car car, CarProperties stats) {
+	public Controlls(CarProperties stats) {
 
 		this.stats = stats;
-		this.car = car;
 		this.topSpeed = stats.topSpeed;
 	}
 	
@@ -31,11 +30,8 @@ public class Controlls {
 		return "neutral";
 	}
 
-	public void reactToControlls(Input input, int deltaTime, boolean paused) {
+	public void reactToControlls(int deltaTime, boolean paused) {
 		if (!paused) {
-			if (usingKeyboard) {
-				reactToKeyboard(input);
-			}
 
 			deltaDeAcceleration = stats.deAcceleration * deltaTime / 1000;
 			if (throttleKeyIsDown && currentSpeed < topSpeed) {
@@ -59,7 +55,7 @@ public class Controlls {
 			} else {
 				deltaDeAcceleration = 0;
 			}
-
+			
 			if (currentSpeed != 0) {
 				deltaAngleChange = 0;
 				if (leftKeyIsDown) {
@@ -73,68 +69,6 @@ public class Controlls {
 		}
 	}
 
-	public void reactToKeyboard(Input input) {
-
-		if (car.getPlayerNr() == 1) {
-			reactToArrowKeys(input);
-		} else if (car.getPlayerNr() == 2) {
-			reactToWasdKeys(input);
-		}
-	}
-
-	public void reactToArrowKeys(Input input) {
-
-		if (input.isKeyDown(Input.KEY_UP)) {
-			throttleKeyDown();
-		} else {
-			throttleKeyUp();
-		}
-
-		if (input.isKeyDown(Input.KEY_DOWN)) {
-			reverseKeyDown();
-		} else {
-			reverseKeyUp();
-		}
-
-		if (input.isKeyDown(Input.KEY_LEFT)) {
-			leftKeyDown();
-		} else {
-			leftKeyUp();
-		}
-
-		if (input.isKeyDown(Input.KEY_RIGHT)) {
-			rightKeyDown();
-		} else {
-			rightKeyUp();
-		}
-	}
-
-	public void reactToWasdKeys(Input input) {
-
-		if (input.isKeyDown(Input.KEY_W)) {
-			throttleKeyDown();
-		} else {
-			throttleKeyUp();
-		}
-
-		if (input.isKeyDown(Input.KEY_S)) {
-			reverseKeyDown();
-		} else {
-			reverseKeyUp();
-		}
-
-		if (input.isKeyDown(Input.KEY_A)) {
-			leftKeyDown();
-		} else {
-			leftKeyUp();
-		}
-
-		if (input.isKeyDown(Input.KEY_D)) {
-			rightKeyDown();
-		} else {
-			rightKeyUp();
-		}
-	}
 	
 	public void changeCurrentSpeed(float changeConstant){
 		currentSpeed *= changeConstant;

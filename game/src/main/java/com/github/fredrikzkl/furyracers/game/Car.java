@@ -18,46 +18,53 @@ import com.github.fredrikzkl.furyracers.network.GameSession;
 
 public class Car implements Comparable<Car> {
 	
-	private int originalCarWidth = 64, originalCarLength = 128, playerNr;
-	private int laps, maxLaps = GameCore.maxLaps, passedChekpoints, time;
+	private static final int 
+	originalCarWidth = 64, originalCarLength = 128, maxLaps = GameCore.maxLaps; 
 	
-	private long startTime, nanoSecondsElapsed, 
-				 secondsElapsed, minutesElapsed, 
-				 tenthsOfASecondElapsed, currentTime = 0;
+	private int 
+	playerNr, laps, passedChekpoints, time;
 	
-	private boolean offRoad, finishedRace, startClock;
-	private boolean paused;
+	private long 
+	startTime, nanoSecondsElapsed, 
+	secondsElapsed, minutesElapsed, 
+	tenthsOfASecondElapsed, currentTime,
+	totalTenthsOfSeconds;
 	
-	private float currentSpeed, radDeg, centerOfRotationYOffset;
+	private boolean 
+	offRoad, finishedRace, startClock, paused;
+	
+	private float 
+	currentSpeed, radDeg, centerOfRotationYOffset,
+	carLength, carWidth, centerOfRotationY;
 	
 	float[] collisionBoxPoints;
 
-	private String tileType, timeElapsed;
-	public String id, username = "";
+	private String 
+	tileType, timeElapsed, 
+	id, username;
+	
+	private Vector2f 
+	movementVector, position, startPos;
 
+	private ArrayList<String> 
+	stoppingDirections;
+
+	private Sound 
+	finalRound, crowdFinish,
+	checkpointSound, lapSound, still,
+	topSpeedSound;
+	
 	private Image sprite;
 	private CarProperties stats;
 	private Level level;
-	private Polygon collisionBox;
-
-	private Vector2f movementVector, position, startPos;
-	Controlls controlls;
-
-	private float carLength, carWidth, centerOfRotationX, centerOfRotationY;
-
-	private ArrayList<String> stoppingDirections = new ArrayList<String>();
-
-	private Sound finalRound;
-	private Sound crowdFinish;
-	private Sound checkpointSound;
-	private Sound lapSound;
-	private Sound still;
-	private Sound topSpeedSound;
+	private CollisionBox colBox;
 	private CollisionHandler collision;
+	Controlls controlls;
 
 	public Car(CarProperties stats, String id, int playerNr, float startX, float startY, Level level) {
 		
-		controlls = new Controlls(this, stats);
+		colBox = new CollisionBox(this);
+		controlls = new Controlls(stats);
 		collision = new CollisionHandler(this);
 		carLength = originalCarLength * stats.carSize;
 		carWidth = originalCarWidth * stats.carSize;
@@ -78,31 +85,29 @@ public class Car implements Comparable<Car> {
 		
 		Car previousCar = GameCore.getCar(playerNr-1);
 		float spaceBetweenCars = originalCarWidth/4;
-		startX -= carLength; //Bilen plasseres bakover etter hvor lang den er.
+		startX -= carLength;
 
 		if(previousCar != null){
 			
-			float prevStartY = previousCar.getStartPos().y;
-			float closestEdgeY = prevStartY + previousCar.getCarWidth();
-			startY = closestEdgeY + spaceBetweenCars;
+			float prevCarStartY = previousCar.getStartPos().y;
+			float prevCarEndY = prevCarStartY + previousCar.getCarWidth();
+			startY = prevCarEndY + spaceBetweenCars;
 		}
 		
 		startPos = new Vector2f(startX, startY);
 	}
 
 	private void initVariables() {
-		time = 0;
+		time = passedChekpoints = laps = 0;
+		currentTime = 0;
 		paused = true;
-		passedChekpoints = 0;
-		laps = 0;
 		offRoad = false;
-	
+		username = "";
 		finishedRace = false;
 		startClock = false;
-		collisionBoxPoints = new float[16];
-		collisionBox = new Polygon(collisionBoxPoints);
 		movementVector = new Vector2f();
 		centerOfRotationYOffset = originalCarWidth*stats.carSize;
+		stoppingDirections = new ArrayList<String>();
 	}
 
 	private void getCarSprite() {
@@ -117,9 +122,8 @@ public class Car implements Comparable<Car> {
 
 	public void update(GameContainer container, StateBasedGame game, int deltaTime) throws SlickException, IOException, EncodeException {
 
-		Input input = container.getInput();
 		currentSpeed = controlls.getCurrentSpeed();
-		controlls.reactToControlls(input, deltaTime, paused);
+		controlls.reactToControlls(deltaTime, paused);
 		rePositionCar(deltaTime);
 		checkForEdgeOfMap();
 		checkForCheckpoint();
@@ -143,10 +147,12 @@ public class Car implements Comparable<Car> {
 
 	public void checkForEdgeOfMap() {
 
-		float[] colBoxPoints = collisionBox.getPoints();
-		int safetyMargin = 7,
-			startOfMapX = safetyMargin, 
-			startOfMapY = safetyMargin;
+		float[] 
+		colBoxPoints = colBox.getPoints();
+		int 
+		safetyMargin = 7,
+		startOfMapX = safetyMargin, 
+		startOfMapY = safetyMargin;
 
 		for (int i = 0; i < colBoxPoints.length; i += 2) {
 
@@ -164,28 +170,28 @@ public class Car implements Comparable<Car> {
 		int tilePosY = (int) (position.y / level.getTileHeight());
 
 		tileType = level.getTileType(tilePosX, tilePosY, passedChekpoints);
-
+		
 		switch (tileType) {
-		case "checkpoint1":
-			passedChekpoints++;
-			if (!checkpointSound.playing())
-				checkpointSound.play();
-			break;
-		case "checkpoint2":
-			passedChekpoints++;
-			if (!checkpointSound.playing())
-				checkpointSound.play();
-			break;
-		case "checkpoint3":
-			passedChekpoints++;
-			if (!checkpointSound.playing())
-				checkpointSound.play();
-			break;
-		case "lap":
-			if(!lapSound.playing() && laps != 3)
-				lapSound.play();
-			laps++;
-			passedChekpoints = 0;
+			case "checkpoint1":
+				passedChekpoints++;
+				if (!checkpointSound.playing())
+					checkpointSound.play();
+				break;
+			case "checkpoint2":
+				passedChekpoints++;
+				if (!checkpointSound.playing())
+					checkpointSound.play();
+				break;
+			case "checkpoint3":
+				passedChekpoints++;
+				if (!checkpointSound.playing())
+					checkpointSound.play();
+				break;
+			case "lap":
+				if(!lapSound.playing() && laps != 3)
+					lapSound.play();
+				laps++;
+				passedChekpoints = 0;
 		}
 		if (laps == maxLaps-1) {
 			if (!GameCore.finalRoundSaid) {
@@ -203,16 +209,17 @@ public class Car implements Comparable<Car> {
 			controlls.throttleKeyUp();
 			controlls.leftKeyUp();
 			controlls.rightKeyUp();
-			setTime((int) (minutesElapsed + secondsElapsed + tenthsOfASecondElapsed));
+			setTime((int) totalTenthsOfSeconds);
 		}
 	}
 
 	public void checkForOffRoad() throws IOException, EncodeException {
 
-		float[] colBoxPoints = collisionBox.getPoints();
+		float[] colBoxPoints = colBox.getPoints();
 		float xPos, yPos;
-		int pointsNotOffRoad = 0,
-			amountOfPointsXY = colBoxPoints.length;
+		int 
+		pointsNotOffRoad = 0,
+		amountOfPointsXY = colBoxPoints.length;
 		
 		for(int i = 0; i < amountOfPointsXY; i+=2){
 			
@@ -238,25 +245,6 @@ public class Car implements Comparable<Car> {
 			GameSession.toggleRumbling(id);
 		}
 	}
-	
-	public void deAccelerate(int slowdownConstant) {
-
-		float deltaDeAcceleration = controlls.getDeltaDeAcceleration();
-		if (currentSpeed < -stats.deAcceleration) {
-
-			currentSpeed += deltaDeAcceleration * slowdownConstant;
-		} else if (currentSpeed > -stats.deAcceleration && currentSpeed < 0) {
-
-			currentSpeed = 0;
-		} else if (currentSpeed > stats.deAcceleration) {
-
-			currentSpeed -= deltaDeAcceleration * slowdownConstant;
-		} else if (currentSpeed > 0 && currentSpeed < stats.deAcceleration) {
-
-			currentSpeed = 0;
-		}
-	}
-	
 	
 	Vector2f getTurningDirectionVector(){
 		
@@ -291,11 +279,9 @@ public class Car implements Comparable<Car> {
 
 		float carRotation = controlls.getMovementDegrees();
 		sprite.setCenterOfRotation(0, centerOfRotationYOffset);
-		sprite.draw(position.x, position.y, stats.carSize);
 		sprite.setRotation(carRotation);
-		collisionBox = new Polygon();
-		collisionBox.setClosed(true);
-		generateCollisionBoxPoints();
+		sprite.draw(position.x, position.y, stats.carSize);
+		colBox.generatePoints();
 	}
 	
 	public ArrayList<String> getDirectionsToStop(){
@@ -303,86 +289,7 @@ public class Car implements Comparable<Car> {
 		return stoppingDirections;
 	}
 	
-	public void generateCollisionBoxPoints(){
-		
-		int colBoxPointsLength = 5;
-		int colBoxPointsWidth = 3;
-		
-		centerOfRotationX = position.x;
-		centerOfRotationY = position.y + centerOfRotationYOffset;
-
-		float backRightX = (float)(centerOfRotationX + Math.cos(radDeg-Math.PI/2)*carWidth/2),
-			  backRightY = (float)(centerOfRotationY + Math.sin(radDeg-Math.PI/2)*carWidth/2);
-		float backLeftX = (float)(centerOfRotationX+ Math.cos(radDeg+Math.PI/2)*carWidth/2),
-			  backLeftY = (float)(centerOfRotationY + Math.sin(radDeg+Math.PI/2)*carWidth/2);
-		
-		Vector2f backRight = new Vector2f(backRightX, backRightY);
-		Vector2f backLeft = new Vector2f(backLeftX, backLeftY);
-		
-		Vector2f frontLeft = colBoxPointsLeftOfCar(backLeft, colBoxPointsLength);
-		Vector2f frontRight = colBoxPointsTopOfCar(frontLeft, colBoxPointsWidth);
-		
-		colBoxPointsRightOfCar(frontRight, colBoxPointsLength);
-		colBoxPointsBackOfCar(backRight, colBoxPointsWidth);
-	}
 	
-	private Vector2f colBoxPointsLeftOfCar(Vector2f backLeft, int amountOfPoints){
-		
-		Vector2f newPoint = new Vector2f(0,0);
-		
-		for(int i = 0; i < amountOfPoints; i++){
-			
-			newPoint.x = (float) (backLeft.x +  Math.cos(radDeg)*carLength*i/(amountOfPoints-1));
-			newPoint.y = (float) (backLeft.y +  Math.sin(radDeg)*carLength*i/(amountOfPoints-1));
-			
-			collisionBox.addPoint(newPoint.x, newPoint.y);
-		}
-		
-		return newPoint;
-		
-	}
-	
-	private Vector2f colBoxPointsTopOfCar(Vector2f frontLeft, int amountOfPoints){
-		
-		Vector2f newPoint = new Vector2f(0,0);
-		
-		for(int i = 1; i < amountOfPoints; i++){
-			
-			 newPoint.x = (float) (frontLeft.x +  Math.cos(radDeg-Math.PI/2)*carWidth*i/(amountOfPoints-1));
-			 newPoint.y = (float) (frontLeft.y +  Math.sin(radDeg-Math.PI/2)*carWidth*i/(amountOfPoints-1));
-			
-			collisionBox.addPoint(newPoint.x, newPoint.y);
-		}
-		
-		return newPoint;
-	}
-	
-	private void colBoxPointsRightOfCar(Vector2f frontRight, int amountOfPoints){
-		
-		Vector2f newPoint = new Vector2f(0,0); 
-		
-		for(int i = 1; i > amountOfPoints; i++){
-			
-			newPoint.x = (float) (frontRight.x +  Math.cos(-radDeg)*carLength*i/(amountOfPoints-1));
-			newPoint.y = (float) (frontRight.y +  Math.sin(-radDeg)*carLength*i/(amountOfPoints-1));
-			
-			collisionBox.addPoint(newPoint.x, newPoint.y);
-		}
-	}
-	
-	private void colBoxPointsBackOfCar(Vector2f backRight, int amountOfPoints){
-		
-		Vector2f newPoint = new Vector2f(0,0);
-		
-		for(int i = 1; i < amountOfPoints-1; i++){
-			
-			newPoint.x = (float) (backRight.x +  Math.cos(radDeg+Math.PI/2)*carWidth*i/(amountOfPoints-1));
-			newPoint.y = (float) (backRight.y +  Math.sin(radDeg+Math.PI/2)*carWidth*i/(amountOfPoints-1));
-				
-			collisionBox.addPoint(newPoint.x, newPoint.y);
-		}
-	}
-
 	public void checkRaceTime() {
 
 		if (startClock) {
@@ -396,7 +303,8 @@ public class Car implements Comparable<Car> {
 			nanoSecondsElapsed = currentTime - startTime;
 			minutesElapsed = TimeUnit.NANOSECONDS.toMinutes(nanoSecondsElapsed);
 			secondsElapsed = TimeUnit.NANOSECONDS.toSeconds(nanoSecondsElapsed) - 60 * minutesElapsed;
-			tenthsOfASecondElapsed = TimeUnit.NANOSECONDS.toMillis(nanoSecondsElapsed) / 100
+			totalTenthsOfSeconds = TimeUnit.NANOSECONDS.toMillis(nanoSecondsElapsed) / 100;
+			tenthsOfASecondElapsed = totalTenthsOfSeconds
 					- TimeUnit.NANOSECONDS.toSeconds(nanoSecondsElapsed) * 10;
 
 			timeElapsed = minutesElapsed + ":" + secondsElapsed + ":" + tenthsOfASecondElapsed;
@@ -457,11 +365,6 @@ public class Car implements Comparable<Car> {
 			return laps + 1;
 		return maxLaps;
 	}
-	
-	public float[] getCollisionBoxPoints(){
-		
-		return collisionBox.getPoints();
-	}
 
 	public boolean finishedRace() {
 		return finishedRace;
@@ -475,8 +378,8 @@ public class Car implements Comparable<Car> {
 		return time;
 	}
 
-	public void setTime(int time) {
-		this.time = time;
+	public void setTime(int totalTime) {
+		this.time = totalTime;
 	}
 
 	@Override
@@ -537,8 +440,27 @@ public class Car implements Comparable<Car> {
 		return startPos;
 	}
 	
-	public float getCarWidth(){
+	float getCenterOfRotationYOffset(){
+		return centerOfRotationYOffset;
+	}
+	
+	float getCarLength(){
+		return carLength;
+	}
+	
+	float getCarWidth(){
 		return carWidth;
 	}
 	
+	float getCenterOfRotationY(){
+		return centerOfRotationY;
+	}
+	
+	float getRotationRad(){
+		return radDeg;
+	}
+	
+	CollisionBox getCollisionBox(){
+		return colBox;
+	}
 }

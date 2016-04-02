@@ -34,42 +34,38 @@ import com.github.fredrikzkl.furyracers.network.GameSession;
 
 public class GameCore extends BasicGameState {
 
+	public final static int maxLaps = 1, menuID = 0;
+	
+	private int screenWidth, screenHeight;
 	private String IP = "";
 
-	private final int menuID = 0;
+	public float 
+	initalZoom, zoom = 1,
+	biggest = 0, infoFontSize; 
 
-	public static Camera camera;
-	public Level level = null;
-	private ScoreBoard scoreboard;
+	private long 
+	startTimeCountdown, nanoSecondsElapsed, 
+	currentTimeCountDown, secondsElapsed,
+	startGoSignalTime, goSignalTimeElapsed, secondsLeft;
 
-	public float initalZoom, zoom = 1;
-
-	public static int maxLaps = 1;
-	Font font;
-	TrueTypeFont infoFont;
-	Image subMapPic, mapPic, side;
+	private boolean 
+	raceStarted, countdownStarted, startGoSignal, goSignal, 
+	raceFinished, threePlayed, twoPlayed, onePlayed, goPlayed;
+	
+	static boolean 
+	finalRoundSaid, crowdFinishedPlayed;
 
 	public static List<Car> cars;
 	public List<Player> players;
-
-	private int screenWidth, screenHeight;
-
-	float biggest = 0;
-
-	private boolean keyboardPlayerOne, keyboardPlayerTwo;
-
-	private long startTimeCountdown, nanoSecondsElapsed, currentTimeCountDown, secondsElapsed;
-
-	private boolean raceStarted, countdownStarted, startGoSignal, goSignal;
-
-	private long startGoSignalTime, goSignalTimeElapsed, secondsLeft;
-	private boolean raceFinished;
 	private TrueTypeFont countDownFont;
-	public Sound three, two, one, go;
-	private boolean threePlayed, twoPlayed, onePlayed, goPlayed;
-
-	private float infoFontSize;
-	public static boolean finalRoundSaid, crowdFinishedPlayed;
+	Sound three, two, one, go;
+	Font font;
+	TrueTypeFont infoFont;
+	Image subMapPic, mapPic, side;
+	Camera camera;
+	Level level = null;
+	ScoreBoard scoreboard;
+ 
 
 	public void init(GameContainer container, StateBasedGame sbg) throws SlickException {
 		System.out.println("IP: " + IP);
@@ -106,9 +102,7 @@ public class GameCore extends BasicGameState {
 		relocateCam(g);
 		drawPlayerInfo(g);
 		countdown(g);
-		int stringWidth = infoFont.getWidth(IP);
-		infoFont.drawString(screenWidth - stringWidth, 10, IP);
-
+		drawIp();
 		if (raceFinished)
 			scoreboard.drawScoreBoard();
 		if (scoreboard.isReturnToMenuTimerDone()) {
@@ -124,6 +118,12 @@ public class GameCore extends BasicGameState {
 		for (Player player : players) {
 			createPlayer(player.getPlayerNr(), player.getId(), player.getSelect());
 		}
+	}
+	
+	private void drawIp(){
+		
+		int stringWidth = infoFont.getWidth(IP);
+		infoFont.drawString(screenWidth - stringWidth, 10, IP);
 	}
 
 	public void addFonts() {
@@ -221,18 +221,22 @@ public class GameCore extends BasicGameState {
 
 		for (int i = 0; i < cars.size(); i++) {
 			
+			
 			Color carColor = players.get(i).getCarColor();
-			String username = players.get(i).getUsername(),
-				   laps = "Lap " + cars.get(i).getLaps() + "/" + maxLaps;
+			String 
+			username = players.get(i).getUsername(),
+			laps = "Lap " + cars.get(i).getLaps() + "/" + maxLaps;
 			
-			int usernameLength = infoFont.getWidth(username),
-				lapsLength = infoFont.getWidth(laps);
+			int 
+			usernameLength = infoFont.getWidth(username),
+			lapsLength = infoFont.getWidth(laps);
 			
-			float infoBoxWidth = infoBoxWidth(usernameLength, lapsLength) + margin*2,
-				  infoBoxHeight = fontHeight*2 + margin*2,
-				  startY = screenHeight / 10 + (infoBoxHeight + margin*2) * i,
-				  startX =  screenWidth / 40,
-				  cornerRadius = 4f;
+			float 
+		    infoBoxWidth = infoBoxWidth(usernameLength, lapsLength) + margin*2,
+			infoBoxHeight = fontHeight*2 + margin*2,
+			startY = screenHeight / 10 + (infoBoxHeight + margin*2) * i,
+			startX =  screenWidth / 40,
+			cornerRadius = 4f;
 			
 			float usernameStartY = startY+margin;
 			float lapsStartY = usernameStartY+margin/2+fontHeight;
@@ -397,9 +401,6 @@ public class GameCore extends BasicGameState {
 		countdownStarted = false;
 
 		startGoSignal = true;
-
-		keyboardPlayerOne = false;
-		keyboardPlayerOne = false;
 
 		font = new Font("Verdana", Font.BOLD, 20);
 		infoFont = new TrueTypeFont(font, true);

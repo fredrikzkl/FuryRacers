@@ -10,8 +10,6 @@ public class CollisionHandler {
 	private static boolean isLeftTileLineCrossed, isRightTileLineCrossed, isTopTileLineCrossed, isBottomTileLineCrossed;
 	private static float yOfTileEndX, yOfTileStartX, xOfTileEndY, xOfTileStartY;
 	
-	private static int collisionSlowdownConstant = 4;  
-	
 	private Car car;
 	private Controlls controlls;
 	
@@ -25,7 +23,7 @@ public class CollisionHandler {
 		ArrayList<String> directionsToStop;
 		ArrayList<String> stopTurningDirections;
 		
-		float[] colBoxPoints = car.getCollisionBoxPoints();
+		float[] colBoxPoints = car.getCollisionBox().getPoints();
 		float xPos;
 		float yPos;
 		int stoppedDirections = 0;
@@ -53,8 +51,6 @@ public class CollisionHandler {
 	void stopCarDirection(ArrayList<String> directionsToStop, Vector2f movementVector){
 		
 		Vector2f position = car.getPosition();
-
-		car.deAccelerate(collisionSlowdownConstant);
 
 		for (String directionToStop : directionsToStop) {
 
