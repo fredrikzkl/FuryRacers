@@ -4,7 +4,7 @@ import org.newdawn.slick.Input;
 
 public class Controlls {
 
-	private float deltaAngleChange, deltaDeAcceleration;
+	private float deltaAngleChange, deltaDeAcceleration, topSpeed;
 	private CarProperties stats;
 	private Car car;
 	boolean reverseKeyIsDown, throttleKeyIsDown, leftKeyIsDown, rightKeyIsDown, usingKeyboard, ignoreNextRight, ignoreNextLeft = false;
@@ -15,6 +15,7 @@ public class Controlls {
 
 		this.stats = stats;
 		this.car = car;
+		this.topSpeed = stats.topSpeed;
 	}
 	
 	public String getTurningDirection(){
@@ -37,7 +38,7 @@ public class Controlls {
 			}
 
 			deltaDeAcceleration = stats.deAcceleration * deltaTime / 1000;
-			if (throttleKeyIsDown && currentSpeed < stats.topSpeed) {
+			if (throttleKeyIsDown && currentSpeed < topSpeed) {
 
 				currentSpeed += stats.acceleration * deltaTime / 1000;
 			} else if (reverseKeyIsDown && currentSpeed > -stats.reverseTopSpeed) {
@@ -140,7 +141,12 @@ public class Controlls {
 	}
 	
 	public void changeTopSpeed(float changeConstant){
-		stats.topSpeed *= changeConstant;
+		topSpeed *= changeConstant;
+	}
+	
+	void resetTopSpeed(){
+		
+		topSpeed = stats.topSpeed;
 	}
 
 	public void throttleKeyDown() {
@@ -151,7 +157,7 @@ public class Controlls {
 	public void leftKeyDown() {
 		if(!ignoreNextLeft){
 			leftKeyIsDown = true;
-			//rightKeyIsDown = false;
+			rightKeyIsDown = false;
 		}
 		
 		ignoreNextLeft = false;
@@ -160,7 +166,7 @@ public class Controlls {
 	public void rightKeyDown() {
 		if(!ignoreNextRight){
 			rightKeyIsDown = true;
-			//leftKeyIsDown = false;
+			leftKeyIsDown = false;
 		}
 		ignoreNextRight = false;
 	}

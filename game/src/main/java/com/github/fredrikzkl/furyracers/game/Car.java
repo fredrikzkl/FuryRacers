@@ -200,7 +200,6 @@ public class Car implements Comparable<Car> {
 				GameCore.crowdFinishedPlayed = true;
 			}
 			finishedRace = true;
-			stats.deAcceleration = 250;
 			controlls.throttleKeyUp();
 			controlls.leftKeyUp();
 			controlls.rightKeyUp();

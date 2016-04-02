@@ -44,7 +44,7 @@ public class GameCore extends BasicGameState {
 
 	public float initalZoom, zoom = 1;
 
-	public static int maxLaps = 3;
+	public static int maxLaps = 1;
 	Font font;
 	TrueTypeFont infoFont;
 	Image subMapPic, mapPic, side;
@@ -104,10 +104,10 @@ public class GameCore extends BasicGameState {
 	public void render(GameContainer container, StateBasedGame sbg, Graphics g) throws SlickException {
 
 		relocateCam(g);
-		drawCarTimes(g);
+		drawPlayerInfo(g);
 		countdown(g);
 		int stringWidth = infoFont.getWidth(IP);
-		infoFont.drawString(screenWidth - stringWidth, 10, IP);// Ip addresene øverst i
+		infoFont.drawString(screenWidth - stringWidth, 10, IP);
 
 		if (raceFinished)
 			scoreboard.drawScoreBoard();
@@ -147,7 +147,7 @@ public class GameCore extends BasicGameState {
 		}
 	}
 
-	public void startCountdown() {
+	private void startCountdown() {
 
 		if (!countdownStarted) {
 			startTimeCountdown = System.nanoTime();
@@ -155,7 +155,7 @@ public class GameCore extends BasicGameState {
 		}
 	}
 
-	public void countdown(Graphics g) {
+	private void countdown(Graphics g) {
 
 		if (!raceStarted) {
 			countdownAnnouncer();
@@ -214,33 +214,34 @@ public class GameCore extends BasicGameState {
 	}
 	
 
-	public void drawCarTimes(Graphics g) {
+	public void drawPlayerInfo(Graphics g) {
 
 		for (int i = 0; i < cars.size(); i++) {
-
-			float margin = screenWidth/160,
-				  nextLineYOffSet = infoFontSize,
-				  yNextPlayerOffSet = nextLineYOffSet * 4,
-				  startY = screenHeight / 10 + (yNextPlayerOffSet * i),
-				  startX =  screenWidth / 40,
-				  cornerRadius = 4f;
 			
 			Color carColor = players.get(i).getCarColor();
 			String username = players.get(i).getUsername(),
 				   laps = "Lap " + cars.get(i).getLaps() + "/" + maxLaps;
 			
 			int usernameLength = infoFont.getWidth(username),
-			    lapsLength = infoFont.getWidth(laps),
-			    fontHeight = infoFont.getHeight();
+				lapsLength = infoFont.getWidth(laps),
+				fontHeight = infoFont.getHeight();
+
+			float margin = screenWidth/160;
 			
 			float infoBoxWidth = infoBoxWidth(usernameLength, lapsLength) + margin*2,
-				  infoBoxHeight = fontHeight * 2 + margin*2;
+				  infoBoxHeight = fontHeight*2 + margin*2,
+				  startY = screenHeight / 10 + (infoBoxHeight + margin*2) * i,
+				  startX =  screenWidth / 40,
+				  cornerRadius = 4f;
 			
-			RoundedRectangle box = new RoundedRectangle(startX-margin, startY-margin, infoBoxWidth, infoBoxHeight, cornerRadius);
+			float usernameStartY = startY+margin;
+			float lapsStartY = usernameStartY+margin/2+fontHeight;
+			
+			RoundedRectangle infoBox = new RoundedRectangle(startX, startY, infoBoxWidth, infoBoxHeight, cornerRadius);
 			g.setColor(carColor);
-			g.fill(box);
-			infoFont.drawString(startX, startY, username);
-			infoFont.drawString(startX, startY + nextLineYOffSet, laps);
+			g.fill(infoBox);
+			infoFont.drawString(startX+margin, usernameStartY, username);
+			infoFont.drawString(startX+margin, lapsStartY, laps);
 		}
 
 	}
@@ -288,6 +289,10 @@ public class GameCore extends BasicGameState {
 	}
 
 	public void returnToMenu(GameContainer container, StateBasedGame game) throws SlickException {
+		
+		for(Car car : cars)
+			car.controlls.resetTopSpeed();
+		
 		Application.closeConnection();
 		Application.createGameSession();
 		
@@ -364,10 +369,12 @@ public class GameCore extends BasicGameState {
 
 	public void createPlayer(int nr, String id, int playerChoice) throws SlickException {
 
-		CarProperties temp = CarProperties.values()[playerChoice];
+		CarProperties stats = CarProperties.values()[playerChoice];
 
-		cars.add(new Car(temp, id, nr, level.getStartCoordinates().x - (level.tileWidth * 4),
-				level.getStartCoordinates().y - (level.tileHeight * 4), level));
+		float startXcoord = level.getStartCoordinates().x - (level.tileWidth * 4);
+		float startYcoord = level.getStartCoordinates().y - (level.tileHeight * 4);
+		
+		cars.add(new Car(stats, id, nr, startXcoord, startYcoord, level));
 	}
 
 	public void relocateCam(Graphics g) {
@@ -407,7 +414,6 @@ public class GameCore extends BasicGameState {
 	}
 
 	public float getZoom() {
-
 		return zoom;
 	}
 
