@@ -1,27 +1,18 @@
 package com.github.fredrikzkl.furyracers;
 
-import java.awt.Font;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.websocket.EncodeException;
-
-import org.newdawn.slick.Color;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
 import org.newdawn.slick.Input;
 import org.newdawn.slick.Music;
 import org.newdawn.slick.SlickException;
-import org.newdawn.slick.Sound;
-import org.newdawn.slick.TrueTypeFont;
 import org.newdawn.slick.state.BasicGameState;
 import org.newdawn.slick.state.StateBasedGame;
-import org.newdawn.slick.util.ResourceLoader;
-
 import com.github.fredrikzkl.furyracers.game.CourseHandler;
 import com.github.fredrikzkl.furyracers.game.GameCore;
 import com.github.fredrikzkl.furyracers.game.Player;
@@ -30,53 +21,34 @@ import com.github.fredrikzkl.furyracers.network.GameSession;
 public class Menu extends BasicGameState {
 
 	private GameCore core;
-
-	Font regularFont;
-	TrueTypeFont ip;
 	
 	private int mapSelected;
 	private CourseHandler course;
 
 	private final int ICONSIZE = 128;
 
-	private static String controllerIP = null;
+	private static String controllerIP;
 	private String version = null;
-	private TrueTypeFont header;
-	private TrueTypeFont regularText;
-	private TrueTypeFont consoleText;
 	private float consoleSize = 15f;
 	private int screenWidth, screenHeight;
 
-	private Color headerColor = new Color(221, 0, 0);
 	private Image icons, cars, controllerQR, nextLevelBorder;
 
 	private int tick;
 	private double seconds;
-	// used to count seconds
+
 	double duration, last;
 
 	private String countDown;
-	private int counter;
-	private int secondsToNextGame;
+	private int counter,  secondsToNextGame;
 	double allReadyTimestamp;
 
 	QRgenerator QR = new QRgenerator();
 
 	public List<String> console;
 	public List<Player> players;
-
-	// --------------//
+	
 	private ParallaxBackground background;
-	// --------------//
-	private Music music;
-	private Sound car_select;
-	private Sound select_car;
-	private Sound spray;
-	private Sound playerJoin;
-	private Sound playerReady;
-	private Sound deSelect;
-	private Sound peep;
-	private Sound getReady;
 	
 	private boolean getReadySaid;
 
@@ -85,15 +57,11 @@ public class Menu extends BasicGameState {
 	}
 
 	public void init(GameContainer container, StateBasedGame game) throws SlickException {
-		
 		QR.genQR(controllerIP);
 		Application.setInMenu(true);
 		initVariables();
-		addFonts();
 		getImages();
-		initSounds();
 		GameSession.setGameState(getID());
-		
 	}
 
 	public void update(GameContainer container, StateBasedGame game, int delta) throws SlickException {
@@ -133,9 +101,9 @@ public class Menu extends BasicGameState {
 		duration = last = System.nanoTime();
 		
 		background = new ParallaxBackground();
-		music = new Music("Sound/menu.ogg");
-		music.loop();
-		music.setVolume((float) 0.4);
+		Sounds.music = new Music("Sound/menu.ogg");
+		Sounds.music.loop();
+		Sounds.music.setVolume((float) 0.4);
 		getReadySaid = false;
 	}
 	
@@ -166,9 +134,10 @@ public class Menu extends BasicGameState {
 	public void drawHeader(){
 		
 		String headerString = "Fury Racers";
-		int stringLength = header.getWidth(headerString);
+		int stringLength = Fonts.header.getWidth(headerString);
+		
 		float xPos = screenWidth/2 - stringLength/2;
-		header.drawString(xPos, screenHeight/15, "Fury Racers", headerColor);
+		Fonts.header.drawString(xPos, screenHeight/15, "Fury Racers", Fonts.headerColor);
 	}
 
 	private void drawPlayerIcons(GameContainer container, Graphics g) {
@@ -247,7 +216,7 @@ public class Menu extends BasicGameState {
 				allReadyTimestamp = seconds;
 				printConsole("Everyone is ready, the game will begin shortly!");
 				if(!getReadySaid){
-					getReady.play();
+					Sounds.getReady.play();
 					getReadySaid = true;
 				}
 			}
@@ -267,14 +236,14 @@ public class Menu extends BasicGameState {
 	}
 
 	private void startGame(StateBasedGame game) throws SlickException {
-		music.stop();
+		Sounds.music.stop();
 		core.gameStart(course, players);
 		game.enterState(1);
 	}
 
 	public void updatePlayerList(ArrayList<Player> list) {
 		players = list;
-		playerJoin.play();
+		Sounds.playerJoin.play();
 	}
 
 	public void printConsole(String text) {
@@ -306,15 +275,15 @@ public class Menu extends BasicGameState {
 				if (player.isCarChosen()) {
 					if (player.isReady()) {
 						player.setReady(false);
-						deSelect.play();
+						Sounds.deSelect.play();
 					} else {
 						determinePlayerChoice(player);
 						player.setReady(true);
-						playerReady.play();
+						Sounds.playerReady.play();
 					}
 				} else {
 					player.setCarChosen(true);
-					select_car.play();
+					Sounds.select_car.play();
 				}
 			}
 		}
@@ -328,10 +297,10 @@ public class Menu extends BasicGameState {
 				if (!player.isReady()) {
 					if (player.isCarChosen()) {
 						player.setySel(player.getySel() + 1);
-						spray.play();
+						Sounds.spray.play();
 					} else {
 						player.setxSel(player.getxSel() + 1);
-						car_select.play();
+						Sounds.car_select.play();
 
 					}
 
@@ -348,38 +317,16 @@ public class Menu extends BasicGameState {
 				if (!player.isReady()) {
 					if (player.isCarChosen()) {
 						player.setySel(player.getySel() - 1);
-						spray.play();
+						Sounds.spray.play();
 					} else {
 						player.setxSel(player.getxSel() - 1);
-						car_select.play();
+						Sounds.car_select.play();
 					}
 				}
 			}
 		}
 	}
 
-	public void addFonts() {
-
-		regularFont = new Font("Verdana", Font.BOLD, 20);
-		InputStream inputStream;
-
-		try {
-			inputStream = ResourceLoader.getResourceAsStream("Font/Orbitron-Regular.ttf");
-			Font awtFont1 = Font.createFont(Font.TRUETYPE_FONT, inputStream);
-			Font awtFont2;
-			Font awtFont3;
-
-			awtFont1 = awtFont1.deriveFont(60f); // set font size
-			awtFont2 = awtFont1.deriveFont(24f);
-			awtFont3 = awtFont1.deriveFont(consoleSize);
-
-			header = new TrueTypeFont(awtFont1, true);
-			regularText = new TrueTypeFont(awtFont2, true);
-			consoleText = new TrueTypeFont(awtFont3, true);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
 
 	public void getImages() {
 		try {
@@ -405,16 +352,16 @@ public class Menu extends BasicGameState {
 		//Draw minimap
 		course.minimap.draw(posX,posY,realXvalue,realYvalue);
 		//Draw mapname
-		regularText.drawString(posX+(realXvalue/20), (posY + (realYvalue/10)), course.mapName);
+		Fonts.regularText.drawString(posX+(realXvalue/20), (posY + (realYvalue/10)), course.mapName);
 		//Draw nextLevelString
-		consoleText.drawString(posX, (posY - (console.size())-15), "Next course:");
+		Fonts.consoleText.drawString(posX, (posY - (console.size())-15), "Next course:");
 		
 	}
 
 	public void drawGameInfo(Graphics g) {
 
 		// countdown
-		header.drawString(screenWidth - 125, screenHeight - 75, countDown);
+		Fonts.header.drawString(screenWidth - 125, screenHeight - 75, countDown);
 		
 		String blinkingText;
 		if (players.isEmpty())
@@ -424,19 +371,19 @@ public class Menu extends BasicGameState {
 		if (allPlayersAreReady() && !players.isEmpty())
 			blinkingText = "Game is starting";
 		
-		int stringLength = regularText.getWidth(blinkingText);
+		int stringLength = Fonts.regularText.getWidth(blinkingText);
 		
 		float xPos = screenWidth/2 - stringLength/2;
 		// Blinking text
 		if (Math.sin(tick / 500) > 0) {
-			regularText.drawString( xPos, screenHeight / 2, blinkingText);
+			Fonts.regularText.drawString( xPos, screenHeight / 2, blinkingText);
 		}
 		
 	}
 
 	public void drawBacksideInfo() {
 		for (int i = console.size(); i > 0; i--) {
-			consoleText.drawString(0, screenHeight - (consoleSize * (console.size() - i + 1)),
+			Fonts.consoleText.drawString(0, screenHeight - (consoleSize * (console.size() - i + 1)),
 					console.get(i - 1));// Draws the console
 		}
 	}
@@ -457,23 +404,6 @@ public class Menu extends BasicGameState {
 		        }
 		}
 		return  1 + (int)(Math.random() * numberOfSubfolders);
-	}
-
-	private void initSounds() {
-		try {
-			String path = "Sound/";
-			car_select = new Sound(path + "car_select.ogg");
-			select_car = new Sound(path + "select_car.ogg");
-			spray = new Sound(path + "spray.ogg");
-			playerJoin = new Sound(path + "playerJoin.ogg");
-			playerReady = new Sound(path + "ready.ogg");
-			deSelect = new Sound(path + "deselect.ogg");
-			peep = new Sound(path + "countdown.ogg");
-			getReady = new Sound(path + "/announcer/getReady.ogg");
-		} catch (SlickException e) {
-			System.out.println("Could not load sound file" + e);
-			e.printStackTrace();
-		}
 	}
 	
 	public void setIP(String ip) {

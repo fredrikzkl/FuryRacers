@@ -68,7 +68,6 @@ public class Controlls {
 			}
 		}
 	}
-
 	
 	public void changeCurrentSpeed(float changeConstant){
 		currentSpeed *= changeConstant;
@@ -168,6 +167,4 @@ public class Controlls {
 	public void setMovementDegrees(float movementDegrees){
 		this.movementDegrees = movementDegrees;
 	}
-
-
 }

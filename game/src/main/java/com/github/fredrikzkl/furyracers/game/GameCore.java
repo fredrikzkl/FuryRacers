@@ -1,43 +1,35 @@
 package com.github.fredrikzkl.furyracers.game;
 
-import java.awt.Font;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
-
 import javax.websocket.EncodeException;
-
 import org.newdawn.slick.Color;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
 import org.newdawn.slick.Input;
 import org.newdawn.slick.SlickException;
-import org.newdawn.slick.Sound;
-import org.newdawn.slick.SpriteSheet;
-import org.newdawn.slick.TrueTypeFont;
-import org.newdawn.slick.geom.Circle;
-import org.newdawn.slick.geom.Rectangle;
 import org.newdawn.slick.geom.RoundedRectangle;
 import org.newdawn.slick.geom.Vector2f;
 import org.newdawn.slick.state.BasicGameState;
-import org.newdawn.slick.state.GameState;
 import org.newdawn.slick.state.StateBasedGame;
-import org.newdawn.slick.state.transition.Transition;
-import org.newdawn.slick.util.ResourceLoader;
-
 import com.github.fredrikzkl.furyracers.Application;
+import com.github.fredrikzkl.furyracers.Fonts;
+import com.github.fredrikzkl.furyracers.Sounds;
 import com.github.fredrikzkl.furyracers.network.GameSession;
 
 public class GameCore extends BasicGameState {
 
-	public final static int maxLaps = 1, menuID = 0;
+	public final static int 
+	maxLaps = 1, menuID = 0;
 	
-	private int screenWidth, screenHeight;
-	private String IP = "";
+	private int 
+	screenWidth, screenHeight;
+	
+	private 
+	String IP;
 
 	public float 
 	initalZoom, zoom = 1,
@@ -57,10 +49,6 @@ public class GameCore extends BasicGameState {
 
 	public static List<Car> cars;
 	public List<Player> players;
-	private TrueTypeFont countDownFont;
-	Sound three, two, one, go;
-	Font font;
-	TrueTypeFont infoFont;
 	Image subMapPic, mapPic, side;
 	Camera camera;
 	Level level = null;
@@ -73,7 +61,6 @@ public class GameCore extends BasicGameState {
 
 	public void gameStart(CourseHandler course, List<Player> players) throws SlickException {
 
-		initSounds();
 		GameSession.setGameState(getID());
 		Application.setInMenu(false);
 		level = new Level(course);
@@ -83,7 +70,6 @@ public class GameCore extends BasicGameState {
 		camera.setZoom((float) 0.3);
 
 		scoreboard = new ScoreBoard(cars, players);
-		addFonts();
 	}
 
 	public void update(GameContainer container, StateBasedGame game, int deltaTime) throws SlickException {
@@ -122,29 +108,8 @@ public class GameCore extends BasicGameState {
 	
 	private void drawIp(){
 		
-		int stringWidth = infoFont.getWidth(IP);
-		infoFont.drawString(screenWidth - stringWidth, 10, IP);
-	}
-
-	public void addFonts() {
-
-		InputStream inputStream;
-		float countdownFontSize = 70f;
-		infoFontSize = 20f;
-
-		try {
-			inputStream = ResourceLoader.getResourceAsStream("Font/Orbitron-Regular.ttf");
-			Font timberFont = Font.createFont(Font.TRUETYPE_FONT, inputStream);
-
-			timberFont = timberFont.deriveFont(countdownFontSize);
-			countDownFont = new TrueTypeFont(timberFont, true);
-			
-			timberFont = timberFont.deriveFont(infoFontSize);
-			infoFont = new TrueTypeFont(timberFont, true);
-
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		int stringWidth = Fonts.infoFont.getWidth(IP);
+		Fonts.infoFont.drawString(screenWidth - stringWidth, 10, IP);
 	}
 
 	private void startCountdown() {
@@ -174,7 +139,7 @@ public class GameCore extends BasicGameState {
 			if (goSignalTimeElapsed < 1500) {
 				drawCountdown("RACE!");
 				if (!goPlayed) {
-					go.play();
+					Sounds.go.play();
 					goPlayed = true;
 				}
 			} else {
@@ -186,28 +151,28 @@ public class GameCore extends BasicGameState {
 	private void drawCountdown(String string){
 		
 		Color countdownColor = new Color(221, 0, 0);
-		int stringWidth = countDownFont.getWidth(string);
+		int stringWidth = Fonts.header.getWidth(string);
 		float margin = screenHeight/10;
 		float startX = screenWidth / 2 - stringWidth/2 + margin;
 		float startY = screenHeight / 2 - margin;
 		
-		countDownFont.drawString(startX, startY, string, countdownColor);
+		Fonts.header.drawString(startX, startY, string, countdownColor);
 	}
 	private void countdownAnnouncer(){
 		
 		if (secondsLeft > 2) {
 			if (!threePlayed) {
-				three.play();
+				Sounds.three.play();
 				threePlayed = true;
 			}
 		} else if (secondsLeft > 1) {
 			if (!twoPlayed) {
-				two.play();
+				Sounds.two.play();
 				twoPlayed = true;
 			}
 		} else if (secondsLeft > 0) {
 			if (!onePlayed) {
-				one.play();
+				Sounds.one.play();
 				onePlayed = true;
 			}
 		}
@@ -217,7 +182,7 @@ public class GameCore extends BasicGameState {
 	private void drawPlayerInfo(Graphics g) {
 		
 		float margin = screenWidth/160;
-		float fontHeight = infoFont.getHeight();
+		float fontHeight = Fonts.infoFont.getHeight();
 
 		for (int i = 0; i < cars.size(); i++) {
 			
@@ -228,8 +193,9 @@ public class GameCore extends BasicGameState {
 			laps = "Lap " + cars.get(i).getLaps() + "/" + maxLaps;
 			
 			int 
-			usernameLength = infoFont.getWidth(username),
-			lapsLength = infoFont.getWidth(laps);
+			usernameLength = 
+			Fonts. infoFont.getWidth(username),
+			lapsLength = Fonts.infoFont.getWidth(laps);
 			
 			float 
 		    infoBoxWidth = infoBoxWidth(usernameLength, lapsLength) + margin*2,
@@ -244,8 +210,8 @@ public class GameCore extends BasicGameState {
 			RoundedRectangle infoBox = new RoundedRectangle(startX, startY, infoBoxWidth, infoBoxHeight, cornerRadius);
 			g.setColor(carColor);
 			g.fill(infoBox);
-			infoFont.drawString(startX+margin, usernameStartY, username);
-			infoFont.drawString(startX+margin, lapsStartY, laps);
+			Fonts.infoFont.drawString(startX+margin, usernameStartY, username);
+			Fonts.infoFont.drawString(startX+margin, lapsStartY, laps);
 		}
 
 	}
@@ -277,19 +243,6 @@ public class GameCore extends BasicGameState {
 		if(carsFinished == cars.size()){
 			raceFinished = true;
 		}
-	}
-	
-
-	private void initSounds() {
-		try {
-			three = new Sound("/Sound/announcer/three.ogg");
-			two = new Sound("/Sound/announcer/two.ogg");
-			one = new Sound("/Sound/announcer/one.ogg");
-			go = new Sound("/Sound/announcer/race!.ogg");
-		} catch (SlickException e) { 
-			System.out.println("ERROR: Could not load announcer files!" + e);
-		}
-
 	}
 
 	public void returnToMenu(GameContainer container, StateBasedGame game) throws SlickException {
@@ -402,9 +355,6 @@ public class GameCore extends BasicGameState {
 
 		startGoSignal = true;
 
-		font = new Font("Verdana", Font.BOLD, 20);
-		infoFont = new TrueTypeFont(font, true);
-
 		screenWidth = Application.screenSize.width;
 		screenHeight = Application.screenSize.height;
 
@@ -420,10 +370,6 @@ public class GameCore extends BasicGameState {
 
 	public boolean isFinalRoundSaid() {
 		return finalRoundSaid;
-	}
-
-	public void setFinalRoundSaid(boolean finalRoundSaid) {
-		this.finalRoundSaid = finalRoundSaid;
 	}
 	
 	public static Car getCar(int playerNr){

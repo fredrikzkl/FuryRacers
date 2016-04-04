@@ -30,7 +30,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>com.github.fredrikzkl.furyracers.GameCore</mainClass>
+                            <mainClass>com.github.fredrikzkl.furyracers.Application</mainClass>
 
                         </manifest>
                     </archive>

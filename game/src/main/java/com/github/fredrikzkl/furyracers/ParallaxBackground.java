@@ -83,7 +83,6 @@ public class ParallaxBackground {
 		for(Layer lay:layers){
 			lay.draw(scaleValue);
 		}
-		
 	}
 	
 	public void tick(){

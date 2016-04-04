@@ -3,17 +3,17 @@ package com.github.fredrikzkl.furyracers.game;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
+
 import javax.websocket.EncodeException;
+
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
-import org.newdawn.slick.Input;
 import org.newdawn.slick.SlickException;
-import org.newdawn.slick.Sound;
-import org.newdawn.slick.geom.Polygon;
 import org.newdawn.slick.geom.Vector2f;
 import org.newdawn.slick.state.StateBasedGame;
 import org.newdawn.slick.GameContainer;
 
+import com.github.fredrikzkl.furyracers.Sounds;
 import com.github.fredrikzkl.furyracers.network.GameSession;
 
 public class Car implements Comparable<Car> {
@@ -48,11 +48,6 @@ public class Car implements Comparable<Car> {
 
 	private ArrayList<String> 
 	stoppingDirections;
-
-	private Sound 
-	finalRound, crowdFinish,
-	checkpointSound, lapSound, still,
-	topSpeedSound;
 	
 	private Image sprite;
 	private CarProperties stats;
@@ -76,7 +71,6 @@ public class Car implements Comparable<Car> {
 		
 		getCarSprite();
 		initVariables();
-		initSounds();
 		detStartPos(startX, startY);
 		position = new Vector2f(startPos);
 	}
@@ -130,7 +124,7 @@ public class Car implements Comparable<Car> {
 		collision.checkForCollision();
 		checkForOffRoad();
 		checkRaceTime();
-		sounds();
+		carSounds();
 	}
 
 	public void rePositionCar(int deltaTime) {
@@ -174,35 +168,35 @@ public class Car implements Comparable<Car> {
 		switch (tileType) {
 			case "checkpoint1":
 				passedChekpoints++;
-				if (!checkpointSound.playing())
-					checkpointSound.play();
+				if (!Sounds.checkpoint.playing())
+					Sounds.checkpoint.play();
 				break;
 			case "checkpoint2":
 				passedChekpoints++;
-				if (!checkpointSound.playing())
-					checkpointSound.play();
+				if (!Sounds.checkpoint.playing())
+					Sounds.checkpoint.play();
 				break;
 			case "checkpoint3":
 				passedChekpoints++;
-				if (!checkpointSound.playing())
-					checkpointSound.play();
+				if (!Sounds.checkpoint.playing())
+					Sounds.checkpoint.play();
 				break;
 			case "lap":
-				if(!lapSound.playing() && laps != 3)
-					lapSound.play();
+				if(!Sounds.lap.playing() && laps != 3)
+					Sounds.lap.play();
 				laps++;
 				passedChekpoints = 0;
 		}
 		if (laps == maxLaps-1) {
 			if (!GameCore.finalRoundSaid) {
-				finalRound.play();
+				Sounds.finalRound.play();
 				GameCore.finalRoundSaid = true;
 			}
 		}
 
 		if (laps == maxLaps) {
 			if (!GameCore.crowdFinishedPlayed) {
-				crowdFinish.play();
+				Sounds.crowdFinish.play();
 				GameCore.crowdFinishedPlayed = true;
 			}
 			finishedRace = true;
@@ -311,39 +305,6 @@ public class Car implements Comparable<Car> {
 		}
 	}
 
-	public void buttonDown(String data) {
-		controlls.disableKeyboardInput();
-		switch (data) {
-		case "0":
-			controlls.reverseKeyDown();
-			break;
-		case "1":
-			controlls.throttleKeyDown();
-			break;
-		case "2":
-			controlls.rightKeyDown();
-			break;
-		case "3":
-			controlls.leftKeyDown();
-		}
-	}
-
-	public void buttonUp(String data) {
-		switch (data) {
-		case "0":
-			controlls.reverseKeyUp();
-			break;
-		case "1":
-			controlls.throttleKeyUp();
-			break;
-		case "2":
-			controlls.rightKeyUp();
-			break;
-		case "3":
-			controlls.leftKeyUp();
-		}
-	}
-
 	public String getTimeElapsed() {
 		return timeElapsed;
 	}
@@ -386,41 +347,25 @@ public class Car implements Comparable<Car> {
 	public int compareTo(Car o) {
 		return -(Integer.compare(this.getTime(), o.getTime()));
 	}
-
-	public void initSounds() {
-		String path = "/Sound/carSounds/";
-		String type = ".ogg";
-		try {
-			finalRound = new Sound("/Sound/announcer/finalRound" + type);
-			crowdFinish = new Sound("/Sound/crowdFinish" + type);
-			checkpointSound = new Sound("/Sound/checkpoint" + type);
-			lapSound = new Sound("/Sound/lap" + type);
-
-			still = new Sound(path + "still" + type);
-			topSpeedSound = new Sound(path + "speed" + type);
-		} catch (SlickException e) {
-			System.out.println("ERROR! Could not load car sounds!");
-		}
-	}
 	
 	public boolean deAcceleratingSoundPlayed = false;
 	
-	private void sounds() {
+	private void carSounds() {
 
-		if(currentSpeed < 1 && !topSpeedSound.playing()){
-			if(!still.playing())
-				still.play();
+		if(currentSpeed < 1 && !Sounds.topSpeed.playing()){
+			if(!Sounds.still.playing())
+				Sounds.still.play();
 		}
 		if(controlls.throttleKeyIsDown){
-			if(!topSpeedSound.playing()){
-				still.stop();
-				topSpeedSound.play();
+			if(!Sounds.topSpeed.playing()){
+				Sounds.still.stop();
+				Sounds.topSpeed.play();
 				deAcceleratingSoundPlayed = false;
 			}
 		}else{
-			topSpeedSound.stop();
-			if(!still.playing())
-				still.play();
+			Sounds.topSpeed.stop();
+			if(!Sounds.still.playing())
+				Sounds.still.play();
 		}
 	}
 	

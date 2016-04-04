@@ -58,7 +58,8 @@ public class GameSession {
 				
 				menu.printConsole("New player connecting...");
 				String playerId = jsonObj.getString("data");
-				addPlayer(playerId, players.size()+1);
+				int playerNr = players.size()+1;
+				addPlayer(playerId, playerNr);
 				break;
 			}
 	
@@ -177,10 +178,10 @@ public class GameSession {
 
 			if (player.getId().equals(from)) {
 				playerExists = true;
-				if (getGameState() == 0) {
+				if (gameState == 0) {
 					menu.buttonDown(data, player.getPlayerNr());
 				}else{
-					player.getCar().buttonDown(data);
+					player.buttonDown(data);
 				}
 			}
 		}
@@ -194,10 +195,10 @@ public class GameSession {
 	
 	private void buttonUp(String from, String data){
 		
-		if (getGameState() == 1) { 
+		if (gameState == 1) { 
 			for (Player player : players) {
 				if (player.getId().equals(from)) {
-					player.getCar().buttonUp(data);
+					player.buttonUp(data);
 				}
 			}
 		}
@@ -225,10 +226,6 @@ public class GameSession {
 		for (Player player : players) {
 			System.out.println(player);
 		}
-	}
-
-	public static int getGameState() {
-		return gameState;
 	}
 
 	public static void setGameState(int gameState) {
