@@ -8,7 +8,6 @@ import javax.websocket.EncodeException;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
-import org.newdawn.slick.Image;
 import org.newdawn.slick.Input;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.geom.RoundedRectangle;
@@ -49,7 +48,6 @@ public class GameCore extends BasicGameState {
 
 	public static List<Car> cars;
 	public List<Player> players;
-	Image subMapPic, mapPic, side;
 	Camera camera;
 	Level level = null;
 	ScoreBoard scoreboard;
@@ -66,7 +64,7 @@ public class GameCore extends BasicGameState {
 		level = new Level(course);
 		camera = new Camera(0, 0, level);
 		initVariables();
-		createPlayers(players);
+		createCars(players);
 		camera.setZoom((float) 0.3);
 
 		scoreboard = new ScoreBoard(cars, players);
@@ -94,15 +92,14 @@ public class GameCore extends BasicGameState {
 		if (scoreboard.isReturnToMenuTimerDone()) {
 			returnToMenu(container, sbg);
 		}
-
 	}
 
-	public void createPlayers(List<Player> players) throws SlickException {
+	public void createCars(List<Player> players) throws SlickException {
 
 		this.players = players;
 
 		for (Player player : players) {
-			createPlayer(player.getPlayerNr(), player.getId(), player.getSelect());
+			createCar(player.getPlayerNr(), player.getId(), player.getSelect());
 		}
 	}
 	
@@ -324,7 +321,7 @@ public class GameCore extends BasicGameState {
 		}
 	}
 
-	public void createPlayer(int nr, String id, int playerChoice) throws SlickException {
+	public void createCar(int nr, String id, int playerChoice) throws SlickException {
 
 		CarProperties stats = CarProperties.values()[playerChoice];
 
@@ -337,7 +334,6 @@ public class GameCore extends BasicGameState {
 	public void relocateCam(Graphics g) {
 		camera.zoom(g, camera.getZoom());// Crasher om verdien <=0
 		g.translate(camera.getX(), camera.getY()); // Start of camera
-
 
 		level.drawCars(g, cars);
 

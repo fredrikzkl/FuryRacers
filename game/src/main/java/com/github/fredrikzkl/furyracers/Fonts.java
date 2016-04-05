@@ -9,8 +9,8 @@ import org.newdawn.slick.util.ResourceLoader;
 
 public class Fonts {
 	
-	private static float headerSize = 30f;
-	private static float textSize = 24f;
+	private static float headerSize = 28f;
+	private static float textSize = 22f;
 	public static Font regularFont;
 	public static TrueTypeFont infoFont;
 	public static  TrueTypeFont countdown;

@@ -32,8 +32,6 @@ public class Menu extends BasicGameState {
 	private float consoleSize = 15f;
 	private int screenWidth, screenHeight;
 
-	private Image icons, cars, controllerQR, nextLevelBorder;
-
 	private int tick;
 	private double seconds;
 
@@ -60,7 +58,6 @@ public class Menu extends BasicGameState {
 		QR.genQR(controllerIP);
 		Application.setInMenu(true);
 		initVariables();
-		getImages();
 		GameSession.setGameState(getID());
 	}
 
@@ -128,7 +125,7 @@ public class Menu extends BasicGameState {
 	public void drawQRcode(Graphics g){
 
 		int margin = screenWidth/38;
-		g.drawImage(controllerQR, screenWidth - controllerQR.getWidth()- margin, margin);
+		g.drawImage(Sprites.controllerQR, screenWidth - Sprites.controllerQR.getWidth()- margin, margin);
 	}
 	
 	public void drawHeader(){
@@ -176,23 +173,23 @@ public class Menu extends BasicGameState {
 			float xPos = startPlayerIcons + i * (ICONSIZE + margin);
 			
 			if (i < players.size() && players.get(i).isReady()) {
-				g.drawImage(icons.getSubImage(128, 0, 128, 128), xPos, yPos);
+				g.drawImage(Sprites.icons.getSubImage(128, 0, 128, 128), xPos, yPos);
 				continue;
 			}
-			g.drawImage(icons.getSubImage(0, 0, 128, 128), xPos, yPos);
+			g.drawImage(Sprites.icons.getSubImage(0, 0, 128, 128), xPos, yPos);
 		}
 	}
 	
 	private Image getCarImage(int carSelectNum, int colorSelectNum){
 		
-		Image carImage = cars.getSubImage( carSelectNum * ICONSIZE, colorSelectNum * ICONSIZE, ICONSIZE, ICONSIZE); 
+		Image carImage = Sprites.cars.getSubImage( carSelectNum * ICONSIZE, colorSelectNum * ICONSIZE, ICONSIZE, ICONSIZE); 
 		
 		return carImage;
 	}
 	
 	private Image getEmptyBlackImage(){
 		
-		return icons.getSubImage(256, 0, 128, 128);
+		return Sprites.icons.getSubImage(256, 0, 128, 128);
 	}
 
 	public boolean allPlayersAreReady() {
@@ -327,28 +324,15 @@ public class Menu extends BasicGameState {
 		}
 	}
 
-
-	public void getImages() {
-		try {
-			icons = new Image("Sprites/menu/menu_sheet.png");
-			cars = new Image("Sprites/menu/carSheet.png");
-			controllerQR = new Image("QRcode/controllerQR.JPG");
-			nextLevelBorder = new Image("Sprites/UI/nextLevelBorder.png");
-		} catch (RuntimeException e) {
-			printConsole("ERROR! Sprite sheet not found!");
-		} catch (SlickException e) {
-			e.printStackTrace();
-		}
-	}
 	public void drawNextLevelInfo(){
 
-		float scaleValue = (float) ((screenWidth/nextLevelBorder.getWidth())/3.5);
-		float realXvalue = nextLevelBorder.getWidth()*scaleValue;
-		float realYvalue = nextLevelBorder.getHeight()*scaleValue;
+		float scaleValue = (float) ((screenWidth/Sprites.nextLevelBorder.getWidth())/3.5);
+		float realXvalue = Sprites.nextLevelBorder.getWidth()*scaleValue;
+		float realYvalue = Sprites.nextLevelBorder.getHeight()*scaleValue;
 		float posX = ((screenWidth/2)-(realXvalue/2));
 		float posY = screenHeight-(realYvalue+25);
 		
-		nextLevelBorder.draw(posX,posY,scaleValue);
+		Sprites.nextLevelBorder.draw(posX,posY,scaleValue);
 		//Draw minimap
 		course.minimap.draw(posX,posY,realXvalue,realYvalue);
 		//Draw mapname
