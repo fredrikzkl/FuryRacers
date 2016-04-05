@@ -11,11 +11,13 @@ public class CollisionBox {
 	private float carWidth;
 	private float carLength;
 	private Polygon collisionBox;
+	public boolean bool = false;
 	
 	public CollisionBox(Car car){
 		this.car = car;
 		carWidth = car.getCarWidth();
 		carLength = car.getCarLength();
+		
 		collisionBox = new Polygon();
 	}
 	
@@ -25,11 +27,12 @@ public class CollisionBox {
 		float centerOfRotationY  = car.getPosition().y + car.getCenterOfRotationYOffset();
 		float radDeg = car.getRotationRad();
 		collisionBox = new Polygon();
+		collisionBox.setClosed(true);
 
-		float backRightX = (float)(centerOfRotationX + Math.cos(radDeg-Math.PI/2)*carWidth/2),
-			  backRightY = (float)(centerOfRotationY + Math.sin(radDeg-Math.PI/2)*carWidth/2);
-		float backLeftX = (float)(centerOfRotationX+ Math.cos(radDeg+Math.PI/2)*carWidth/2),
-			  backLeftY = (float)(centerOfRotationY + Math.sin(radDeg+Math.PI/2)*carWidth/2);
+		float backRightX = centerOfRotationX + (float)(Math.cos(radDeg-Math.PI/2)*carWidth/2),
+			  backRightY = centerOfRotationY + (float)(Math.sin(radDeg-Math.PI/2)*carWidth/2);
+		float backLeftX = centerOfRotationX + (float)(Math.cos(radDeg+Math.PI/2)*carWidth/2),
+			  backLeftY = centerOfRotationY + (float)(Math.sin(radDeg+Math.PI/2)*carWidth/2);
 		
 		Vector2f backRight = new Vector2f(backRightX, backRightY);
 		Vector2f backLeft = new Vector2f(backLeftX, backLeftY);
@@ -77,10 +80,9 @@ public class CollisionBox {
 		Vector2f newPoint = new Vector2f(0,0); 
 		
 		for(int i = 1; i < amountLength; i++){
-			
-			
-			newPoint.x = (float) (frontRight.x +  Math.cos(-radDeg)*carLength*i/(amountLength-1));
-			newPoint.y = (float) (frontRight.y +  Math.sin(-radDeg)*carLength*i/(amountLength-1));
+						
+			newPoint.x = (float) (frontRight.x +  Math.cos(radDeg+Math.PI)*carLength*i/(amountLength-1));
+			newPoint.y = (float) (frontRight.y +  Math.sin(radDeg+Math.PI)*carLength*i/(amountLength-1));
 			
 			collisionBox.addPoint(newPoint.x, newPoint.y);
 		}
@@ -89,7 +91,7 @@ public class CollisionBox {
 	private void pointsBackOfCar(Vector2f backRight, float radDeg){
 		
 		Vector2f newPoint = new Vector2f(0,0);
-		
+
 		for(int i = 1; i < amountWidth-1; i++){
 			
 			newPoint.x = (float) (backRight.x +  Math.cos(radDeg+Math.PI/2)*carWidth*i/(amountWidth-1));
@@ -100,7 +102,12 @@ public class CollisionBox {
 	}
 	
 	float[] getPoints(){
+		
 		return collisionBox.getPoints();
+	}
+	
+	Polygon getBox(){
+		return collisionBox;
 	}
 
 }

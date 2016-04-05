@@ -30,7 +30,8 @@ public class Menu extends BasicGameState {
 	private float 
 	consoleSize, xPosCountdown, yPosCountdown;;
 
-	private double seconds, duration, last, 
+	private double 
+	seconds, duration, last, 
 	allReadyTimestamp;
 
 	private boolean 
@@ -115,7 +116,7 @@ public class Menu extends BasicGameState {
 		}
 	}
 	
-	public void setTime(){
+	private void setTime(){
 		
 		tick++;
 		duration = System.nanoTime() - last;
@@ -123,13 +124,13 @@ public class Menu extends BasicGameState {
 		last = System.nanoTime();
 	}
 
-	public void drawQRcode(Graphics g){
+	private void drawQRcode(Graphics g){
 
 		int margin = screenWidth/38;
 		g.drawImage(Sprites.controllerQR, screenWidth - Sprites.controllerQR.getWidth()- margin, margin);
 	}
 	
-	public void drawHeader(){
+	private void drawHeader(){
 		
 		String headerString = "Fury Racers";
 		int stringLength = Fonts.header.getWidth(headerString);

@@ -3,9 +3,7 @@ package com.github.fredrikzkl.furyracers.game;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
-
 import javax.websocket.EncodeException;
-
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
 import org.newdawn.slick.SlickException;
@@ -19,7 +17,8 @@ import com.github.fredrikzkl.furyracers.network.GameSession;
 public class Car implements Comparable<Car> {
 	
 	private static final int 
-	originalCarWidth = 64, originalCarLength = 128, maxLaps = GameCore.maxLaps; 
+	originalCarWidth = 64, originalCarLength = 128, 
+	maxLaps = GameCore.maxLaps; 
 	
 	private int 
 	playerNr, laps, passedChekpoints, time;
@@ -58,11 +57,11 @@ public class Car implements Comparable<Car> {
 
 	public Car(CarProperties stats, String id, int playerNr, float startX, float startY, Level level) {
 		
-		colBox = new CollisionBox(this);
 		controlls = new Controlls(stats);
-		collision = new CollisionHandler(this);
 		carLength = originalCarLength * stats.carSize;
 		carWidth = originalCarWidth * stats.carSize;
+		collision = new CollisionHandler(this);
+		colBox = new CollisionBox(this);
 		
 		this.stats = stats;
 		this.id = id;
@@ -209,8 +208,12 @@ public class Car implements Comparable<Car> {
 
 	public void checkForOffRoad() throws IOException, EncodeException {
 
-		float[] colBoxPoints = colBox.getPoints();
-		float xPos, yPos;
+		float[] 
+		colBoxPoints = colBox.getPoints();
+		
+		float 
+		xPos, yPos;
+		
 		int 
 		pointsNotOffRoad = 0,
 		amountOfPointsXY = colBoxPoints.length;
@@ -283,8 +286,7 @@ public class Car implements Comparable<Car> {
 		return stoppingDirections;
 	}
 	
-	
-	public void checkRaceTime() {
+	private void checkRaceTime() {
 
 		if (startClock) {
 			startTime = System.nanoTime();
