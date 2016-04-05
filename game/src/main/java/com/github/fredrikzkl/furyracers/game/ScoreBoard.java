@@ -11,27 +11,27 @@ import com.github.fredrikzkl.furyracers.Sprites;
 
 public class ScoreBoard {
 
-	float resultPosX, resultPosY, highScorePosX, highScorePosY;
-
-	private boolean toMenuTimerSet, returnToMenuTimerDone;
 	private long toMenuRealTimer;
-	private String toMenuTimer = "";
-	private int timeToMenu = 10;
-	private float margin;
-	int scoreBoardFontHeight, origScreenWidth;
-	float screenWidth;
-	 
-	float scalingValue;
-
-	public ArrayList<Car> cars;
-	public ArrayList<Player> players;
 	
-	private boolean closedPlayed, movePlayed;
+	private int 
+	timeToMenu, scoreBoardFontHeight, 
+	origScreenWidth;
+	
+	private boolean 
+	closedPlayed, movePlayed, 
+	toMenuTimerSet, returnToMenuTimerDone;
 
 	private float 
 	resultsBoardWidth, highscoreBoardWidth, 
-	endXposResults, screenHeight, 
-	endOfResultsY, movementPerUpdate;
+	endXposResults, screenHeight, margin, 
+	endOfResultsY, movementPerUpdate, screenWidth,
+	scalingValue, resultPosX, resultPosY, 
+	highScorePosX, highScorePosY;
+	
+	private ArrayList<Car> cars;
+	private ArrayList<Player> players;
+	
+	private String toMenuTimer = "";
 
 	public ScoreBoard(List<Car> cars2, List<Player> players2) {
 
@@ -40,6 +40,7 @@ public class ScoreBoard {
 		
 		returnToMenuTimerDone = false;
 		
+		timeToMenu = 10;
 		scoreBoardFontHeight = Fonts.scoreBoardHeader.getHeight();
 		screenWidth = Application.screenSize.width;
 		screenHeight = Application.screenSize.height;
@@ -57,12 +58,11 @@ public class ScoreBoard {
 		movementPerUpdate = screenWidth/342f;
 
 		movePlayed = closedPlayed = false;
-		
 	}
 
 	public void drawScoreBoard() {
 		
-		drawBoardBackground();
+		drawBoardBackgrounds();
 		
 		if(!movePlayed){
 			Sounds.scoreboardMove.play();
@@ -83,7 +83,7 @@ public class ScoreBoard {
 		}
 	}
 	
-	private void drawBoardBackground(){
+	private void drawBoardBackgrounds(){
 		
 		Sprites.resultsBoard.draw(resultPosX, resultPosY, scalingValue);
 		Sprites.highscoresBoard.draw(highScorePosX, highScorePosY, scalingValue);
@@ -110,7 +110,6 @@ public class ScoreBoard {
 		int amountOfCars = sortedCars.size();
 		int startIndex = amountOfCars - 1;
 		float yPos = resultPosY;
-		
 		
 		for (int i = startIndex; i > -1; i--) {
 			
