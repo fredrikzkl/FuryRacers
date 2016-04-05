@@ -20,44 +20,40 @@ import com.github.fredrikzkl.furyracers.network.GameSession;
 
 public class Menu extends BasicGameState {
 
-	private GameCore core;
-	
-	private int mapSelected;
-	private CourseHandler course;
-
 	private final int ICONSIZE = 128;
+	
+	private int 
+	screenWidth, screenHeight,
+	counter, secondsToNextGame,
+	tick, mapSelected;
+	
+	private float 
+	consoleSize, xPosCountdown, yPosCountdown;;
 
-	private static String controllerIP;
-	private String version = null;
-	private float consoleSize = 15f;
-	private int screenWidth, screenHeight;
+	private double seconds, duration, last, 
+	allReadyTimestamp;
 
-	private int tick;
-	private double seconds;
+	private boolean 
+	getReadySaid;
+	
+	private String 
+	controllerIP, version, countDown;
 
-	double duration, last;
-
-	private String countDown;
-	private int counter,  secondsToNextGame;
-	double allReadyTimestamp;
-
-	QRgenerator QR = new QRgenerator();
-
+	private QRgenerator QR;
+	private GameCore core;
+	private CourseHandler course;
 	public List<String> console;
 	public List<Player> players;
-	
 	private ParallaxBackground background;
-	
-	private boolean getReadySaid;
 
 	public Menu(GameCore game) {
 		core = game;
 	}
 
 	public void init(GameContainer container, StateBasedGame game) throws SlickException {
+		initVariables();
 		QR.genQR(controllerIP);
 		Application.setInMenu(true);
-		initVariables();
 		GameSession.setGameState(getID());
 	}
 
@@ -72,7 +68,7 @@ public class Menu extends BasicGameState {
 		background.draw();
 		background.tick();
 		drawHeader();
-		drawGameInfo(g);
+		drawMenuInfo(g);
 		drawBacksideInfo();
 		drawPlayerIcons(container, g);
 		drawQRcode(g);
@@ -80,6 +76,8 @@ public class Menu extends BasicGameState {
 	}
 	
 	public void initVariables() throws SlickException{
+		
+		QR = new QRgenerator();
 		
 		screenWidth = Application.screenSize.width;
 		screenHeight = Application.screenSize.height;
@@ -91,6 +89,9 @@ public class Menu extends BasicGameState {
 		mapSelected = randomMap();
 		course = new CourseHandler(mapSelected);
 		
+		xPosCountdown = screenWidth - screenHeight/10;
+		yPosCountdown = screenHeight - screenHeight/20;
+		consoleSize = 15f;
 		allReadyTimestamp = 0;
 		secondsToNextGame = 5;
 		counter = secondsToNextGame;
@@ -192,7 +193,7 @@ public class Menu extends BasicGameState {
 		return Sprites.icons.getSubImage(256, 0, 128, 128);
 	}
 
-	public boolean allPlayersAreReady() {
+	private boolean allPlayersAreReady() {
 
 		if (players.size() > 0) {
 			for (Player player : players)
@@ -205,7 +206,7 @@ public class Menu extends BasicGameState {
 		return true;
 	}
 
-	public void readyCheck(StateBasedGame game) throws SlickException {
+	private void readyCheck(StateBasedGame game) throws SlickException {
 
 		if (allPlayersAreReady()) {
 
@@ -333,19 +334,29 @@ public class Menu extends BasicGameState {
 		float posY = screenHeight-(realYvalue+25);
 		
 		Sprites.nextLevelBorder.draw(posX,posY,scaleValue);
-		//Draw minimap
+		
 		course.minimap.draw(posX,posY,realXvalue,realYvalue);
-		//Draw mapname
+		
 		Fonts.regularText.drawString(posX+(realXvalue/20), (posY + (realYvalue/10)), course.mapName);
 		//Draw nextLevelString
 		Fonts.consoleText.drawString(posX, (posY - (console.size())-15), "Next course:");
 		
 	}
 
-	public void drawGameInfo(Graphics g) {
+	private void drawMenuInfo(Graphics g) {
 
-		// countdown
-		Fonts.header.drawString(screenWidth - 125, screenHeight - 75, countDown);
+		drawCountdown();
+		
+		drawBlinkingInfo();
+		
+	}
+	
+	private void drawCountdown(){
+		
+		Fonts.header.drawString(xPosCountdown, yPosCountdown, countDown);
+	}
+	
+	private void drawBlinkingInfo(){
 		
 		String blinkingText;
 		if (players.isEmpty())
@@ -358,11 +369,10 @@ public class Menu extends BasicGameState {
 		int stringLength = Fonts.regularText.getWidth(blinkingText);
 		
 		float xPos = screenWidth/2 - stringLength/2;
-		// Blinking text
-		if (Math.sin(tick / 500) > 0) {
+		
+		if (Math.sin(tick / 60) > 0) {
 			Fonts.regularText.drawString( xPos, screenHeight / 2, blinkingText);
 		}
-		
 	}
 
 	public void drawBacksideInfo() {

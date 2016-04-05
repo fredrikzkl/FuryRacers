@@ -11,7 +11,8 @@ import com.github.fredrikzkl.furyracers.Sprites;
 
 public class ScoreBoard {
 
-	private long toMenuRealTimer;
+	private long 
+	toMenuRealTimer;
 	
 	private int 
 	timeToMenu, scoreBoardFontHeight, 
@@ -28,18 +29,16 @@ public class ScoreBoard {
 	scalingValue, resultPosX, resultPosY, 
 	highScorePosX, highScorePosY;
 	
+	private String toMenuTimer = "";
+	
 	private ArrayList<Car> cars;
 	private ArrayList<Player> players;
-	
-	private String toMenuTimer = "";
 
 	public ScoreBoard(List<Car> cars2, List<Player> players2) {
 
 		this.cars = (ArrayList<Car>) cars2;
 		this.players = (ArrayList<Player>) players2;
-		
-		returnToMenuTimerDone = false;
-		
+				
 		timeToMenu = 10;
 		scoreBoardFontHeight = Fonts.scoreBoardHeader.getHeight();
 		screenWidth = Application.screenSize.width;
@@ -57,17 +56,17 @@ public class ScoreBoard {
 		endXposResults = screenWidth / 2 - resultsBoardWidth;
 		movementPerUpdate = screenWidth/342f;
 
-		movePlayed = closedPlayed = false;
+		movePlayed = closedPlayed = returnToMenuTimerDone = false;
 	}
 
 	public void drawScoreBoard() {
-		
-		drawBoardBackgrounds();
 		
 		if(!movePlayed){
 			Sounds.scoreboardMove.play();
 			movePlayed = true;
 		}
+		
+		drawBoardBackgrounds();
 		
 		if (resultPosX < endXposResults) {
 			resultPosX += movementPerUpdate;
@@ -182,5 +181,4 @@ public class ScoreBoard {
 	public boolean isReturnToMenuTimerDone() {
 		return returnToMenuTimerDone;
 	}
-
 }

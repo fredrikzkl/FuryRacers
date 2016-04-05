@@ -22,7 +22,7 @@ import com.github.fredrikzkl.furyracers.network.GameSession;
 public class GameCore extends BasicGameState {
 
 	public final static int 
-	maxLaps = 1, menuID = 0;
+	maxLaps = 3, menuID = 0;
 	
 	private int 
 	screenWidth, screenHeight;
@@ -325,8 +325,8 @@ public class GameCore extends BasicGameState {
 
 		CarProperties stats = CarProperties.values()[playerChoice];
 
-		float startXcoord = level.getStartCoordinates().x - (level.tileWidth * 4);
-		float startYcoord = level.getStartCoordinates().y - (level.tileHeight * 4);
+		float startXcoord = level.getStartCoordinates().x - (level.getTileWidth() * 4);
+		float startYcoord = level.getStartCoordinates().y - (level.getTileHeight() * 4);
 		
 		cars.add(new Car(stats, id, nr, startXcoord, startYcoord, level));
 	}
@@ -380,6 +380,5 @@ public class GameCore extends BasicGameState {
 	public int getID() {
 		return 1;
 	}
-
 
 }

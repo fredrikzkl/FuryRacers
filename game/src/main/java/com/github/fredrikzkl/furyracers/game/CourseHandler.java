@@ -5,9 +5,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.nio.file.DirectoryStream;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.newdawn.slick.Image;
 import org.newdawn.slick.Music;
@@ -20,7 +17,7 @@ public class CourseHandler {
 
 	private int level;
 	
-	public Image subLayer, topLayer,minimap;
+	public Image subLayer, topLayer, minimap;
 	public Music soundTrack;
 	public TiledMap data;
 	public String mapName;
