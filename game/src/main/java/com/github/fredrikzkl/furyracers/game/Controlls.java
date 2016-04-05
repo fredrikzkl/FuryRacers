@@ -2,7 +2,7 @@ package com.github.fredrikzkl.furyracers.game;
 
 public class Controlls {
 
-	private float deltaAngleChange, deltaDeAcceleration, topSpeed;
+	private float deltaAngleChange, deltaDeAcceleration, topSpeed, acceleration, deAcceleration;
 	private CarProperties stats;
 	boolean 
 	reverseKeyIsDown, throttleKeyIsDown, leftKeyIsDown, 
@@ -14,7 +14,10 @@ public class Controlls {
 	public Controlls(CarProperties stats) {
 
 		this.stats = stats;
-		this.topSpeed = stats.topSpeed;
+		topSpeed = stats.topSpeed;
+		acceleration = stats.acceleration;
+		deAcceleration = stats.deAcceleration;
+	
 	}
 	
 	public String getTurningDirection(){
@@ -33,23 +36,23 @@ public class Controlls {
 	public void reactToControlls(int deltaTime, boolean paused) {
 		if (!paused) {
 
-			deltaDeAcceleration = stats.deAcceleration * deltaTime / 1000;
+			deltaDeAcceleration = deAcceleration * deltaTime / 1000;
 			if (throttleKeyIsDown && currentSpeed < topSpeed) {
 
-				currentSpeed += stats.acceleration * deltaTime / 1000;
+				currentSpeed += acceleration * deltaTime / 1000;
 			} else if (reverseKeyIsDown && currentSpeed > -stats.reverseTopSpeed) {
 
 				currentSpeed -= stats.reverseAcceleration * deltaTime / 1000;
-			} else if (currentSpeed < -stats.deAcceleration) {
+			} else if (currentSpeed < -deAcceleration) {
 
 				currentSpeed += deltaDeAcceleration;
-			} else if (currentSpeed > -stats.deAcceleration && currentSpeed < 0) {
+			} else if (currentSpeed > -deAcceleration && currentSpeed < 0) {
 
 				currentSpeed = 0;
-			} else if (currentSpeed > stats.deAcceleration) {
+			} else if (currentSpeed > deAcceleration) {
 
 				currentSpeed -= deltaDeAcceleration;
-			} else if (currentSpeed > 0 && currentSpeed < stats.deAcceleration) {
+			} else if (currentSpeed > 0 && currentSpeed < deAcceleration) {
 
 				currentSpeed = 0;
 			} else {
@@ -67,6 +70,15 @@ public class Controlls {
 				}
 			}
 		}
+	}
+	
+	void changeDeAcceleration(float constant){
+		
+		deAcceleration *= constant;
+	}
+	
+	void resetDeAcceleration(){
+		deAcceleration = stats.deAcceleration;
 	}
 	
 	public void changeCurrentSpeed(float changeConstant){

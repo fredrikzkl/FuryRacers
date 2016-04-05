@@ -22,13 +22,12 @@ import com.github.fredrikzkl.furyracers.network.GameSession;
 public class GameCore extends BasicGameState {
 
 	public final static int 
-	maxLaps = 3, menuID = 0;
+	maxLaps = 1, menuID = 0;
 	
 	private int 
 	screenWidth, screenHeight;
 	
-	private 
-	String IP;
+	private String IP;
 
 	public float 
 	initalZoom, zoom = 1,
@@ -244,8 +243,10 @@ public class GameCore extends BasicGameState {
 
 	public void returnToMenu(GameContainer container, StateBasedGame game) throws SlickException {
 		
-		for(Car car : cars)
+		for(Car car : cars){
 			car.controlls.resetTopSpeed();
+			car.controlls.resetDeAcceleration();
+		}
 		
 		Application.closeConnection();
 		Application.createGameSession();
@@ -324,11 +325,13 @@ public class GameCore extends BasicGameState {
 	public void createCar(int nr, String id, int playerChoice) throws SlickException {
 
 		CarProperties stats = CarProperties.values()[playerChoice];
-
-		float startXcoord = level.getStartCoordinates().x - (level.getTileWidth() * 4);
-		float startYcoord = level.getStartCoordinates().y - (level.getTileHeight() * 4);
 		
-		cars.add(new Car(stats, id, nr, startXcoord, startYcoord, level));
+		Vector2f startArea = new Vector2f();
+
+		startArea.x = level.getStartCoordinates().x - level.getTileWidth() * 4;
+		startArea.y = level.getStartCoordinates().y - level.getTileHeight() * 4;
+		
+		cars.add(new Car(stats, id, nr, startArea, level));
 	}
 
 	public void relocateCam(Graphics g) {

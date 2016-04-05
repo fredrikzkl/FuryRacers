@@ -3,7 +3,10 @@ package com.github.fredrikzkl.furyracers.game;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
+
 import javax.websocket.EncodeException;
+
+import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
 import org.newdawn.slick.SlickException;
@@ -16,12 +19,12 @@ import com.github.fredrikzkl.furyracers.network.GameSession;
 
 public class Car implements Comparable<Car> {
 	
-	private static final int 
-	originalCarWidth = 64, originalCarLength = 128, 
+	private static final int
 	maxLaps = GameCore.maxLaps; 
 	
 	private int 
-	playerNr, laps, passedChekpoints, time;
+	playerNr, laps, passedChekpoints, 
+	time, originalCarWidth, originalCarLength;
 	
 	private long 
 	startTime, nanoSecondsElapsed, 
@@ -48,46 +51,47 @@ public class Car implements Comparable<Car> {
 	private ArrayList<String> 
 	stoppingDirections;
 	
-	private Image sprite;
 	private CarProperties stats;
 	private Level level;
 	private CollisionBox colBox;
 	private CollisionHandler collision;
 	Controlls controlls;
 
-	public Car(CarProperties stats, String id, int playerNr, float startX, float startY, Level level) {
+	public Car(CarProperties stats, String id, int playerNr, Vector2f startArea, Level level) {
 		
-		controlls = new Controlls(stats);
+		originalCarLength = stats.carImage.getWidth();
+		originalCarWidth = stats.carImage.getHeight()/2;
+		
 		carLength = originalCarLength * stats.carSize;
 		carWidth = originalCarWidth * stats.carSize;
-		collision = new CollisionHandler(this);
-		colBox = new CollisionBox(this);
 		
 		this.stats = stats;
 		this.id = id;
 		this.playerNr = playerNr;
 		this.level = level;
 		
-		getCarSprite();
 		initVariables();
-		detStartPos(startX, startY);
+		detStartPos(startArea);
+		
 		position = new Vector2f(startPos);
+		collision = new CollisionHandler(this);
+		colBox = new CollisionBox(this);
+		controlls = new Controlls(stats);
 	}
 	
-	private void detStartPos(float startX, float startY){
+	private void detStartPos(Vector2f carStartPos){
 		
 		Car previousCar = GameCore.getCar(playerNr-1);
 		float spaceBetweenCars = originalCarWidth/4;
-		startX -= carLength;
+		carStartPos.x -= carLength;
 
 		if(previousCar != null){
-			
 			float prevCarStartY = previousCar.getStartPos().y;
 			float prevCarEndY = prevCarStartY + previousCar.getCarWidth();
-			startY = prevCarEndY + spaceBetweenCars;
+			carStartPos.y = prevCarEndY + spaceBetweenCars;
 		}
 		
-		startPos = new Vector2f(startX, startY);
+		startPos = new Vector2f(carStartPos);
 	}
 
 	private void initVariables() {
@@ -99,18 +103,8 @@ public class Car implements Comparable<Car> {
 		finishedRace = false;
 		startClock = false;
 		movementVector = new Vector2f();
-		centerOfRotationYOffset = originalCarWidth*stats.carSize;
+		centerOfRotationYOffset = carWidth;
 		stoppingDirections = new ArrayList<String>();
-	}
-
-	private void getCarSprite() {
-
-		try {
-			sprite = new Image(stats.imageFile);
-		} catch (SlickException e) {
-			System.out.println("Could not find image file " + stats.imageFile);
-			e.printStackTrace();
-		}
 	}
 
 	public void update(GameContainer container, StateBasedGame game, int deltaTime) throws SlickException, IOException, EncodeException {
@@ -186,6 +180,7 @@ public class Car implements Comparable<Car> {
 				laps++;
 				passedChekpoints = 0;
 		}
+		
 		if (laps == maxLaps-1) {
 			if (!GameCore.finalRoundSaid) {
 				Sounds.finalRound.play();
@@ -202,6 +197,7 @@ public class Car implements Comparable<Car> {
 			controlls.throttleKeyUp();
 			controlls.leftKeyUp();
 			controlls.rightKeyUp();
+			controlls.changeDeAcceleration(1.04f);
 			setTime((int) totalTenthsOfSeconds);
 		}
 	}
@@ -275,9 +271,9 @@ public class Car implements Comparable<Car> {
 	public void render(Graphics g) {
 
 		float carRotation = controlls.getMovementDegrees();
-		sprite.setCenterOfRotation(0, centerOfRotationYOffset);
-		sprite.setRotation(carRotation);
-		sprite.draw(position.x, position.y, stats.carSize);
+		stats.carImage.setCenterOfRotation(0, centerOfRotationYOffset);
+		stats.carImage.setRotation(carRotation);
+		stats.carImage.draw(position.x, position.y, stats.carSize);
 		colBox.generatePoints();
 	}
 	
@@ -316,7 +312,7 @@ public class Car implements Comparable<Car> {
 	}
 
 	public Image getImage() {
-		return sprite;
+		return stats.carImage;
 	}
 
 	public void startClock() {
