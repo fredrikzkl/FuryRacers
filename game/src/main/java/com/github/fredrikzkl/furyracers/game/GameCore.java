@@ -26,12 +26,10 @@ public class GameCore extends BasicGameState {
 	
 	private int 
 	screenWidth, screenHeight;
-	
-	private String IP;
 
 	public float 
-	initalZoom, zoom = 1,
-	biggest = 0, infoFontSize; 
+	initalZoom, zoom,
+	biggest, infoFontSize; 
 
 	private long 
 	startTimeCountdown, nanoSecondsElapsed, 
@@ -45,11 +43,13 @@ public class GameCore extends BasicGameState {
 	static boolean 
 	finalRoundSaid, crowdFinishedPlayed;
 
+	private String IP;
+	
 	public static List<Car> cars;
 	public List<Player> players;
-	Camera camera;
-	Level level = null;
-	ScoreBoard scoreboard;
+	private Camera camera;
+	private Level level;
+	private ScoreBoard scoreboard;
  
 
 	public void init(GameContainer container, StateBasedGame sbg) throws SlickException {
@@ -65,7 +65,6 @@ public class GameCore extends BasicGameState {
 		initVariables();
 		createCars(players);
 		camera.setZoom((float) 0.3);
-
 		scoreboard = new ScoreBoard(cars, players);
 	}
 
@@ -345,18 +344,20 @@ public class GameCore extends BasicGameState {
 	}
 
 	public void initVariables() {
-		threePlayed = twoPlayed = onePlayed = goPlayed = finalRoundSaid = crowdFinishedPlayed = false;
-		raceFinished = false;
-		cars = new ArrayList<Car>();
-
-		raceStarted = false;
-		countdownStarted = false;
-
+		threePlayed = twoPlayed = onePlayed = 
+		goPlayed = finalRoundSaid = 
+		crowdFinishedPlayed = raceFinished = 
+		raceStarted = countdownStarted = false;
+		
 		startGoSignal = true;
-
+		
 		screenWidth = Application.screenSize.width;
 		screenHeight = Application.screenSize.height;
-
+		
+		zoom = 1;
+		biggest = 0;
+			
+		cars = new ArrayList<Car>();
 	}
 
 	public void setIP(String ip) {

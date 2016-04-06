@@ -28,7 +28,7 @@ public class Menu extends BasicGameState {
 	tick, mapSelected;
 	
 	private float 
-	consoleSize, xPosCountdown, yPosCountdown;;
+	consoleSize, xPosCountdown, yPosCountdown;
 
 	private double 
 	seconds, duration, last, 
@@ -91,7 +91,7 @@ public class Menu extends BasicGameState {
 		course = new CourseHandler(mapSelected);
 		
 		xPosCountdown = screenWidth - screenHeight/10;
-		yPosCountdown = screenHeight - screenHeight/20;
+		yPosCountdown = screenHeight - screenHeight/15;
 		consoleSize = 15f;
 		allReadyTimestamp = 0;
 		secondsToNextGame = 5;

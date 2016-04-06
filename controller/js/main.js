@@ -255,6 +255,20 @@ function drawUsername(){
     redButtons.events.onInputUp.add(throttleUp, game);
   }
 
+  function setFullscreen(){
+
+    var iOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+
+    if(!iOS){
+
+      game.input.onDown.add(function(pointer) {
+        if (!game.scale.isFullScreen) {
+            game.scale.startFullScreen(false);
+        }
+      }, this);
+    }
+  }
+
   game = new Phaser.Game(800, 600, Phaser.AUTO, 'controller', {
 
     preload: function preload() {
@@ -279,8 +293,10 @@ function drawUsername(){
 
     create: function create(){
 
+      game.scale.fullScreenScaleMode = Phaser.ScaleManager.EXACT_FIT;
       game.scale.scaleMode = Phaser.ScaleManager.EXACT_FIT;
       game.scale.refresh();
+
       style = { font: ' 20pt Ariel', fill: 'black', align: 'left', wordWrap: true, wordWrapWidth: 450 };
       usernameText = game.add.text(game.world.width, game.world.height, getUsername(), style);
       carModelText = game.add.text(game.world.centerX, game.world.centerY, carModel, style);
@@ -294,6 +310,7 @@ function drawUsername(){
 
       drawUsername();
 
+      setFullscreen();
     }
   });
 
