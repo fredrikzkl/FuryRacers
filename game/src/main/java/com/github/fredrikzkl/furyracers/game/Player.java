@@ -6,6 +6,7 @@ import javax.websocket.EncodeException;
 
 import org.newdawn.slick.Color;
 
+import com.github.fredrikzkl.furyracers.car.Car;
 import com.github.fredrikzkl.furyracers.network.GameSession;
 
 public class Player implements Comparable<Player>{

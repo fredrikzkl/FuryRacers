@@ -1,21 +1,22 @@
 package com.github.fredrikzkl.furyracers.game;
 
 import java.util.List;
+
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.geom.Vector2f;
 
-public class Level {
-	static CourseHandler course;
+import com.github.fredrikzkl.furyracers.car.Car;
 
-	static int tileHeight, tileWidth;
+public class Level {
+	public static CourseHandler course;
+
+	public static int tileHeight, tileWidth;
 	int mapWidthTiles, mapHeightTiles;
 
 	float mapWidthPixels, mapHeightPixels;
 
 	private Vector2f startCoordinates, timerCoordinates;
-	static int propsLayer, backgroundLayer, roadLayer;
-
-	// --------------------------------//
+	public static int propsLayer, backgroundLayer, roadLayer;
 
 	public Level(CourseHandler course) {
 		this.course = course;

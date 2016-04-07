@@ -4,10 +4,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+
 import com.github.fredrikzkl.furyracers.Application;
-import com.github.fredrikzkl.furyracers.Fonts;
-import com.github.fredrikzkl.furyracers.Sounds;
-import com.github.fredrikzkl.furyracers.Sprites;
+import com.github.fredrikzkl.furyracers.assets.Fonts;
+import com.github.fredrikzkl.furyracers.assets.Sounds;
+import com.github.fredrikzkl.furyracers.assets.Sprites;
+import com.github.fredrikzkl.furyracers.car.Car;
 
 public class ScoreBoard {
 

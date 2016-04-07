@@ -4,7 +4,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+
 import javax.websocket.EncodeException;
+
 import org.newdawn.slick.Color;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
@@ -14,9 +16,12 @@ import org.newdawn.slick.geom.RoundedRectangle;
 import org.newdawn.slick.geom.Vector2f;
 import org.newdawn.slick.state.BasicGameState;
 import org.newdawn.slick.state.StateBasedGame;
+
 import com.github.fredrikzkl.furyracers.Application;
-import com.github.fredrikzkl.furyracers.Fonts;
-import com.github.fredrikzkl.furyracers.Sounds;
+import com.github.fredrikzkl.furyracers.assets.Fonts;
+import com.github.fredrikzkl.furyracers.assets.Sounds;
+import com.github.fredrikzkl.furyracers.car.Car;
+import com.github.fredrikzkl.furyracers.car.CarProperties;
 import com.github.fredrikzkl.furyracers.network.GameSession;
 
 public class GameCore extends BasicGameState {
@@ -40,7 +45,7 @@ public class GameCore extends BasicGameState {
 	raceStarted, countdownStarted, startGoSignal, goSignal, 
 	raceFinished, threePlayed, twoPlayed, onePlayed, goPlayed;
 	
-	static boolean 
+	public static boolean 
 	finalRoundSaid, crowdFinishedPlayed;
 
 	private String IP;

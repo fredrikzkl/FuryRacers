@@ -7,11 +7,14 @@ import javax.json.JsonReader;
 import javax.websocket.DeploymentException;
 import javax.websocket.EncodeException;
 import javax.websocket.Session;
+
 import org.glassfish.tyrus.client.ClientManager;
 import org.newdawn.slick.SlickException;
-import com.github.fredrikzkl.furyracers.Menu;
+
 import com.github.fredrikzkl.furyracers.game.GameCore;
 import com.github.fredrikzkl.furyracers.game.Player;
+import com.github.fredrikzkl.furyracers.menu.Menu;
+
 import java.io.IOException;
 import java.io.StringReader;
 import java.net.URI;

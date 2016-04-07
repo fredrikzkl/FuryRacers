@@ -1,6 +1,8 @@
 package com.github.fredrikzkl.furyracers;
 
+import com.github.fredrikzkl.furyracers.assets.*;
 import com.github.fredrikzkl.furyracers.game.GameCore;
+import com.github.fredrikzkl.furyracers.menu.Menu;
 import com.github.fredrikzkl.furyracers.network.GameSession;
 
 import org.lwjgl.opengl.Display;
