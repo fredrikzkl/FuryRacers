@@ -9,38 +9,58 @@ public class Sprites {
 	icons, cars, controllerQR, nextLevelBorder, resultsBoard, highscoresBoard, 
 	mustangR, mustangB, mustangG, mustangY, 
 	camaroR, camaroB, camaroG, camaroY, 
-	vRaptorR, vRaptorB, vRaptorG, vRaptorY;
+	vRaptorR, vRaptorB, vRaptorG, vRaptorY,
+	city1, city2, hills, moon, stars1, stars2;
 	
+	private static String path = "games/furyracers/assets/";
 	
 	public static void init(){
 		
+		
 		try {
-			icons = new Image("Sprites/menu/menu_sheet.png");
-			cars = new Image("Sprites/menu/carSheet.png");
-			controllerQR = new Image("QRcode/controllerQR.JPG");
-			nextLevelBorder = new Image("Sprites/UI/nextLevelBorder.png");
-			resultsBoard = new Image("Sprites/UI/border.png");
-			highscoresBoard = new Image("Sprites/UI/border.png");
+			icons = new Image( path + "Sprites/menu/menu_sheet.png");
+			cars = new Image( path + "Sprites/menu/carSheet.png");
 			
-			mustangR = new Image("Sprites/cars/fr_mustang_red.png");
-			mustangG = new Image("Sprites/cars/fr_mustang_green.png");
-			mustangB = new Image("Sprites/cars/fr_mustang_blue.png");
-			mustangY = new Image("Sprites/cars/fr_mustang_yellow.png");
+			nextLevelBorder = new Image( path + "Sprites/UI/nextLevelBorder.png");
+			resultsBoard = new Image( path + "Sprites/UI/border.png");
+			highscoresBoard = new Image( path + "Sprites/UI/border.png");
 			
-			camaroR = new Image("Sprites/cars/fr_camaro_red.png");
-			camaroG = new Image("Sprites/cars/fr_camaro_green.png");
-			camaroB = new Image("Sprites/cars/fr_camaro_blue.png");
-			camaroY = new Image("Sprites/cars/fr_camaro_yellow.png");
+			mustangR = new Image( path + "Sprites/cars/fr_mustang_red.png");
+			mustangG = new Image( path + "Sprites/cars/fr_mustang_green.png");
+			mustangB = new Image( path + "Sprites/cars/fr_mustang_blue.png");
+			mustangY = new Image( path + "Sprites/cars/fr_mustang_yellow.png");
 			
-			vRaptorR = new Image("Sprites/cars/fr_pickup_red.png");
-			vRaptorG = new Image("Sprites/cars/fr_pickup_green.png");
-			vRaptorB = new Image("Sprites/cars/fr_pickup_blue.png");
-			vRaptorY = new Image("Sprites/cars/fr_pickup_yellow.png");
+			camaroR = new Image( path + "Sprites/cars/fr_camaro_red.png");
+			camaroG = new Image( path + "Sprites/cars/fr_camaro_green.png");
+			camaroB = new Image( path + "Sprites/cars/fr_camaro_blue.png");
+			camaroY = new Image( path + "Sprites/cars/fr_camaro_yellow.png");
+			
+			vRaptorR = new Image( path + "Sprites/cars/fr_pickup_red.png");
+			vRaptorG = new Image( path + "Sprites/cars/fr_pickup_green.png");
+			vRaptorB = new Image( path + "Sprites/cars/fr_pickup_blue.png");
+			vRaptorY = new Image( path + "Sprites/cars/fr_pickup_yellow.png");
+			
+			city1 = new Image(path + "Sprites/background/city1.png");
+			city2 = new Image(path + "Sprites/background/city2.png");
+			hills = new Image(path + "Sprites/background/hills.png");
+			moon = new Image(path + "Sprites/background/moon.png");
+			stars1 = new Image(path + "Sprites/background/stars1.png");
+			stars2 = new Image(path + "Sprites/background/stars2.png");
 			
 		} catch (RuntimeException e) {
 			System.out.println("Sprite/image ERROR: " + e);
 		} catch (SlickException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	public static void loadQRimage(){
+		
+		try {
+			controllerQR = new Image( path + "QRcode/controllerQR.JPG");
+		} catch (SlickException e) {
+			e.printStackTrace();
+		}
+		
 	}
 }

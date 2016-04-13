@@ -18,40 +18,40 @@ import java.io.IOException;
 import javax.websocket.EncodeException;
 
 public class Application extends StateBasedGame {
-	
-	private final static String version = "0.01" + "a";
+
+	private final static String version = "0.02" + "a";
 	private final static String gameName = "FuryRacers";
 	private final static int menuID = 0;
 	public static final int FPS = 120;
-	
+
 	private static GameCore game;
 	private static Menu menu;
 	private static GameSession gameSession;
 	public static Dimension screenSize;
 	public static boolean inMenu;
-	
-	public static void main(String[] args) {
-		createStates();
-		createGameSession();
-		startGame();
-	}
 
+	public static void main(String[] args) {
+			createStates();
+			createGameSession();
+			startGame();
+	}
+	
 	public Application(String gameName) {
 		super(gameName);
 		this.addState(menu);
 		this.addState(game);
 	}
-	
-	public static void closeConnection(){
-		
+
+	public static void closeConnection() {
+
 		try {
 			gameSession.closeConnection();
 		} catch (IOException | EncodeException e) {
-			System.out.println("Failed disconnect "); 
+			System.out.println("Failed disconnect: ");
 			e.printStackTrace();
 		}
 	}
-	
+
 	public void initStatesList(GameContainer container) throws SlickException {
 		Sprites.init();
 		Sounds.initialize();
@@ -61,30 +61,34 @@ public class Application extends StateBasedGame {
 
 	public static void createGameSession() {
 		try {
-			gameSession = new GameSession(game,menu);
+			gameSession = new GameSession(game, menu);
 			gameSession.connect();
 		} catch (Exception e) {
 			fatalError("Could not start websocket server: " + e.getMessage());
 		}
 	}
-	
-	private static void createStates(){
-		
+
+	private static void createStates() {
+
 		game = new GameCore();
 		menu = new Menu(game);
 		menu.setVersion(version);
 	}
-	
+
 	private static void startGame() {
 		try {
 			screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 			Display.setResizable(true);
-			AppGameContainer app = new AppGameContainer(new ScalableGame(new Application(gameName), (int)screenSize.getWidth(), (int)screenSize.getHeight()));
-			app.setDisplayMode((int)screenSize.getWidth(), (int)screenSize.getHeight(), true);
+			AppGameContainer app = new AppGameContainer(new ScalableGame(
+					new Application(gameName), (int) screenSize.getWidth(),
+					(int) screenSize.getHeight()));
+			app.setDisplayMode((int) screenSize.getWidth(),
+					(int) screenSize.getHeight(), true);
 			app.setTargetFrameRate(FPS);
 			app.setAlwaysRender(true);
 			app.start();
-			System.out.println("Launching the game! Setting resolution: " + screenSize.getWidth() + "x" + screenSize.getHeight());
+			System.out.println("Launching the game! Setting resolution: "
+					+ screenSize.getWidth() + "x" + screenSize.getHeight());
 		} catch (SlickException e) {
 			fatalError("Could not start FuryRacers: " + e.getMessage());
 		}
@@ -97,11 +101,11 @@ public class Application extends StateBasedGame {
 	public static void setInMenu(boolean inMenu) {
 		Application.inMenu = inMenu;
 	}
-	
+
 	public static GameSession getGameSession() {
 		return gameSession;
 	}
-	
+
 	public static void fatalError(String error) {
 		System.out.println(error);
 		exit();

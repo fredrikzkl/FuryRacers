@@ -5,16 +5,23 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.text.StyleConstants.FontConstants;
 import javax.websocket.EncodeException;
 
+import org.newdawn.slick.Color;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
 import org.newdawn.slick.Input;
-import org.newdawn.slick.Music;
 import org.newdawn.slick.SlickException;
+import org.newdawn.slick.TrueTypeFont;
+import org.newdawn.slick.geom.RoundedRectangle;
 import org.newdawn.slick.state.BasicGameState;
 import org.newdawn.slick.state.StateBasedGame;
+import org.newdawn.slick.state.transition.EmptyTransition;
+import org.newdawn.slick.state.transition.FadeInTransition;
+import org.newdawn.slick.state.transition.FadeOutTransition;
+import org.newdawn.slick.state.transition.SelectTransition;
 
 import com.github.fredrikzkl.furyracers.Application;
 import com.github.fredrikzkl.furyracers.assets.Fonts;
@@ -35,7 +42,8 @@ public class Menu extends BasicGameState {
 	tick, mapSelected;
 	
 	private float 
-	consoleSize, xPosCountdown, yPosCountdown;
+	consoleSize, xPosCountdown, 
+	yPosCountdown, QRmargin;
 
 	private double 
 	seconds, duration, last, 
@@ -61,6 +69,7 @@ public class Menu extends BasicGameState {
 	public void init(GameContainer container, StateBasedGame game) throws SlickException {
 		initVariables();
 		QR.genQR(controllerIP);
+		Sprites.loadQRimage();
 		Application.setInMenu(true);
 		GameSession.setGameState(getID());
 	}
@@ -74,13 +83,13 @@ public class Menu extends BasicGameState {
 	public void render(GameContainer container, StateBasedGame game, Graphics g) throws SlickException {
 		
 		background.draw();
-		background.tick();
 		drawHeader();
 		drawMenuInfo(g);
 		drawBacksideInfo();
 		drawPlayerIcons(container, g);
 		drawQRcode(g);
 		drawNextLevelInfo();
+		drawIp(g);
 	}
 	
 	public void initVariables() throws SlickException{
@@ -97,6 +106,8 @@ public class Menu extends BasicGameState {
 		mapSelected = randomMap();
 		course = new CourseHandler(mapSelected);
 		
+		QRmargin = screenWidth/32;
+		
 		xPosCountdown = screenWidth - screenHeight/10;
 		yPosCountdown = screenHeight - screenHeight/15;
 		consoleSize = 15f;
@@ -107,9 +118,8 @@ public class Menu extends BasicGameState {
 		duration = last = System.nanoTime();
 		
 		background = new ParallaxBackground();
-		Sounds.music = new Music("Sound/menu.ogg");
-		Sounds.music.loop();
-		Sounds.music.setVolume((float) 0.4);
+		Sounds.menuMusic.loop();
+		Sounds.menuMusic.setVolume((float) 0.4);
 		getReadySaid = false;
 	}
 	
@@ -133,8 +143,50 @@ public class Menu extends BasicGameState {
 
 	private void drawQRcode(Graphics g){
 
-		int margin = screenWidth/38;
-		g.drawImage(Sprites.controllerQR, screenWidth - Sprites.controllerQR.getWidth()- margin, margin);
+		float yPosQR = QRmargin;
+		float xPosQR  = screenWidth - Sprites.controllerQR.getWidth()- QRmargin;
+		
+		g.drawImage(Sprites.controllerQR, xPosQR, yPosQR);
+		
+		String infoTxt = "Scan for controller!";
+		int margin = Fonts.consoleText.getHeight();
+		float yPosInfoString = yPosQR + Sprites.controllerQR.getHeight() + margin;
+		float xEndOfQR = xPosQR + Sprites.controllerQR.getWidth();
+		float strLngthInf = Fonts.consoleText.getWidth(infoTxt);
+		
+		float middleOfQr = (xPosQR + xEndOfQR)/2;
+		float xPosInfoString =  middleOfQr - strLngthInf/2;
+		
+		
+		Fonts.consoleText.drawString(xPosInfoString, yPosInfoString, "Scan for controller!", Color.red);
+	}
+	
+	private void drawIp(Graphics g) {
+		 
+		
+		String infoStr = "Write " + controllerIP + " in phone browser for controller!";
+		float strLngthIp = Fonts.ipTextMenu.getWidth(infoStr);
+		float fontHeight = Fonts.ipTextMenu.getHeight();
+		float margin = screenWidth/160;
+		float cornerRadius = 4f;
+		
+		float boxHeight = fontHeight + margin*2;
+		float boxWidth = strLngthIp + margin*2;
+		
+		float xPosBox = screenWidth/2 - boxWidth/2;
+		float yPosBox = screenHeight - boxHeight;
+		
+		RoundedRectangle infoBox = new RoundedRectangle(xPosBox, yPosBox, boxWidth, boxHeight, cornerRadius);
+		
+		float transparacy = 0.8f;
+		g.setColor(new Color(0f, 0f, 0f, transparacy));
+		g.fill(infoBox);
+		
+		float xPosIpString = xPosBox + margin;
+		float yPosIpString = yPosBox + margin;
+		 
+		Fonts.ipTextMenu.drawString(xPosIpString, yPosIpString, infoStr);
+		
 	}
 	
 	private void drawHeader(){
@@ -242,7 +294,7 @@ public class Menu extends BasicGameState {
 	}
 
 	private void startGame(StateBasedGame game) throws SlickException {
-		Sounds.music.stop();
+		Sounds.menuMusic.stop();
 		core.gameStart(course, players);
 		game.enterState(1);
 	}
@@ -335,19 +387,28 @@ public class Menu extends BasicGameState {
 
 	public void drawNextLevelInfo(){
 
-		float scaleValue = (float) ((screenWidth/Sprites.nextLevelBorder.getWidth())/3.5);
+		float scaleValue = (float) (screenWidth / (Sprites.nextLevelBorder.getWidth()*3.5));
 		float realXvalue = Sprites.nextLevelBorder.getWidth()*scaleValue;
 		float realYvalue = Sprites.nextLevelBorder.getHeight()*scaleValue;
-		float posX = ((screenWidth/2)-(realXvalue/2));
-		float posY = screenHeight-(realYvalue+25);
+		float margin = realYvalue/6;
+		float posX = (screenWidth/2 - realXvalue/2);
+		float posY = screenHeight - realYvalue - margin;
+		
 		
 		Sprites.nextLevelBorder.draw(posX,posY,scaleValue);
 		
 		course.minimap.draw(posX,posY,realXvalue,realYvalue);
 		
-		Fonts.regularText.drawString(posX+(realXvalue/20), (posY + (realYvalue/10)), course.mapName);
 		//Draw nextLevelString
-		Fonts.consoleText.drawString(posX, (posY - (console.size())-15), "Next course:");
+		int cnslTxtHeight = Fonts.consoleText.getHeight();
+		int rglTxtHeight = Fonts.regularText.getHeight();
+		int crsNmLngth = Fonts.regularText.getWidth(course.mapName);
+		float mapNameYpos = screenWidth/2 - crsNmLngth/2;
+		
+ 		Fonts.consoleText.drawString(posX, posY - cnslTxtHeight, "Next course: ");
+		
+		Fonts.regularText.drawString(mapNameYpos, posY + rglTxtHeight, course.mapName);
+		
 		
 	}
 
@@ -391,13 +452,15 @@ public class Menu extends BasicGameState {
 	}
 
 	private void determinePlayerChoice(Player player) {
-		int car = player.getxSel();
-		int color = player.getySel();
-		player.setSelect(car * player.maxY + color);
+		int carType = player.getxSel();
+		int carColor = player.getySel();
+		player.setSelect(carType * player.maxY + carColor);
 	}
 	
 	private int randomMap(){
-		File dir = new File("Maps/");
+		
+		String path = "games/furyracers/assets/";
+		File dir = new File(path + "Maps/");
 		int numberOfSubfolders = 0;
 		File listDir[] = dir.listFiles();
 		for (int i = 0; i < listDir.length; i++) {
@@ -409,7 +472,7 @@ public class Menu extends BasicGameState {
 	}
 	
 	public void setIP(String ip) {
-		controllerIP = "http://" + ip + "/furyracers";
+		controllerIP = ip + "/furyracers";
 	}
 	
 	public void setVersion(String version) {

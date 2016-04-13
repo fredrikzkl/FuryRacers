@@ -113,15 +113,16 @@ public class ScoreBoard {
 		float yPos = resultPosY;
 		
 		for (int i = startIndex; i > -1; i--) {
-			
 			Car car = sortedCars.get(i);
-			String playerAndTime = "Player " + car.getPlayerNr() + ": " + car.getTimeElapsed() + " Score: "
-					+ "+" + (i + 1);
+			
+			String player = "Player " + car.getPlayerNr() + ": ";
+			String time = car.getTimeElapsed() + " Score: +" + (i + 1);
+			
 			float yOffset = margin + scoreBoardFontHeight *(amountOfCars-i);
 			float xPos = resultPosX + margin;
 			yPos = resultPosY + yOffset;
 			
-			Fonts.scoreBoardText.drawString(xPos, yPos, playerAndTime);
+			Fonts.scoreBoardText.drawString(xPos, yPos, player + time);
 		}
 		
 		endOfResultsY = yPos; 

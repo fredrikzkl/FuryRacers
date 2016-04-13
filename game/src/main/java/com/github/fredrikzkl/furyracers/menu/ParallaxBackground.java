@@ -4,58 +4,41 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.github.fredrikzkl.furyracers.Application;
+import com.github.fredrikzkl.furyracers.assets.Sprites;
 
-public class ParallaxBackground {
+class ParallaxBackground {
 	
 	private final int SCREENWIDTH = Application.screenSize.width;
 	
-	private Layer layer1;
-	private Layer layer1sub;
-	
-	private Layer layer2;
-	private Layer layer2sub;
-	
-	private Layer layer3;
-	private Layer layer3sub;
-	
-	private Layer layer4;
-	private Layer layer4sub;
-	
-	private Layer layer5;
-	private Layer layer5sub;
-	
-	private Layer moon;
-	
 	private List<Layer> layers;
-	private float scaleValue = 1;
 	
-	public ParallaxBackground(){
+	ParallaxBackground(){
+		
 		layers = new ArrayList<Layer>();
+		
+		int subLayerStartX = SCREENWIDTH;
+		
+		float speed = 0.009f;
+		Layer layer5 = new Layer(Sprites.stars1,0,0,speed);
+		Layer layer5sub = new Layer(Sprites.stars1,subLayerStartX,0,speed);
+		
+		speed = 0.028f;
+		Layer layer4 = new Layer(Sprites.stars2,0,0,speed);
+		Layer layer4sub = new Layer(Sprites.stars2,subLayerStartX,0,speed);
+		
+		speed = 0.036f;
+		Layer layer3 = new Layer(Sprites.hills,0,0,speed);
+		Layer layer3sub = new Layer(Sprites.hills,subLayerStartX,0,speed);
 
-		float speed = 0.02f*6f;
-		layer1 = new Layer("city1",0,0,speed);
-		layer1sub = new Layer("city1",SCREENWIDTH,0,speed);
+		speed = 0.06f;
+		Layer layer2 = new Layer(Sprites.city2,0,0,speed);
+		Layer layer2sub = new Layer(Sprites.city2,subLayerStartX,0,speed);
 		
-		determineScaling(layer1);
+		speed = 0.12f;
+		Layer layer1 = new Layer(Sprites.city1,0,0,speed);
+		Layer layer1sub = new Layer(Sprites.city1,subLayerStartX,0,speed);
 		
-		speed = 0.01f*6f;
-		layer2 = new Layer("city2",0,0,speed);
-		layer2sub = new Layer("city2",SCREENWIDTH,0,speed);
-		
-		speed = 0.009f*4f;
-		layer3 = new Layer("hills",0,0,speed);
-		float trueLength = layer3.getImg().getWidth()*scaleValue;
-		layer3sub = new Layer("hills",(int)trueLength,0,speed);
-		
-		speed = 0.007f*4f;
-		layer4 = new Layer("stars2",0,0,speed);
-		layer4sub = new Layer("stars2",(int)trueLength,0,speed);
-		
-		speed = 0.009f;
-		layer5 = new Layer("stars1",0,0,speed);
-		layer5sub = new Layer("stars1",(int)trueLength,0,speed);
-		
-		moon = new Layer("moon",0,0,0);
+		Layer moon = new Layer(Sprites.moon,0,0,0);
 
 		layers.add(layer5);
 		layers.add(layer5sub);
@@ -74,24 +57,18 @@ public class ParallaxBackground {
 		layers.add(layer1);
 		layers.add(layer1sub);
 	}
-	
-	private void determineScaling(Layer lay) {
-		float temp = (float)SCREENWIDTH/lay.getImg().getWidth();
-		if(temp>scaleValue)
-			scaleValue = temp;
-	}
 
-	public void draw(){
-		for(Layer lay:layers){
-			lay.draw(scaleValue);
+	void draw(){
+		for(Layer layer : layers){
+			tick(layer);
+			layer.draw();
 		}
 	}
 	
-	public void tick(){
-		for(Layer lay:layers){
-			lay.setX(lay.getX()-lay.getSpeed());
-			lay.outOfFrame(scaleValue);
-		}
+	private void tick(Layer layer){
+		
+		float newXpos = layer.getX() - layer.getSpeed(); 
+		layer.setX(newXpos);
 	}
 	
 }

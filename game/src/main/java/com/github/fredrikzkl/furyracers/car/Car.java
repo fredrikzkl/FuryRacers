@@ -66,6 +66,8 @@ public class Car implements Comparable<Car> {
 		carLength = originalCarLength * stats.carSize;
 		carWidth = originalCarWidth * stats.carSize;
 		
+		centerOfRotationYOffset = stats.carImage.getHeight()/2 * stats.carSize;
+		
 		this.stats = stats;
 		this.id = id;
 		this.playerNr = playerNr;
@@ -104,7 +106,6 @@ public class Car implements Comparable<Car> {
 		finishedRace = false;
 		startClock = false;
 		movementVector = new Vector2f();
-		centerOfRotationYOffset = carWidth;
 		stoppingDirections = new ArrayList<String>();
 	}
 

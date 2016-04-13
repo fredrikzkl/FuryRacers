@@ -27,7 +27,8 @@ public class CourseHandler {
 	
 	public CourseHandler(int level){
 		this.level = level;
-		directory  = "Maps/course" + level + "/";
+		String path = "games/furyracers/assets/";
+		directory  = path + "Maps/course" + level + "/";
 		importAssets();
 		
 		mapName = readTxtFile(info);

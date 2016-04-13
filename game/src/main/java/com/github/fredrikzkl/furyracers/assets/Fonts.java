@@ -7,6 +7,8 @@ import org.newdawn.slick.Color;
 import org.newdawn.slick.TrueTypeFont;
 import org.newdawn.slick.util.ResourceLoader;
 
+import com.github.fredrikzkl.furyracers.Application;
+
 public class Fonts {
 	
 	private static float headerSize = 28f;
@@ -20,15 +22,18 @@ public class Fonts {
 	public static TrueTypeFont header;
 	public static TrueTypeFont regularText;
 	public static TrueTypeFont consoleText;
+	public static TrueTypeFont ipTextMenu;
 	private static float consoleSize = 15f;
+	private static float ipTextSize = (float) Application.screenSize.getWidth() * 0.009899f;
 	public static Color headerColor = new Color(221, 0, 0);
 	
 	public static void initialize(){
 		regularFont = new Font("Verdana", Font.BOLD, 20);
 		InputStream inputStream;
+		String path = "games/furyracers/assets/";
 
 		try {
-			inputStream = ResourceLoader.getResourceAsStream("Font/Orbitron-Regular.ttf");
+			inputStream = ResourceLoader.getResourceAsStream(path + "Font/Orbitron-Regular.ttf");
 			Font awtFont1 = Font.createFont(Font.TRUETYPE_FONT, inputStream);
 			
 			awtFont1 = awtFont1.deriveFont(60f); // set font size
@@ -38,6 +43,7 @@ public class Fonts {
 			Font awtFont5 = awtFont1.deriveFont(textSize);
 			Font awtFont6 = awtFont1.deriveFont(50f);
 			Font awtFont7 = awtFont1.deriveFont(24f);
+			Font awtFont8 = awtFont1.deriveFont(ipTextSize);
 
 			header = new TrueTypeFont(awtFont1, true);
 			regularText = new TrueTypeFont(awtFont2, true);
@@ -46,6 +52,7 @@ public class Fonts {
 			scoreBoardText = new TrueTypeFont(awtFont5, true);
 			countdown = new TrueTypeFont(awtFont6, true);
 			infoFont = new TrueTypeFont(awtFont7, true);
+			ipTextMenu = new TrueTypeFont(awtFont8, true);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

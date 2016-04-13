@@ -50,9 +50,9 @@ public class GameSession {
 			
 			case "get username": {
 				
-				JsonArray client = jsonObj.getJsonArray("data");
-				String playerId = client.get(0).toString();
-				String username = client.get(1).toString();
+				JsonArray clientInfo = jsonObj.getJsonArray("data");
+				String playerId = clientInfo.get(0).toString();
+				String username = clientInfo.get(1).toString();
 				setUsername(playerId, username);
 				break;
 			}
@@ -177,6 +177,7 @@ public class GameSession {
 	private void buttonDown(String from, String data) throws IOException, EncodeException, SlickException{
 
 		boolean playerExists = false;
+		
 		for (Player player : players) {
 
 			if (player.getId().equals(from)) {

@@ -27,7 +27,7 @@ import com.github.fredrikzkl.furyracers.network.GameSession;
 public class GameCore extends BasicGameState {
 
 	public final static int 
-	maxLaps = 1, menuID = 0;
+	maxLaps = 3, menuID = 0;
 	
 	private int 
 	screenWidth, screenHeight;
@@ -193,8 +193,7 @@ public class GameCore extends BasicGameState {
 			laps = "Lap " + cars.get(i).getLaps() + "/" + maxLaps;
 			
 			int 
-			usernameLength = 
-			Fonts. infoFont.getWidth(username),
+			usernameLength = Fonts.infoFont.getWidth(username),
 			lapsLength = Fonts.infoFont.getWidth(laps);
 			
 			float 
@@ -204,18 +203,18 @@ public class GameCore extends BasicGameState {
 			startX =  screenWidth / 40,
 			cornerRadius = 4f;
 			
-			float usernameStartY = startY+margin;
-			float lapsStartY = usernameStartY+margin/2+fontHeight;
+			float usernameStartY = startY + margin;
+			float lapsStartY = usernameStartY + margin/2 + fontHeight;
 			
 			RoundedRectangle infoBox = new RoundedRectangle(startX, startY, infoBoxWidth, infoBoxHeight, cornerRadius);
 			g.setColor(carColor);
 			g.fill(infoBox);
 			Fonts.infoFont.drawString(startX+margin, usernameStartY, username);
+			
 			Fonts.infoFont.drawString(startX+margin, lapsStartY, laps);
 		}
 
 	}
-	
 	private int infoBoxWidth(int usernameLength, int lapsLength ){
 		if(usernameLength < lapsLength){
 			return lapsLength;

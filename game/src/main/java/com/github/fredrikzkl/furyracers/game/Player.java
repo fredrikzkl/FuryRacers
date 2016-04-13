@@ -17,6 +17,7 @@ public class Player implements Comparable<Player>{
 	
 	private final int AMOUNT_OF_CARTYPES = 3;
 	private final int AMOUNT_OF_CARCOLORS= 4;
+	
 	public final int maxX = AMOUNT_OF_CARTYPES; 
 	public final int maxY = AMOUNT_OF_CARCOLORS;
 	

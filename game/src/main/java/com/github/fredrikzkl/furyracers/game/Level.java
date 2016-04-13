@@ -11,7 +11,7 @@ public class Level {
 	public static CourseHandler course;
 
 	public static int tileHeight, tileWidth;
-	int mapWidthTiles, mapHeightTiles;
+	int mapWidthInTiles, mapHeightInTiles;
 
 	float mapWidthPixels, mapHeightPixels;
 
@@ -26,12 +26,11 @@ public class Level {
 		backgroundLayer = course.data.getLayerIndex("background");
 		tileWidth = course.data.getTileWidth();
 		tileHeight = course.data.getTileHeight();
-		mapWidthTiles = course.data.getWidth();
-		mapHeightTiles = course.data.getHeight();
+		mapWidthInTiles = course.data.getWidth();
+		mapHeightInTiles = course.data.getHeight();
 		mapHeightPixels = course.data.getTileHeight() * course.data.getHeight();
 		mapWidthPixels = course.data.getTileWidth() * course.data.getWidth();
-		// ---------------------------
-
+	
 		musicControl();
 		determineStartPosition();
 	}
@@ -43,8 +42,8 @@ public class Level {
 	}
 
 	private void determineStartPosition() {
-		for (int x = 0; x < course.data.getWidth(); x++) {
-			for (int y = 0; y < course.data.getHeight(); y++) {
+		for (int x = 0; x < mapWidthInTiles; x++) {
+			for (int y = 0; y < mapHeightInTiles; y++) {
 				int tileIDroad = course.data.getTileId(x, y, roadLayer);
 				if (course.data.getTileProperty(tileIDroad, "startPos", "-1")
 						.equals("start")) {
@@ -60,7 +59,6 @@ public class Level {
 
 		}
 	}
-
 
 	public void drawCars(Graphics g, List<Car> cars) {
 		g.drawImage(course.subLayer, 0, 0);

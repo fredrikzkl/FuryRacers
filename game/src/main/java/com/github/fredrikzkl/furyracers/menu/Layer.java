@@ -1,41 +1,43 @@
 package com.github.fredrikzkl.furyracers.menu;
 
 import org.newdawn.slick.Image;
-import org.newdawn.slick.SlickException;
 
 import com.github.fredrikzkl.furyracers.Application;
 
 public class Layer {
-	private String path = "/Sprites/background/";
+	
 	private Image img;
 	private float x,y;
 	private float speed;
+	private float scaleValue;
+	private float SCREENWIDTH = Application.screenSize.width;
+	private float outOfFrameX;
 	
+	 Layer(Image spriteName,int x, int y, float speed){
 	
-	public Layer(String fileName,int x, int y, float speed){
-		try {
-			img = new Image(path + fileName + ".png");
-		} catch (SlickException e) {
-			e.printStackTrace();
-		}
+		img = spriteName;
 		
 		this.x = x;
 		this.y = y;
 		
 		this.speed = speed;
+		
+		scaleValue = (float)SCREENWIDTH/img.getWidth();
+		
+		outOfFrameX = - img.getWidth()*scaleValue;
 	}
 	
-	public void draw(float scalingValue){
-		img.draw(x,y,scalingValue);
+	public void draw(){
+		img.draw(x,y, scaleValue);
 	}
 	
-	public void outOfFrame(float scalingValue){
-		if(getX()+img.getWidth()*scalingValue < 0){
-			setX(x + Application.screenSize.width*2);
+	private boolean outOfFrame(float x){
+		if(x < outOfFrameX){
+			return true;
 		}
+		return false;
 	}
 	
-
 	public Image getImg() {
 		return img;
 	}
@@ -45,21 +47,16 @@ public class Layer {
 	}
 
 	public void setX(float x) {
+		
+		if(outOfFrame(x)){
+			this.x = SCREENWIDTH;
+			return;
+		}
 		this.x = x;
-	}
-
-	public float getY() {
-		return y;
-	}
-
-	public void setY(float y) {
-		this.y = y;
 	}
 
 	public float getSpeed() {
 		return speed;
 	}
-
-	
 	
 }

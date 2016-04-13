@@ -6,7 +6,7 @@ import org.newdawn.slick.Sound;
 
 public class Sounds {
 	
-	public static Music music;
+	public static Music menuMusic;
 	public static Sound car_select;
 	public static Sound select_car;
 	public static Sound spray;
@@ -26,7 +26,9 @@ public class Sounds {
 	public static void initialize(){
 		
 		try {
-			String path = "Sound/";
+			String path = "games/furyracers/assets/Sound/";
+			
+			menuMusic = new Music(path + "menu.ogg");
 			car_select = new Sound(path + "car_select.ogg");
 			select_car = new Sound(path + "select_car.ogg");
 			spray = new Sound(path + "spray.ogg");

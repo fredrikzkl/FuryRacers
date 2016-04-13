@@ -10,16 +10,17 @@ import net.glxn.qrgen.javase.QRCode;
 
 public class QRgenerator {
 	
-	int backgroundColor = 0xEFEFEF;
-	int frontColor = 0x0;
-	
 	public void genQR(String IPtoController){
-		ByteArrayOutputStream out = QRCode.from(IPtoController)
+		
+		int backgroundColor = 0xEFEFEF;
+		int frontColor = 0x0;
+		
+		ByteArrayOutputStream out = QRCode.from("http://" + IPtoController)
                 .to(ImageType.PNG).withColor(frontColor, backgroundColor).stream();
 
 		try {
 			FileOutputStream fout = new FileOutputStream(new File(
-			"QRcode/controllerQR.JPG"));
+			"games/furyracers/assets/QRcode/controllerQR.JPG"));
 			
 			fout.write(out.toByteArray());
 			fout.flush();
