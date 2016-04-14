@@ -42,8 +42,8 @@ public class Menu extends BasicGameState {
 	tick, mapSelected;
 	
 	private float 
-	consoleSize, xPosCountdown, 
-	yPosCountdown, QRmargin;
+	xPosCountdown, yPosCountdown, 
+	QRmargin;
 
 	private double 
 	seconds, duration, last, 
@@ -110,7 +110,6 @@ public class Menu extends BasicGameState {
 		
 		xPosCountdown = screenWidth - screenHeight/10;
 		yPosCountdown = screenHeight - screenHeight/15;
-		consoleSize = 15f;
 		allReadyTimestamp = 0;
 		secondsToNextGame = 5;
 		counter = secondsToNextGame;
@@ -165,27 +164,25 @@ public class Menu extends BasicGameState {
 		 
 		
 		String infoStr = "Write " + controllerIP + " in phone browser for controller!";
-		float strLngthIp = Fonts.ipTextMenu.getWidth(infoStr);
-		float fontHeight = Fonts.ipTextMenu.getHeight();
-		float margin = screenWidth/160;
+		float strLngthIp = Fonts.consoleText.getWidth(infoStr);
+		float fontHeight = Fonts.consoleText.getHeight();
+		
 		float cornerRadius = 4f;
+		float boxHeight = fontHeight;
+		float boxWidth = strLngthIp;
+		float boxTransparacy = 0.9f;
 		
-		float boxHeight = fontHeight + margin*2;
-		float boxWidth = strLngthIp + margin*2;
-		
-		float xPosBox = screenWidth/2 - boxWidth/2;
-		float yPosBox = screenHeight - boxHeight;
+		float xPosBox = 0;
+		float yPosBox = screenHeight - fontHeight;
 		
 		RoundedRectangle infoBox = new RoundedRectangle(xPosBox, yPosBox, boxWidth, boxHeight, cornerRadius);
-		
-		float transparacy = 0.8f;
-		g.setColor(new Color(0f, 0f, 0f, transparacy));
+		g.setColor(new Color(0f, 0f, 0f, boxTransparacy));
 		g.fill(infoBox);
 		
-		float xPosIpString = xPosBox + margin;
-		float yPosIpString = yPosBox + margin;
+		float xPosIpString = xPosBox;
+		float yPosIpString = yPosBox;
 		 
-		Fonts.ipTextMenu.drawString(xPosIpString, yPosIpString, infoStr);
+		Fonts.consoleText.drawString(xPosIpString, yPosIpString, infoStr);
 		
 	}
 	
@@ -445,9 +442,12 @@ public class Menu extends BasicGameState {
 	}
 
 	public void drawBacksideInfo() {
-		for (int i = console.size(); i > 0; i--) {
-			Fonts.consoleText.drawString(0, screenHeight - (consoleSize * (console.size() - i + 1)),
-					console.get(i - 1));// Draws the console
+		
+		int fontHeight = Fonts.consoleText.getHeight();
+		
+		for (int i = console.size()+1; i > 1; i--) {
+			Fonts.consoleText.drawString(0, screenHeight - (fontHeight * (console.size() - i + 3)),
+					console.get(i - 2));// Draws the console
 		}
 	}
 

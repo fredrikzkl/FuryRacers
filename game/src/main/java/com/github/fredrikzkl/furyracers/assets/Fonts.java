@@ -24,7 +24,6 @@ public class Fonts {
 	public static TrueTypeFont consoleText;
 	public static TrueTypeFont ipTextMenu;
 	private static float consoleSize = 15f;
-	private static float ipTextSize = (float) Application.screenSize.getWidth() * 0.009899f;
 	public static Color headerColor = new Color(221, 0, 0);
 	
 	public static void initialize(){
@@ -43,7 +42,6 @@ public class Fonts {
 			Font awtFont5 = awtFont1.deriveFont(textSize);
 			Font awtFont6 = awtFont1.deriveFont(50f);
 			Font awtFont7 = awtFont1.deriveFont(24f);
-			Font awtFont8 = awtFont1.deriveFont(ipTextSize);
 
 			header = new TrueTypeFont(awtFont1, true);
 			regularText = new TrueTypeFont(awtFont2, true);
@@ -52,7 +50,6 @@ public class Fonts {
 			scoreBoardText = new TrueTypeFont(awtFont5, true);
 			countdown = new TrueTypeFont(awtFont6, true);
 			infoFont = new TrueTypeFont(awtFont7, true);
-			ipTextMenu = new TrueTypeFont(awtFont8, true);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
