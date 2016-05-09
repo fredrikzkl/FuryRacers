@@ -6,9 +6,9 @@ The [link](https://github.com/fredrikzkl/FuryRacersCompiled/archive/master.zip) 
 
 Unpack and start the exe file. Enjoy.
 
-##Make new maps
+##Make custom maps
 
-Follow the appendings in this document. 
+Follow appendix A in this document. 
 
 ##Important Notes
 
