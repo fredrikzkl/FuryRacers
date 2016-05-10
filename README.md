@@ -14,6 +14,9 @@ Follow appendix A in this document.
 
 Remember to terminate all programs that may use port 3001. 
 
+
+The compiled version is 64-bit which requires a 64-bit windows system.
+
 Controllers may be unstable on Apple iOS devices.
 
 
