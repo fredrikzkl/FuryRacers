@@ -6,22 +6,18 @@ import org.newdawn.slick.Sound;
 
 public class Sounds {
 	
-	public static Music menuMusic;
-	public static Sound car_select;
-	public static Sound select_car;
-	public static Sound spray;
-	public static Sound playerJoin;
-	public static Sound playerReady;
-	public static Sound deSelect;
-	public static Sound peep;
-	public static Sound getReady;
-	public static Sound three, two, one, go;
+	public static Music 
+	menuMusic;
+	
 	public static Sound 
+	car_select, select_car, spray,
+	playerJoin, playerReady, deSelect, 
+	peep, getReady,
+	three, two, one, go, 
 	finalRound, crowdFinish,
 	checkpoint, lap, still,
-	topSpeed;
-	public static Sound scoreboardClose;
-	public static Sound scoreboardMove;
+	topSpeed, 
+	scoreboardClose, scoreboardMove;
 	
 	public static void initialize(){
 		

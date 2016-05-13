@@ -3,14 +3,19 @@ package com.github.fredrikzkl.furyracers.car;
 
 public class Controlls {
 
-	private float deltaAngleChange, deltaDeAcceleration, topSpeed, acceleration, deAcceleration;
-	private CarProperties stats;
+	private float 
+	deltaAngleChange, deltaDeAcceleration, 
+	topSpeed, acceleration, deAcceleration;
+	
 	boolean 
 	reverseKeyIsDown, throttleKeyIsDown, leftKeyIsDown, 
 	rightKeyIsDown, usingKeyboard, ignoreNextRight, 
 	ignoreNextLeft = false;
 
-	float currentSpeed, movementDegrees = 0;
+	float 
+	currentSpeed, movementDegrees = 0;
+	
+	private CarProperties stats;
 
 	public Controlls(CarProperties stats) {
 

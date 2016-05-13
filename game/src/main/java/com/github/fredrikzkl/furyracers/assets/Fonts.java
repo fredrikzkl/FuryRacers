@@ -7,24 +7,21 @@ import org.newdawn.slick.Color;
 import org.newdawn.slick.TrueTypeFont;
 import org.newdawn.slick.util.ResourceLoader;
 
-import com.github.fredrikzkl.furyracers.Application;
-
 public class Fonts {
 	
-	private static float headerSize = 28f;
-	private static float textSize = 22f;
-	public static Font regularFont;
-	public static TrueTypeFont infoFont;
-	public static  TrueTypeFont countdown;
-	public static  TrueTypeFont scoreBoardHeader;
-	public static  TrueTypeFont scoreBoardText;
-	public static TrueTypeFont ip;
-	public static TrueTypeFont header;
-	public static TrueTypeFont regularText;
-	public static TrueTypeFont consoleText;
-	public static TrueTypeFont ipTextMenu;
-	private static float consoleSize = 15f;
+	private static float 
+	headerSize = 28f,textSize = 22f,
+	consoleSize = 15f;
+	
+	public static TrueTypeFont 
+	infoFont, countdown, 
+	scoreBoardHeader, scoreBoardText,
+	ip,header, regularText, consoleText,
+	ipTextMenu;
+	
 	public static Color headerColor = new Color(221, 0, 0);
+	public static Font regularFont;
+	
 	
 	public static void initialize(){
 		regularFont = new Font("Verdana", Font.BOLD, 20);

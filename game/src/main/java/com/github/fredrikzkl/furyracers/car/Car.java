@@ -52,6 +52,8 @@ public class Car implements Comparable<Car> {
 	private ArrayList<String> 
 	stoppingDirections;
 	
+	public boolean deAcceleratingSoundPlayed = false;
+	
 	private CarProperties stats;
 	private Level level;
 	private CollisionBox colBox;
@@ -348,7 +350,6 @@ public class Car implements Comparable<Car> {
 		return -(Integer.compare(this.getTime(), o.getTime()));
 	}
 	
-	public boolean deAcceleratingSoundPlayed = false;
 	
 	private void carSounds() {
 

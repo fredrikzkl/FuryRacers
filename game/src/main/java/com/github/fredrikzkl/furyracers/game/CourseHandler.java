@@ -82,7 +82,4 @@ public class CourseHandler {
 		}
 		return name;
 	}
-	
-	
-	
 }

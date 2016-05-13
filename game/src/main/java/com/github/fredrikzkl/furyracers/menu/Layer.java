@@ -4,7 +4,7 @@ import org.newdawn.slick.Image;
 
 import com.github.fredrikzkl.furyracers.Application;
 
-public class Layer {
+class Layer {
 	
 	private Image img;
 	private float x,y;
@@ -27,26 +27,22 @@ public class Layer {
 		outOfFrameX = - img.getWidth()*scaleValue;
 	}
 	
-	public void draw(){
+	void draw(){
 		img.draw(x,y, scaleValue);
 	}
 	
 	private boolean outOfFrame(float x){
-		if(x < outOfFrameX){
+		if(x <= outOfFrameX){
 			return true;
 		}
 		return false;
 	}
-	
-	public Image getImg() {
-		return img;
-	}
 
-	public float getX() {
+	float getX() {
 		return x;
 	}
 
-	public void setX(float x) {
+	void setX(float x) {
 		
 		if(outOfFrame(x)){
 			this.x = SCREENWIDTH;
@@ -55,7 +51,7 @@ public class Layer {
 		this.x = x;
 	}
 
-	public float getSpeed() {
+	float getSpeed() {
 		return speed;
 	}
 	

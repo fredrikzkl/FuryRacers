@@ -181,13 +181,18 @@ public class GameCore extends BasicGameState {
 
 	private void drawPlayerInfo(Graphics g) {
 		
-		float margin = screenWidth/160;
-		float fontHeight = Fonts.infoFont.getHeight();
+		float 
+		margin = screenWidth/160,
+		fontHeight = Fonts.infoFont.getHeight(),
+		startX =  screenWidth / 40,
+		infoBoxHeight = fontHeight*2 + margin*2,
+		cornerRadius = 4f;
 
 		for (int i = 0; i < cars.size(); i++) {
 			
+			Color 
+			carColor = players.get(i).getCarColor();
 			
-			Color carColor = players.get(i).getCarColor();
 			String 
 			username = players.get(i).getUsername(),
 			laps = "Lap " + cars.get(i).getLaps() + "/" + maxLaps;
@@ -198,13 +203,10 @@ public class GameCore extends BasicGameState {
 			
 			float 
 		    infoBoxWidth = infoBoxWidth(usernameLength, lapsLength) + margin*2,
-			infoBoxHeight = fontHeight*2 + margin*2,
 			startY = screenHeight / 10 + (infoBoxHeight + margin*2) * i,
-			startX =  screenWidth / 40,
-			cornerRadius = 4f;
 			
-			float usernameStartY = startY + margin;
-			float lapsStartY = usernameStartY + margin/2 + fontHeight;
+			usernameStartY = startY + margin,
+			lapsStartY = usernameStartY + margin/2 + fontHeight;
 			
 			RoundedRectangle infoBox = new RoundedRectangle(startX, startY, infoBoxWidth, infoBoxHeight, cornerRadius);
 			g.setColor(carColor);

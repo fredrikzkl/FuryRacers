@@ -7,38 +7,44 @@ import com.github.fredrikzkl.furyracers.Application;
 
 public class Camera {
 	
-	private float x,y;
-	public float initialZoom = (float) 1; //TODO
-	public float zoom = (float) 1;
-	private Vector2f size;
-	float edgeX, edgeY;
-	float biggest = 0;
-	Vector2f deltaDistances = new Vector2f();
-	Vector2f closestEdge = new Vector2f();
-	float mapHeightPixels, mapWidthPixels;
+	int 
+	screenWidth, screenHeight;
 	
-	int monitorWidth, monitorHeight;
+	private float 
+	x, y, initialZoom, 
+	zoom, biggest,
+	mapHeightPixels, mapWidthPixels;
+	
+	float 
+	edgeX, edgeY;
+	
+	private Vector2f 
+	deltaDistances,  closestEdge, size;
 	
 	public Camera(float startX, float startY, Level level){
 		
 		x = startX;
 		y = startY;
 		
-		monitorHeight = Application.screenSize.height;
-		monitorWidth = Application.screenSize.width;
+		initialZoom = 1f;
+		
+		screenHeight = Application.screenSize.height;
+		screenWidth = Application.screenSize.width;
 		
 		mapHeightPixels = level.getMapHeightPixels();
 		mapWidthPixels = level.getMapWidthPixels();
 		
 		size = new Vector2f();
+		deltaDistances = new Vector2f();
+		closestEdge = new Vector2f();
 		
-		edgeX = (float) (mapWidthPixels - monitorWidth);
-		edgeY = (float) (mapHeightPixels - monitorHeight);
+		edgeX = (float) (mapWidthPixels - screenWidth);
+		edgeY = (float) (mapHeightPixels - screenHeight);
 	}
 	
 	public void update(float posX, float posY) {
-		size.x = monitorWidth / zoom;
-		size.y = monitorHeight/ zoom;
+		size.x = screenWidth / zoom;
+		size.y = screenHeight/ zoom;
 		
 		x = -posX;
 		y = -posY;
@@ -60,8 +66,8 @@ public class Camera {
 	
 	public void zoomLogic() {
 		
-		float deltaX = (float) (deltaDistances.x/(monitorWidth/1.98)); //Høyere deleverdi gir mindre margin
-		float deltaY = (float) (deltaDistances.y/(monitorHeight/1.92)); 
+		float deltaX = (float) (deltaDistances.x/(screenWidth/1.98)); //Høyere deleverdi gir mindre margin
+		float deltaY = (float) (deltaDistances.y/(screenHeight/1.92)); 
 		float temp = zoom;
 		boolean zoomLim = true;
 		
@@ -88,8 +94,8 @@ public class Camera {
 	
 	public void updateCamCoordinates(){
 		
-		float x = ((deltaDistances.x/2+closestEdge.x)-monitorWidth/2)*zoom;
-		float y = ((deltaDistances.y/2+closestEdge.y)-monitorHeight/2)*zoom;
+		float x = ( (deltaDistances.x/2 + closestEdge.x) - screenWidth/2 ) * zoom;
+		float y = ( (deltaDistances.y/2 + closestEdge.y) - screenHeight/2 ) * zoom;
 		
 		update(x,y);
 	}
@@ -101,10 +107,6 @@ public class Camera {
 
 	public Vector2f getSize() {
 		return size;
-	}
-	
-	public void setInitialZoom(float initialZoom) {
-		this.initialZoom = initialZoom;
 	}
 
 	public void setZoom(float zoom) {

@@ -11,8 +11,13 @@ public class CollisionHandler {
 	
 	CourseHandler course = Level.course;
 	
-	private static boolean isLeftTileLineCrossed, isRightTileLineCrossed, isTopTileLineCrossed, isBottomTileLineCrossed;
-	private static float yOfTileEndX, yOfTileStartX, xOfTileEndY, xOfTileStartY;
+	private static boolean 
+	isLeftTileLineCrossed, isRightTileLineCrossed, 
+	isTopTileLineCrossed, isBottomTileLineCrossed;
+	
+	private static float 
+	yOfTileEndX, yOfTileStartX, 
+	xOfTileEndY, xOfTileStartY;
 	
 	private Car car;
 	private Controlls controlls;
