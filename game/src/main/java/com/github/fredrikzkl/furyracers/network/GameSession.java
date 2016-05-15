@@ -215,20 +215,11 @@ public class GameSession {
 	private void addPlayer(String id, int playerNr) throws IOException, EncodeException, SlickException {
 		if (players.size() > 4) {
 			menu.printConsole("The game is full!");
-			printPlayers();
 		} else {
 			players.add(new Player(id, playerNr));
 			sendToBackend("get username", id);
 			menu.updatePlayerList(players);
 			menu.printConsole(id + " joined the game! Assigned as player: " + playerNr);
-		}
-	}
-
-	private void printPlayers() {
-		
-		System.out.println("--Player list--");
-		for (Player player : players) {
-			System.out.println(player);
 		}
 	}
 

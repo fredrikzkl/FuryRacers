@@ -37,7 +37,7 @@ public class Level {
 
 	private void musicControl() {
 		course.soundTrack.loop();
-		course.soundTrack.setVolume((float) 0.4);
+		course.soundTrack.setVolume(0.4f);
 
 	}
 

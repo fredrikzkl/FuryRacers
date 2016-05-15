@@ -108,7 +108,6 @@ public class Controlls {
 	public void leftKeyDown() {
 		if(!ignoreNextLeft){
 			leftKeyIsDown = true;
-			rightKeyIsDown = false;
 		}
 		
 		ignoreNextLeft = false;
@@ -117,7 +116,6 @@ public class Controlls {
 	public void rightKeyDown() {
 		if(!ignoreNextRight){
 			rightKeyIsDown = true;
-			leftKeyIsDown = false;
 		}
 		ignoreNextRight = false;
 	}
@@ -143,10 +141,10 @@ public class Controlls {
 			ignoreNextLeft = true;
 		}else{
 			leftKeyIsDown = false;
+			System.out.println("leftUp");
 			ignoreNextLeft = false;
 		}
 	}
-
 
 	public void reverseKeyUp() {
 		reverseKeyIsDown = false;

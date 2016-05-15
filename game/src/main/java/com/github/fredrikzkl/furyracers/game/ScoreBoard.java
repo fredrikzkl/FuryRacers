@@ -14,15 +14,15 @@ import com.github.fredrikzkl.furyracers.car.Car;
 public class ScoreBoard {
 
 	private long 
-	toMenuRealTimer;
+	startTime;
 	
 	private int 
-	timeToMenu, scoreBoardFontHeight, 
+	initialSeconds, scoreBoardFontHeight, 
 	origScreenWidth;
 	
 	private boolean 
 	closedPlayed, movePlayed, 
-	toMenuTimerSet, returnToMenuTimerDone;
+	timerStarted, returnToMenuTimerDone;
 
 	private float 
 	resultsBoardWidth, highscoreBoardWidth, 
@@ -31,7 +31,7 @@ public class ScoreBoard {
 	scalingValue, resultPosX, resultPosY, 
 	highScorePosX, highScorePosY;
 	
-	private String toMenuTimer = "";
+	private String secondsLeft = "";
 	
 	private ArrayList<Car> cars;
 	private ArrayList<Player> players;
@@ -41,7 +41,7 @@ public class ScoreBoard {
 		this.cars = (ArrayList<Car>) cars2;
 		this.players = (ArrayList<Player>) players2;
 				
-		timeToMenu = 10;
+		initialSeconds = 10;
 		scoreBoardFontHeight = Fonts.scoreBoardHeader.getHeight();
 		screenWidth = Application.screenSize.width;
 		screenHeight = Application.screenSize.height;
@@ -115,8 +115,8 @@ public class ScoreBoard {
 		for (int i = startIndex; i > -1; i--) {
 			Car car = sortedCars.get(i);
 			
-			String player = "Player " + car.getPlayerNr() + ": ";
-			String time = car.getTimeElapsed() + " Score: +" + (i + 1);
+			String player = "Player " + car.getPlayerNr() + ":        ";
+			String time = car.getTimeElapsed() + "Score: +" + (i + 1);
 			
 			float yOffset = margin + scoreBoardFontHeight *(amountOfCars-i);
 			float xPos = resultPosX + margin;
@@ -148,7 +148,7 @@ public class ScoreBoard {
 			
 			String usernameWithScores = player.getUsername() + ": " + player.getScore();
 			float yOffset = margin + scoreBoardFontHeight*(i+1);
-			float yPos = endOfResultsY*margin*2 + yOffset;
+			float yPos = endOfResultsY + margin*2 + yOffset;
 			
 			Fonts.scoreBoardText.drawString(xPos, yPos, usernameWithScores);
 			i++;
@@ -162,21 +162,23 @@ public class ScoreBoard {
 	}
 	
 	private void drawMenuCountdown() {
-		if (!toMenuTimerSet) {
-			toMenuRealTimer = System.nanoTime();
-			toMenuTimerSet = true;
+		if (!timerStarted) {
+			startTime = System.nanoTime();
+			timerStarted = true;
 		}
-		long currentTime = System.nanoTime();
-		long elapsed = TimeUnit.NANOSECONDS.toSeconds(currentTime - toMenuRealTimer);
-		toMenuTimer = "" + (timeToMenu - elapsed);
 		
-		int stringWidth = Fonts.scoreBoardHeader.getWidth(toMenuTimer);
+		long currentTime = System.nanoTime();
+		long secondsElapsed = TimeUnit.NANOSECONDS.toSeconds(currentTime - startTime);
+		
+		secondsLeft = "" + (initialSeconds - secondsElapsed);
+		
+		int stringWidth = Fonts.scoreBoardHeader.getWidth(secondsLeft);
 		float xPos = screenWidth - stringWidth;
 		float yPos = screenHeight - scoreBoardFontHeight;
 		
-		Fonts.scoreBoardHeader.drawString(xPos, yPos, toMenuTimer);
+		Fonts.scoreBoardHeader.drawString(xPos, yPos, secondsLeft);
 
-		if (timeToMenu - elapsed == 0) {
+		if (initialSeconds - secondsElapsed == 0) {
 			returnToMenuTimerDone = true;
 		}
 	}
