@@ -128,9 +128,9 @@ public class CollisionHandler {
 		float movementDegrees = controlls.getMovementDegrees();
 		
 		if(movementVector.x > 0)
-			movementDegrees -= deltaAngleChange;
-		else
 			movementDegrees += deltaAngleChange;
+		else
+			movementDegrees -= deltaAngleChange;
 		
 		controlls.setMovementDegrees(movementDegrees);
 	}
@@ -141,9 +141,9 @@ public class CollisionHandler {
 		float movementDegrees = controlls.getMovementDegrees();
 		
 		if(movementVector.x < 0)
-			movementDegrees -= deltaAngleChange*1.001;
+			movementDegrees += deltaAngleChange*1.001;
 		else
-			movementDegrees += deltaAngleChange;
+			movementDegrees -= deltaAngleChange;
 		
 		controlls.setMovementDegrees(movementDegrees);
 	}
@@ -183,7 +183,7 @@ public class CollisionHandler {
 		float slope = yVector / xVector;
 		float constant = yCarPos - slope * xCarPos; // c = y - ax
 
-		intersectionPointsOfLine(slope, constant, tileStartX, tileStartY, tileEndX, tileEndY);
+		intersectionPointsOfLineWithTile(slope, constant, tileStartX, tileStartY, tileEndX, tileEndY);
 		checkIntersectionsWithTile(tileStartX, tileStartY, tileEndX, tileEndY);
 
 		if (isRightTileLineCrossed && carMovingLeft) {
@@ -289,8 +289,11 @@ public class CollisionHandler {
 	}
 	
 	
-	private void intersectionPointsOfLine(float slope, float constant, int tileStartX, int tileStartY, int tileEndX, int tileEndY){
-		yOfTileEndX = slope*tileEndX + constant; // y = ax + c
+	private void intersectionPointsOfLineWithTile(float slope, float constant, int tileStartX, int tileStartY, int tileEndX, int tileEndY){
+		/*The line is a representation of the cars vector direction*/
+		/*This method finds the intersection points between the line and the tile(The tile the car has landed on).*/
+		
+		yOfTileEndX = slope*tileEndX + constant; // When the line crosses the x-value of the tile's right side, this is the lines y-value (y = ax + c)
 		yOfTileStartX = slope*tileStartX + constant;
 												
 		xOfTileEndY = (tileEndY - constant)/slope; // x = (y-c)/a

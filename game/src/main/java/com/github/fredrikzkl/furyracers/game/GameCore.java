@@ -251,6 +251,7 @@ public class GameCore extends BasicGameState {
 		for(Car car : cars){
 			car.controlls.resetTopSpeed();
 			car.controlls.resetDeAcceleration();
+			car.rumbleController(false);
 		}
 		
 		Application.closeConnection();

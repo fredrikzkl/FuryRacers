@@ -111,7 +111,7 @@ public class Menu extends BasicGameState {
 		
 		background = new ParallaxBackground();
 		Sounds.menuMusic.loop();
-		Sounds.menuMusic.setVolume((float) 0.4);
+		Sounds.menuMusic.setVolume(0.4f);
 		getReadySaid = false;
 	}
 	
@@ -144,10 +144,10 @@ public class Menu extends BasicGameState {
 		int margin = Fonts.consoleText.getHeight();
 		float yPosInfoString = yPosQR + Sprites.controllerQR.getHeight() + margin;
 		float xEndOfQR = xPosQR + Sprites.controllerQR.getWidth();
-		float strLngthInf = Fonts.consoleText.getWidth(infoTxt);
+		float strLngthInfo = Fonts.consoleText.getWidth(infoTxt);
 		
 		float middleOfQr = (xPosQR + xEndOfQR)/2;
-		float xPosInfoString =  middleOfQr - strLngthInf/2;
+		float xPosInfoString =  middleOfQr - strLngthInfo/2;
 		
 		
 		Fonts.consoleText.drawString(xPosInfoString, yPosInfoString, "Scan for controller!", Color.red);

@@ -6,6 +6,7 @@ import java.util.concurrent.TimeUnit;
 
 import javax.websocket.EncodeException;
 
+import org.newdawn.slick.Game;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
 import org.newdawn.slick.SlickException;
@@ -206,7 +207,7 @@ public class Car implements Comparable<Car> {
 		}
 	}
 
-	public void checkForOffRoad() throws IOException, EncodeException {
+	public void checkForOffRoad() {
 
 		float[] 
 		colBoxPoints = colBox.getPoints();
@@ -216,9 +217,9 @@ public class Car implements Comparable<Car> {
 		
 		int 
 		pointsNotOffRoad = 0,
-		amountOfPointsXY = colBoxPoints.length;
+		amountOfXYPoints = colBoxPoints.length;
 		
-		for(int i = 0; i < amountOfPointsXY; i+=2){
+		for(int i = 0; i < amountOfXYPoints; i+=2){
 			
 			xPos = colBoxPoints[i];
 			yPos = colBoxPoints[i + 1];
@@ -228,7 +229,7 @@ public class Car implements Comparable<Car> {
 					controlls.changeTopSpeed(0.5f);
 					controlls.changeCurrentSpeed(0.5f);
 					offRoad = true;
-					GameSession.toggleRumbling(id);
+					rumbleController(true);
 					break;
 				}
 			} else {
@@ -236,10 +237,25 @@ public class Car implements Comparable<Car> {
 			}
 		}
 		
-		if(offRoad && pointsNotOffRoad == amountOfPointsXY/2){
+		if(offRoad && pointsNotOffRoad == amountOfXYPoints/2){
 			controlls.changeTopSpeed(2);
 			offRoad = false;
-			GameSession.toggleRumbling(id);
+			rumbleController(false);
+		}
+	}
+	
+	public void rumbleController(boolean rumbleController) {
+			
+		try {
+			if(rumbleController){
+				GameSession.rumbleControllerOn(id);
+			}else{
+				GameSession.rumbleControllerOff(id);
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (EncodeException e) {
+			e.printStackTrace();
 		}
 	}
 	
@@ -247,24 +263,24 @@ public class Car implements Comparable<Car> {
 		
 		String turningDirection = controlls.getTurningDirection();
 		float deltaAngleChange = controlls.getDeltaAngleChange();
-		float movementDegrees = controlls.getMovementDegrees();
+		float degreesRotated = controlls.getMovementDegrees();
 		float angleBeforeCollision;
 		Vector2f turningVector = new Vector2f();
 		
 		if(turningDirection == "positive"){
-			angleBeforeCollision = movementDegrees - deltaAngleChange;
+			angleBeforeCollision = degreesRotated - deltaAngleChange;
 			double toRad = Math.toRadians(angleBeforeCollision);
-			turningVector.x = (float) Math.cos(toRad-Math.PI/2);
-			turningVector.x = (float) Math.sin(toRad-Math.PI/2);
+			turningVector.x = (float) Math.cos(toRad+Math.PI/2);
+			turningVector.x = (float) Math.sin(toRad+Math.PI/2);
 			
 			return turningVector;
 		}
 		
 		if(turningDirection == "negative"){
-			angleBeforeCollision = movementDegrees + deltaAngleChange;
+			angleBeforeCollision = degreesRotated + deltaAngleChange;
 			double toRad = Math.toRadians(angleBeforeCollision);
-			turningVector.x = (float) Math.cos(toRad+Math.PI/2);
-			turningVector.x = (float) Math.sin(toRad+Math.PI/2);
+			turningVector.x = (float) Math.cos(toRad-Math.PI/2);
+			turningVector.x = (float) Math.sin(toRad-Math.PI/2);
 			
 			return turningVector;
 		}
@@ -406,7 +422,11 @@ public class Car implements Comparable<Car> {
 		return radDeg;
 	}
 	
-	CollisionBox getCollisionBox(){
+	public CollisionBox getCollisionBox(){
 		return colBox;
+	}
+	
+	public void setOffroad(boolean isOffroad){
+		offRoad = isOffroad;
 	}
 }

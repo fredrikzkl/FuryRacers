@@ -42,13 +42,13 @@ public class Controlls {
 	public void reactToControlls(int deltaTime, boolean paused) {
 		if (!paused) {
 
-			deltaDeAcceleration = deAcceleration * deltaTime / 1000;
+			deltaDeAcceleration = deAcceleration * deltaTime/1000;
 			if (throttleKeyIsDown && currentSpeed < topSpeed) {
 
-				currentSpeed += acceleration * deltaTime / 1000;
+				currentSpeed += acceleration * deltaTime/1000;
 			} else if (reverseKeyIsDown && currentSpeed > -stats.reverseTopSpeed) {
 
-				currentSpeed -= stats.reverseAcceleration * deltaTime / 1000;
+				currentSpeed -= stats.reverseAcceleration * deltaTime/1000;
 			} else if (currentSpeed < -deAcceleration) {
 
 				currentSpeed += deltaDeAcceleration;
@@ -68,10 +68,10 @@ public class Controlls {
 			if (currentSpeed != 0) {
 				deltaAngleChange = 0;
 				if (leftKeyIsDown) {
-					deltaAngleChange = stats.handling * deltaTime / 1000;
+					deltaAngleChange = stats.handling * deltaTime/1000;
 					movementDegrees -= deltaAngleChange;
 				} else if (rightKeyIsDown) {
-					deltaAngleChange = stats.handling * deltaTime / 1000;
+					deltaAngleChange = stats.handling * deltaTime/1000;
 					movementDegrees += deltaAngleChange;
 				}
 			}
@@ -141,7 +141,6 @@ public class Controlls {
 			ignoreNextLeft = true;
 		}else{
 			leftKeyIsDown = false;
-			System.out.println("leftUp");
 			ignoreNextLeft = false;
 		}
 	}

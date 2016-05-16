@@ -162,8 +162,12 @@ public class GameSession {
 		}
 	}
 	
-	public static void toggleRumbling(String id) throws IOException, EncodeException{
-		sendToClient(id, "rumble", "");
+	public static void rumbleControllerOff(String id) throws IOException, EncodeException{
+		sendToClient(id, "rumble off", "");
+	}
+	
+	public static void rumbleControllerOn(String id) throws IOException, EncodeException{
+		sendToClient(id, "rumble on", "");
 	}
 	
 	public static void carColorToController(String recieverId, String colorCode) throws IOException, EncodeException{
