@@ -11,7 +11,7 @@ Unpack and start the exe file. Enjoy.
 
 ##Make custom maps
 
-Follow appendix A in this document. 
+Follow appendix A in [this](https://github.com/fredrikzkl/FuryRacers/blob/master/Vedlegg%20A.pdf) document. 
 
 ##Important Notes
 
