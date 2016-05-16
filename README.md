@@ -1,6 +1,6 @@
 # FuryRacers
 This repository contains the project files and code for the game FuryRacers. The game is originally made to work in unison with [this](https://github.com/s111/gamesystem) game server.
-However, it is recommended to set up the compiled game, like showed in [this](https://github.com/fredrikzkl/FuryRacersCompiled) repository. 
+However, it is recommended to set up the compiled game, like shown in [this](https://github.com/fredrikzkl/FuryRacersCompiled) repository. 
 The example repository contains a modified hub.js file, necessary to run the game. 
 It also contains a modified .exe file, enabling direct launch of FuryRacers.
 
