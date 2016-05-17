@@ -101,7 +101,7 @@ public class Player implements Comparable<Player>{
 		sendCarColorToController();
 	}
 
-	private void sendCarColorToController() throws IOException, EncodeException{
+	public void sendCarColorToController() throws IOException, EncodeException{
 		
 		switch(colorSel){
 			
@@ -124,7 +124,7 @@ public class Player implements Comparable<Player>{
 		}
 	}
 	
-	private void sendCarModelToController() throws IOException, EncodeException{
+	public void sendCarModelToController() throws IOException, EncodeException{
 		
 		switch(carSel){
 			

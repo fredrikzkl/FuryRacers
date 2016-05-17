@@ -316,12 +316,15 @@ public class Menu extends BasicGameState {
 		}
 	}
 	
-	private void selectButtonDown(int playerNr){
+	private void selectButtonDown(int playerNr) throws IOException, EncodeException{
 		
 		for (int i = 0; i < players.size(); i++) {
 			if (playerNr == i + 1) {
 				Player player = players.get(i);
-				if (player.isCarChosen()) {
+				player.sendCarColorToController(); //Sometimes initial messages containing car model and color, . 
+				player.sendCarModelToController(); //are never received by controller.
+													//This provides added certainty.
+				if (player.isCarChosen()) {			
 					if (player.isReady()) {
 						player.setReady(false);
 						Sounds.deSelect.play();
