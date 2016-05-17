@@ -55,21 +55,20 @@ public class GameCore extends BasicGameState {
 	private Camera camera;
 	private Level level;
 	private ScoreBoard scoreboard;
- 
 
 	public void init(GameContainer container, StateBasedGame sbg) throws SlickException {
-		System.out.println("IP: " + IP);
+		initVariables();
 	}
 
-	public void gameStart(CourseHandler course, List<Player> players) throws SlickException {
+	public void mapInput(CourseHandler course, List<Player> players) throws SlickException {
 
 		GameSession.setGameState(getID());
 		Application.setInMenu(false);
+		this.players = players;
 		level = new Level(course);
 		camera = new Camera(0, 0, level);
-		initVariables();
-		createCars(players);
-		camera.setZoom((float) 0.3);
+		camera.setZoom(0.3f);
+		createCars();
 		scoreboard = new ScoreBoard(cars, players);
 	}
 
@@ -86,7 +85,9 @@ public class GameCore extends BasicGameState {
 
 	public void render(GameContainer container, StateBasedGame sbg, Graphics g) throws SlickException {
 
-		relocateCam(g);
+		firstCamRelocation(g);
+		level.drawCars(g, cars);
+		secondCamRelocation(g);
 		drawPlayerInfo(g);
 		countdown(g);
 		drawIp();
@@ -97,12 +98,11 @@ public class GameCore extends BasicGameState {
 		}
 	}
 
-	public void createCars(List<Player> players) throws SlickException {
+	public void createCars() throws SlickException {
 
-		this.players = players;
-
+		cars = new ArrayList<Car>();
 		for (Player player : players) {
-			createCar(player.getPlayerNr(), player.getId(), player.getSelect());
+			createCar(player.getPlayerNr(), player.getId(), player.getCarComboNr());
 		}
 	}
 	
@@ -340,12 +340,13 @@ public class GameCore extends BasicGameState {
 		cars.add(new Car(stats, id, nr, startArea, level));
 	}
 
-	public void relocateCam(Graphics g) {
+	private void firstCamRelocation(Graphics g) {
 		camera.zoom(g, camera.getZoom());// Crasher om verdien <=0
 		g.translate(camera.getX(), camera.getY()); // Start of camera
-
-		level.drawCars(g, cars);
-
+	}
+	
+	private void secondCamRelocation(Graphics g){
+		
 		g.translate(-camera.getX(), -camera.getY()); // End of camera
 		camera.zoom(g, 1 / camera.getZoom());
 	}
@@ -363,8 +364,6 @@ public class GameCore extends BasicGameState {
 		
 		zoom = 1;
 		biggest = 0;
-			
-		cars = new ArrayList<Car>();
 	}
 
 	public void setIP(String ip) {

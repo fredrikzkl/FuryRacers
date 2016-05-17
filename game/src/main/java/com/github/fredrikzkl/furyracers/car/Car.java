@@ -6,7 +6,6 @@ import java.util.concurrent.TimeUnit;
 
 import javax.websocket.EncodeException;
 
-import org.newdawn.slick.Game;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
 import org.newdawn.slick.SlickException;

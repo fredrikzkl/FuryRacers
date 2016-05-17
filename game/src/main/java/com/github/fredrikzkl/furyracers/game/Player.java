@@ -15,11 +15,8 @@ public class Player implements Comparable<Player>{
 	RED = "#ffe6e6", GREEN = "#d6f5d6", 
 	BLUE = "#e6f5ff", YELLOW = "#ffffcc";
 	
-	private final int AMOUNT_OF_CARTYPES = 3;
-	private final int AMOUNT_OF_CARCOLORS= 4;
-	
-	public final int maxX = AMOUNT_OF_CARTYPES; 
-	public final int maxY = AMOUNT_OF_CARCOLORS;
+	public final int AMOUNT_OF_CARTYPES = 3;
+	public final int AMOUNT_OF_CARCOLORS = 4;
 	
 	private String id;
 	private String username;
@@ -28,12 +25,12 @@ public class Player implements Comparable<Player>{
 	private int playerNr;
 	private int score = 0;
 	
-	private boolean ready = false;;
+	private boolean ready = false;
 	private boolean carChosen = false;
 	
-	private int xSel = 0;
-	private int ySel = 0;
-	private int select = 0;
+	private int carSel = 0;
+	private int colorSel = 0;
+	private int carCombo = 0;
 	
 	public Player(String id, int playerNr) throws IOException, EncodeException{
 		
@@ -45,8 +42,11 @@ public class Player implements Comparable<Player>{
 		rgbGREEN = new Color(0f,255f, 0f, 0.5f);
 		rgbYELLOW = new Color(255f,255f,0f,0.5f);
 		
-		setySel(playerNr -1);
-		setxSel(playerNr-1);
+		colorSel = playerNr-1;
+		carSel = playerNr-1;
+		
+		sendCarColorToController();
+		sendCarModelToController();
 	}
 
 	public boolean equals(Player o){
@@ -57,33 +57,53 @@ public class Player implements Comparable<Player>{
 		return getId().hashCode();
 	}
 	
-	public void setxSel(int xSel) throws IOException, EncodeException {
-		if(xSel > maxX-1){
-			this.xSel = 0;
-		}else if(xSel<0){
-			this.xSel = maxX-1;
-		}else{
-			this.xSel = xSel;
+	public void selNextCar() throws IOException, EncodeException {
+		
+		carSel++;
+		detCarModel();
+	}
+	
+	public void selPrevCar() throws IOException, EncodeException {
+		
+		carSel--;
+		detCarModel();
+	}
+	
+	private void detCarModel() throws IOException, EncodeException{
+		
+		if(carSel > AMOUNT_OF_CARTYPES-1){
+			carSel = 0;
+		}else if(carSel < 0){
+			carSel = AMOUNT_OF_CARTYPES-1;
 		}
 		
-		setCarModelToController(this.xSel);
+		sendCarModelToController();
 	}
 
-	public void setySel(int ySel) throws IOException, EncodeException {
-		if(ySel >= maxY){
-			this.ySel = 0;
-		}else if(ySel<0){
-			this.ySel = maxY-1;
-		}else{
-			this.ySel = ySel;
+	public void selNextColor() throws IOException, EncodeException  {
+		colorSel++;
+		detColor();
+	}
+	
+	public void selPrevColor() throws IOException, EncodeException  {
+		colorSel--;
+		detColor();
+	}
+	
+	private void detColor() throws IOException, EncodeException{
+		
+		if(colorSel > AMOUNT_OF_CARCOLORS-1){
+			colorSel = 0;
+		}else if(colorSel < 0){
+			colorSel = AMOUNT_OF_CARCOLORS-1;
 		}
 		
-		setCarColorToController(this.ySel);
+		sendCarColorToController();
 	}
 
-	private void setCarColorToController(int ySel) throws IOException, EncodeException{
+	private void sendCarColorToController() throws IOException, EncodeException{
 		
-		switch(ySel){
+		switch(colorSel){
 			
 			case 0: 
 				GameSession.carColorToController(id, RED);
@@ -104,9 +124,9 @@ public class Player implements Comparable<Player>{
 		}
 	}
 	
-	private void setCarModelToController(int xSel) throws IOException, EncodeException{
+	private void sendCarModelToController() throws IOException, EncodeException{
 		
-		switch(xSel){
+		switch(carSel){
 			
 			case 0: 
 				GameSession.carModelToController(id, "Mustang");
@@ -146,20 +166,20 @@ public class Player implements Comparable<Player>{
 		this.ready = ready;
 	}
 
-	public int getSelect() {
-		return select;
+	public int getCarComboNr() {
+		return carCombo;
 	}
 
-	public void setSelect(int select) {
-		this.select = select;
+	public void setCarCombo(int comboNr) {
+		carCombo = comboNr;
 	}
 
-	public int getxSel() {
-		return xSel;
+	public int getCarSel() {
+		return carSel;
 	}
 
-	public int getySel() {
-		return ySel;
+	public int getColorSel() {
+		return colorSel;
 	}
 	
 	public String getUsername() {
@@ -217,7 +237,6 @@ public class Player implements Comparable<Player>{
 	
 	public String toString(){
 		return "Player " + getPlayerNr() + " ID:'" + getId() +"'";
-		
 	}
 	
 	public Car getCar(){

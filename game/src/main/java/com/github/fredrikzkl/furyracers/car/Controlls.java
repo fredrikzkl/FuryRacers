@@ -3,6 +3,9 @@ package com.github.fredrikzkl.furyracers.car;
 
 public class Controlls {
 
+	private int
+	stopLockLeft, stopLockRight;
+	
 	private float 
 	deltaAngleChange, deltaDeAcceleration, 
 	topSpeed, acceleration, deAcceleration;
@@ -10,7 +13,7 @@ public class Controlls {
 	boolean 
 	reverseKeyIsDown, throttleKeyIsDown, leftKeyIsDown, 
 	rightKeyIsDown, usingKeyboard, ignoreNextRight, 
-	ignoreNextLeft = false;
+	ignoreNextLeft;
 
 	float 
 	currentSpeed, movementDegrees = 0;
@@ -23,7 +26,8 @@ public class Controlls {
 		topSpeed = stats.topSpeed;
 		acceleration = stats.acceleration;
 		deAcceleration = stats.deAcceleration;
-	
+		stopLockLeft = 0;
+		stopLockRight = 0; 
 	}
 	
 	public String getTurningDirection(){
@@ -105,14 +109,6 @@ public class Controlls {
 		reverseKeyUp();
 	}
 
-	public void leftKeyDown() {
-		if(!ignoreNextLeft){
-			leftKeyIsDown = true;
-		}
-		
-		ignoreNextLeft = false;
-	}
-
 	public void rightKeyDown() {
 		if(!ignoreNextRight){
 			rightKeyIsDown = true;
@@ -123,7 +119,12 @@ public class Controlls {
 	public void rightKeyUp() {
 		
 		if(!rightKeyIsDown){
-			ignoreNextRight = true;
+			stopLockRight++;
+			if(stopLockRight < 1){
+				ignoreNextRight = true;
+			}else{
+				stopLockRight = 0;
+			}
 		}else{
 			rightKeyIsDown = false;
 			ignoreNextRight = false;
@@ -134,11 +135,23 @@ public class Controlls {
 		reverseKeyIsDown = true;
 		throttleKeyUp();
 	}
+	
+	public void leftKeyDown() {
+		if(!ignoreNextLeft){
+			leftKeyIsDown = true;
+		}
+		ignoreNextLeft = false;
+	}
 
 	public void leftKeyUp() {
 		
 		if(!leftKeyIsDown){
-			ignoreNextLeft = true;
+			stopLockLeft++;
+			if(stopLockLeft < 1){
+				ignoreNextLeft = true;
+			}else{
+				stopLockLeft = 0;
+			}
 		}else{
 			leftKeyIsDown = false;
 			ignoreNextLeft = false;

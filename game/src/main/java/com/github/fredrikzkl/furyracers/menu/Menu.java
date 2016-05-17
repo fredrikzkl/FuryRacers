@@ -70,7 +70,7 @@ public class Menu extends BasicGameState {
 	public void update(GameContainer container, StateBasedGame game, int delta) throws SlickException {
 		setKeyboardCommands(container, game);
 		setTime();
-		readyCheck(game);
+		readyCheck(container, game);
 	}
 	
 	public void render(GameContainer container, StateBasedGame game, Graphics g) throws SlickException {
@@ -207,8 +207,8 @@ public class Menu extends BasicGameState {
 	private void drawCarSprite(float xPos, float yPos, int i, Graphics g){
 		
 		if (i < players.size()) {
-			int carSelectNum = players.get(i).getxSel();
-			int colorSelectNum = players.get(i).getySel();
+			int carSelectNum = players.get(i).getCarSel();
+			int colorSelectNum = players.get(i).getColorSel();
 			
 			g.drawImage( getCarImage(carSelectNum, colorSelectNum), xPos, yPos);
 		}else{
@@ -256,7 +256,7 @@ public class Menu extends BasicGameState {
 		return true;
 	}
 
-	private void readyCheck(StateBasedGame game) throws SlickException {
+	private void readyCheck(GameContainer container, StateBasedGame game) throws SlickException {
 
 		if (allPlayersAreReady()) {
 
@@ -273,7 +273,7 @@ public class Menu extends BasicGameState {
 			countDown = String.valueOf(secondsToNextGame);
 
 			if (secondsToNextGame <= 0) {
-				startGame(game);
+				startGame(container, game);
 			}
 
 		} else {
@@ -283,9 +283,10 @@ public class Menu extends BasicGameState {
 		}
 	}
 
-	private void startGame(StateBasedGame game) throws SlickException {
+	private void startGame(GameContainer container, StateBasedGame game) throws SlickException {
 		Sounds.menuMusic.stop();
-		core.gameStart(course, players);
+		core.init(container, game);
+		core.mapInput(course, players);
 		game.enterState(1);
 	}
 
@@ -325,7 +326,7 @@ public class Menu extends BasicGameState {
 						player.setReady(false);
 						Sounds.deSelect.play();
 					} else {
-						determinePlayerChoice(player);
+						detCarComboForSpriteSheet(player);
 						player.setReady(true);
 						Sounds.playerReady.play();
 					}
@@ -344,14 +345,12 @@ public class Menu extends BasicGameState {
 				Player player = players.get(i);
 				if (!player.isReady()) {
 					if (player.isCarChosen()) {
-						player.setySel(player.getySel() + 1);
+						player.selNextColor();;
 						Sounds.spray.play();
 					} else {
-						player.setxSel(player.getxSel() + 1);
+						player.selNextCar();
 						Sounds.car_select.play();
-
 					}
-
 				}
 			}
 		}
@@ -364,10 +363,10 @@ public class Menu extends BasicGameState {
 				Player player = players.get(i);
 				if (!player.isReady()) {
 					if (player.isCarChosen()) {
-						player.setySel(player.getySel() - 1);
+						player.selPrevColor();
 						Sounds.spray.play();
 					} else {
-						player.setxSel(player.getxSel() - 1);
+						player.selPrevCar();
 						Sounds.car_select.play();
 					}
 				}
@@ -440,14 +439,14 @@ public class Menu extends BasicGameState {
 		
 		for (int i = console.size()+1; i > 1; i--) {
 			Fonts.consoleText.drawString(0, screenHeight - (fontHeight * (console.size() - i + 3)),
-					console.get(i - 2));// Draws the console
+					console.get(i - 2));// Draws the the bottom left info
 		}
 	}
 
-	private void determinePlayerChoice(Player player) {
-		int carType = player.getxSel();
-		int carColor = player.getySel();
-		player.setSelect(carType * player.maxY + carColor);
+	private void detCarComboForSpriteSheet(Player player) {
+		int carTypeNr = player.getCarSel();
+		int carColorNr = player.getColorSel();
+		player.setCarCombo(carTypeNr * player.AMOUNT_OF_CARCOLORS + carColorNr);
 	}
 	
 	private int randomMap(){
@@ -458,8 +457,8 @@ public class Menu extends BasicGameState {
 		File listDir[] = dir.listFiles();
 		for (int i = 0; i < listDir.length; i++) {
 		    if (listDir[i].isDirectory()) {
-		            numberOfSubfolders++;
-		        }
+		    	numberOfSubfolders++;
+		    }
 		}
 		return  1 + (int)(Math.random() * numberOfSubfolders);
 	}

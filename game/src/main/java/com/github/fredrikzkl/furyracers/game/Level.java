@@ -19,7 +19,7 @@ public class Level {
 	public static int propsLayer, backgroundLayer, roadLayer;
 
 	public Level(CourseHandler course) {
-		this.course = course;
+		Level.course = course;
 
 		roadLayer = course.data.getLayerIndex("road");
 		propsLayer = course.data.getLayerIndex("props");
@@ -62,6 +62,7 @@ public class Level {
 
 	public void drawCars(Graphics g, List<Car> cars) {
 		g.drawImage(course.subLayer, 0, 0);
+		
 		for (Car car : cars) {
 			car.render(g);
 		}
@@ -129,6 +130,10 @@ public class Level {
 
 	public int getTileHeight() {
 		return tileHeight;
+	}
+	
+	public CourseHandler getCourse(){
+		return course;
 	}
 
 }
