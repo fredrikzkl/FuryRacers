@@ -77,7 +77,6 @@ public class GameSession {
 				
 				String playerId = jsonObj.getString("from");
 				sendToBackend("get username", playerId);
-	
 				break;
 			}
 	
@@ -89,7 +88,6 @@ public class GameSession {
 				String buttonId = jsonObj.getJsonNumber("data").toString();
 				String playerId = jsonObj.getString("from");
 				buttonDown(playerId, buttonId);
-				
 				break;
 			}
 			case "buttonUp": {
@@ -100,7 +98,6 @@ public class GameSession {
 				String buttonId = jsonObj.getJsonNumber("data").toString();
 				String playerId = jsonObj.getString("from");
 				buttonUp(playerId, buttonId);
-	
 				break;
 			}
 	

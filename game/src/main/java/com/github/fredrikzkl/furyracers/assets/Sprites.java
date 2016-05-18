@@ -14,7 +14,7 @@ public class Sprites {
 	
 	private static String path = "games/furyracers/assets/";
 	
-	public static void init(){
+	public static void initialize(){
 		
 		
 		try {

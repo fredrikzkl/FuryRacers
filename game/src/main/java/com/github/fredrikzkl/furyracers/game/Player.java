@@ -12,7 +12,7 @@ import com.github.fredrikzkl.furyracers.network.GameSession;
 public class Player implements Comparable<Player>{
 	
 	private final String 
-	RED = "#ffe6e6", GREEN = "#d6f5d6", 
+	RED = "#ffe6e6", GREEN = "#d6f5d6",   
 	BLUE = "#e6f5ff", YELLOW = "#ffffcc";
 	
 	public final int AMOUNT_OF_CARTYPES = 3;
@@ -23,11 +23,11 @@ public class Player implements Comparable<Player>{
 	private Color rgbRED, rgbGREEN, rgbBLUE, rgbYELLOW;
 	private Color carColor;
 	private int playerNr;
-	private int score = 0;
 	
 	private boolean ready = false;
 	private boolean carChosen = false;
 	
+	private int score = 0;
 	private int carSel = 0;
 	private int colorSel = 0;
 	private int carCombo = 0;
@@ -58,13 +58,11 @@ public class Player implements Comparable<Player>{
 	}
 	
 	public void selNextCar() throws IOException, EncodeException {
-		
 		carSel++;
 		detCarModel();
 	}
 	
 	public void selPrevCar() throws IOException, EncodeException {
-		
 		carSel--;
 		detCarModel();
 	}
@@ -144,9 +142,40 @@ public class Player implements Comparable<Player>{
 	public int compareTo(Player o) {
 		return Integer.compare(this.getScore(), o.getScore());
 	}
+	public void buttonDown(String data) {
+		
+		switch (data) {
+		case "0":
+			getCar().controlls.reverseKeyDown();
+			break;
+		case "1":
+			getCar().controlls.throttleKeyDown();
+			break;
+		case "2":
+			getCar().controlls.rightKeyDown();
+			break;
+		case "3":
+			getCar().controlls.leftKeyDown();
+		}
+	}
+
+	public void buttonUp(String data) {
+		switch (data) {
+		case "0":
+			getCar().controlls.reverseKeyUp();
+			break;
+		case "1":
+			getCar().controlls.throttleKeyUp();
+			break;
+		case "2":
+			getCar().controlls.rightKeyUp();
+			break;
+		case "3":
+			getCar().controlls.leftKeyUp();
+		}
+	}
 	
 	Color getCarColor(){
-		
 		return carColor;
 	}
 	
@@ -184,39 +213,6 @@ public class Player implements Comparable<Player>{
 	
 	public String getUsername() {
 		return username;
-	}
-	
-	public void buttonDown(String data) {
-		getCar().controlls.disableKeyboardInput();
-		switch (data) {
-		case "0":
-			getCar().controlls.reverseKeyDown();
-			break;
-		case "1":
-			getCar().controlls.throttleKeyDown();
-			break;
-		case "2":
-			getCar().controlls.rightKeyDown();
-			break;
-		case "3":
-			getCar().controlls.leftKeyDown();
-		}
-	}
-
-	public void buttonUp(String data) {
-		switch (data) {
-		case "0":
-			getCar().controlls.reverseKeyUp();
-			break;
-		case "1":
-			getCar().controlls.throttleKeyUp();
-			break;
-		case "2":
-			getCar().controlls.rightKeyUp();
-			break;
-		case "3":
-			getCar().controlls.leftKeyUp();
-		}
 	}
 
 	public void setUsername(String username) {

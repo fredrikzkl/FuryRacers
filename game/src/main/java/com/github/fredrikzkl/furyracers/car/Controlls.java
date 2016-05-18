@@ -43,8 +43,8 @@ public class Controlls {
 		return "neutral";
 	}
 
-	public void reactToControlls(int deltaTime, boolean paused) {
-		if (!paused) {
+	public void reactToControlls(int deltaTime, boolean preventMovement) {
+		if (!preventMovement) {
 
 			deltaDeAcceleration = deAcceleration * deltaTime/1000;
 			if (throttleKeyIsDown && currentSpeed < topSpeed) {
@@ -165,10 +165,6 @@ public class Controlls {
 	public void throttleKeyUp() {
 		throttleKeyIsDown = false;
 		
-	}
-
-	public void disableKeyboardInput() {
-		usingKeyboard = false;
 	}
 
 	public void activateKeyboardInput() {

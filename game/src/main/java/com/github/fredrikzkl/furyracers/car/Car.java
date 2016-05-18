@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
 import javax.websocket.EncodeException;
-
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
 import org.newdawn.slick.SlickException;
@@ -34,7 +33,7 @@ public class Car implements Comparable<Car> {
 	totalTenthsOfSeconds;
 	
 	private boolean 
-	offRoad, finishedRace, startClock, paused;
+	offRoad, finishedRace, startClock, preventMovement;
 	
 	private float 
 	currentSpeed, radDeg, centerOfRotationYOffset,
@@ -102,7 +101,7 @@ public class Car implements Comparable<Car> {
 	private void initVariables() {
 		time = passedChekpoints = laps = 0;
 		currentTime = 0;
-		paused = true;
+		preventMovement = true;
 		offRoad = false;
 		username = "";
 		finishedRace = false;
@@ -113,8 +112,7 @@ public class Car implements Comparable<Car> {
 
 	public void update(GameContainer container, StateBasedGame game, int deltaTime) throws SlickException, IOException, EncodeException {
 
-		currentSpeed = controlls.getCurrentSpeed();
-		controlls.reactToControlls(deltaTime, paused);
+		controlls.reactToControlls(deltaTime, preventMovement);
 		rePositionCar(deltaTime);
 		checkForEdgeOfMap();
 		checkForCheckpoint();
@@ -127,10 +125,10 @@ public class Car implements Comparable<Car> {
 	public void rePositionCar(int deltaTime) {
 
 		radDeg = (float) Math.toRadians(controlls.getMovementDegrees());
-		float currentSpeed = controlls.getCurrentSpeed();
+		currentSpeed = controlls.getCurrentSpeed();
 
-		movementVector.x = (float) Math.cos(radDeg) * currentSpeed * deltaTime / 1000;
-		movementVector.y = (float) Math.sin(radDeg) * currentSpeed * deltaTime / 1000;
+		movementVector.x = (float) Math.cos(radDeg) * currentSpeed * deltaTime/1000;
+		movementVector.y = (float) Math.sin(radDeg) * currentSpeed * deltaTime/1000;
 
 		position.x += movementVector.x;
 		position.y += movementVector.y;
@@ -216,9 +214,9 @@ public class Car implements Comparable<Car> {
 		
 		int 
 		pointsNotOffRoad = 0,
-		amountOfXYPoints = colBoxPoints.length;
+		amountOfXpointsAndYpoints = colBoxPoints.length;
 		
-		for(int i = 0; i < amountOfXYPoints; i+=2){
+		for(int i = 0; i < amountOfXpointsAndYpoints; i+=2){
 			
 			xPos = colBoxPoints[i];
 			yPos = colBoxPoints[i + 1];
@@ -236,7 +234,7 @@ public class Car implements Comparable<Car> {
 			}
 		}
 		
-		if(offRoad && pointsNotOffRoad == amountOfXYPoints/2){
+		if(offRoad && pointsNotOffRoad == amountOfXpointsAndYpoints/2){
 			controlls.changeTopSpeed(2);
 			offRoad = false;
 			rumbleController(false);
@@ -306,7 +304,7 @@ public class Car implements Comparable<Car> {
 		if (startClock) {
 			startTime = System.nanoTime();
 			startClock = false;
-			paused = false;
+			preventMovement = false;
 		}
 
 		if (startTime != 0 && !finishedRace) {
